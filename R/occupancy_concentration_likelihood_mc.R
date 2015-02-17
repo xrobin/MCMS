@@ -1,7 +1,3 @@
-source("occupancy_concentration_likelihood.R")
-beta.shape1 <- beta.shape2 <- .5
-
-
 #' Generates a new coo by sampling from the prior
 #' @param coo the previous coo
 #' @param c.sd,o.sd standard deviations for the normal distribution
@@ -12,7 +8,7 @@ beta.shape1 <- beta.shape2 <- .5
 #' 	\item log.previous.bias the bias of the new coo within the previous prior
 #' 	\item log.new.bias the bias of the previous coo within the new prior
 #' }
-draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 = .5, beta.shape2 = .5) {
+draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2")) {
 	which.changes <- floor(runif(1, min=1, max = length(coo) + 1))
 	if (which.changes == 1) {
 		# Draw concentration from double laplace distribution
@@ -27,7 +23,7 @@ draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 =
 	}
 	return(list(coo = coo, log.previous.bias = log.previous.bias, log.new.bias = log.new.bias))
 }
-	
+
 #' Generates a new coo by a random normal number
 #' @param coo the previous coo
 #' @param c.sd,o.sd standard deviations for the normal distribution
@@ -39,7 +35,7 @@ draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 =
 #' 	\item log.previous.bias the bias of the new coo within the previous prior
 #' 	\item log.new.bias the bias of the previous coo within the new prior
 #' }
-draw.new.coo <- function(coo, c.sd = 0.05, o.sd = 0.05, k.scale = 1/100, beta.shape1 = .5, beta.shape2 = .5, o.range = c(1e-5, 1-1e-5)) {
+draw.new.coo <- function(coo, c.sd = 0.05, o.sd = 0.05, k.scale = 1/100, beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2"), o.range = c(1e-5, 1-1e-5)) {
 	log.previous.bias <- log.new.bias <- 0
 	which.changes <- floor(runif(1, min=1, max = length(coo) + 1))
 	if (which.changes == 1) {
@@ -89,12 +85,12 @@ draw.new.coo <- function(coo, c.sd = 0.05, o.sd = 0.05, k.scale = 1/100, beta.sh
 #' @return a matrix with ncol as the dimension of the problem + 1. Each row is one step of the simulation.
 #' The first column contains the c, the last the likelihood, and the middle ones the occupancy ratios corresponding to the coo.
 mc.occupancy <- function(coo.initial, x, var.model, Iis, tis, steps = 100000, burn.in.proportion = 0.3, prior.move.proportion = .02, npeptides = npeptides, nsites = nsites,
-						 beta.shape1 = .5, beta.shape2 = .5
+						 beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2")
 						 #on.observed, off.observed
 						 ) {
 	print(unique(x$Longest.Isoform))
 	print(length(coo.initial))
-	
+
 	burn.in.time <- ceiling(burn.in.proportion * steps)
 	allocate <- try(mc.result <- matrix(NA, nrow=steps - burn.in.time, ncol=length(coo.initial) + 1))
 	if (is(allocate, "try-error")) {
@@ -104,13 +100,13 @@ mc.occupancy <- function(coo.initial, x, var.model, Iis, tis, steps = 100000, bu
 	}
 	# Having model as an already shaped data.frame might speed up the simulation... or not
 	model <- x
-	
+
 	previous.coo <- coo.initial
-	previous.likelihood <- 
+	previous.likelihood <-
 		fit.concentration.occupancy.objective(coo.initial, x, model = model, var.model,
 											  Iis = Iis, tis = tis, #on.observed = on.observed, off.observed = off.observed,
 											  npeptides = npeptides, nsites = nsites)
-	
+
 	for (t in 1:steps) {
 		log.previous.bias <- 0
 		log.new.bias <- 0
@@ -119,7 +115,7 @@ mc.occupancy <- function(coo.initial, x, var.model, Iis, tis, steps = 100000, bu
 			new.coo <- new.coo.and.biases[["coo"]]
 			log.previous.bias <- new.coo.and.biases[["log.previous.bias"]]
 			log.new.bias <- new.coo.and.biases[["log.new.bias"]]
-			new.likelihood <- 
+			new.likelihood <-
 				fit.concentration.occupancy.objective(new.coo, data = x, model = model, var.model = var.model,
 													  Iis = Iis, tis = tis, #on.observed = on.observed, off.observed = off.observed,
 													  npeptides = npeptides, nsites = nsites)
@@ -129,7 +125,7 @@ mc.occupancy <- function(coo.initial, x, var.model, Iis, tis, steps = 100000, bu
 			new.coo <- new.coo.and.biases[["coo"]]
 			log.previous.bias <- new.coo.and.biases[["log.previous.bias"]]
 			log.new.bias <- new.coo.and.biases[["log.new.bias"]]
-			new.likelihood <- 
+			new.likelihood <-
 				fit.concentration.occupancy.objective(new.coo, data = x, model = model, var.model = var.model,
 													  Iis = Iis, tis = tis, #on.observed = on.observed, off.observed = off.observed,
 													  npeptides = npeptides, nsites = nsites)
@@ -164,7 +160,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 	output.files <- list.files(dir, "\\.RData$", full.names = TRUE)
 	ENSPs <- str_match(output.files, ".+(ENSP\\d+)\\.RData")[, 2]
 	names(output.files) <- ENSPs
-	
+
 	#c.list <- c.sd.list <- rep(NA, length(output.files))
 	#p.list <- pbar.list <- p.sd.list <- pbar.sd.list <- vector("list", length(output.files))
 	#names(c.list) <- names(c.sd.list) <- names(p.list) <- names(pbar.list) <- names(p.sd.list) <- names(pbar.sd.list) <- ENSPs
@@ -183,7 +179,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 			c.sd <- sd(burnt.in[, 1])
 			#c.list[ENSP] <- c
 			#c.sd.list[ENSP] <- sd(burnt.in[, 1])
-			
+
 			if (nsites > 0) {
 				o.cols <- (1:nsites) + 1
 				o.prime.cols <- o.cols + nsites
@@ -193,11 +189,11 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 
 				on <- c + log(o.prime) - log(o)
 				off <- c + log(1 - o.prime) - log(1 - o)
-				
+
 				site.names <- str_replace(names(means)[o.cols], "_480", "")
 				site.names.on <- paste(site.names, "+", sep = "")
 				site.names.off <- paste(site.names, "-", sep = "")
-				
+
 				p <- colMeans(on)
 				pbar <- colMeans(off)
 				p.sd <- colSds(on)
@@ -216,7 +212,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 				names(final.o.prime) <- paste0(site.names, ".o_620")
 				names(final.o.sd) <- paste0(site.names, ".o_480_sd")
 				names(final.o.prime.sd) <- paste0(site.names, ".o_620_sd")
-				
+
 				names(final.delta.o) <- paste0(site.names, ".do")
 				names(final.delta.o.sd) <- paste0(site.names, ".do_sd")
 				#p.list[[ENSP]] <- colMeans(on)
@@ -242,7 +238,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 	c <- sapply(all.data, function(x) {x[1]}, simplify=TRUE)
 	c.sd <- sapply(all.data, function(x) {x[2]})
 	phosphos <- unlist(sapply(all.data, function(x) {x[-c(1, 2)]}))
-	
+
 	p <- phosphos[str_detect(names(phosphos), "\\+$")]
 	pbar <- phosphos[str_detect(names(phosphos), "-$")]
 	p.sd <- phosphos[str_detect(names(phosphos), "\\+\\.sd$")]
@@ -253,7 +249,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 	o.prime.sd <- phosphos[str_detect(names(phosphos), "\\.o_620_sd$")]
 	final.delta.o <- phosphos[str_detect(names(phosphos), ".do$")]
 	final.delta.o.sd <- phosphos[str_detect(names(phosphos), ".do_sd$")]
-	
+
 	# Remove useless stuff from names
 	names(c) <- str_replace(names(c), "\\.c$", "")
 	names(c.sd) <- str_replace(names(c.sd), "\\.c.sd$", "")
@@ -261,7 +257,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 	names(pbar.sd) <- str_replace(names(pbar.sd), "\\.sd$", "")
 	names(final.delta.o) <- str_replace(names(final.delta.o), "\\.do$", "")
 	names(final.delta.o.sd) <- str_replace(names(final.delta.o.sd), "\\.do_sd$", "")
-	
+
 	names(pbar) <- str_replace(names(pbar), "_", "")
 	names(pbar) <- str_replace(names(pbar), "\\.", "_")
 	names(p.sd) <- str_replace(names(p.sd), "_", "")
@@ -290,22 +286,22 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 # print((1 + tanh(opt$par[2:4])) / 2)
 # print((1 + tanh(opt$par[5:7])) / 2)
 # print(opt$value)
-# 
+#
 # # Likelihood of the optimized parameters
 # fit.concentration.occupancy.objective(opt$par, ratios = mu, gammas = gammas, nu.tildes = nu.tildes,
 # 									  Iis = Iis, tis = tis, on.observed = on.observed, off.observed = off.observed,
 # 									  npeptides = npeptides, nsites = nsites)
-# 
+#
 # # Likelihood for the true parameters:
 # fit.concentration.occupancy.objective(c(c, o.to.x(o), o.to.x(o.prime)), ratios = mu, gammas = gammas, nu.tildes = nu.tildes,
 # 									  Iis = Iis, tis = tis, on.observed = on.observed, off.observed = off.observed,
 # 									  npeptides = npeptides, nsites = nsites)
-# 
-# 
-# mu <- mu.coo(c, 
-# 			 matrix((1 + tanh(opt$par[2:4])) / 2, 7, 3, byrow = TRUE), 
+#
+#
+# mu <- mu.coo(c,
+# 			 matrix((1 + tanh(opt$par[2:4])) / 2, 7, 3, byrow = TRUE),
 # 			 matrix((1 + tanh(opt$par[5:7])) / 2, 7, 3, byrow = TRUE), Iis, tis, npeptides, nsites)
-# 
+#
 
 # par(mfcol=c(3, 3))
 # par(mar=c(2, 2, 0, 0))
@@ -326,7 +322,7 @@ read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 # abline(h = c, col="red", lty=2)
 # plot(mc.result[,8], type="l")
 # plot(-mc.result[,8], type="l", log="y", ylim = rev(range(-mc.result[,8])))
-# 
+#
 # par(mfcol=c(3, 3))
 # hist(tail(mc.result[,1], n = mc.steps / 2))
 # hist(tail(mc.result[,2], n = mc.steps / 2))
