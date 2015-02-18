@@ -1,13 +1,13 @@
 #' Compute the best guess from the model on the ratios
 #' @param c the 
 #' @param o,o.prime the occupancy ratios, as matrices of the same size as Iis and tis.
-#' @note internal
+#' @keywords internal
 mu.coo <- function(c, o, o.prime, Iis, tis, npeptides, nsites) {
 	c + rowSums( Iis * (log((1 - o.prime) / (1 - o)) + tis * (log(o.prime / (1 - o.prime)) - log(o / (1 - o)))))
 }
 
 #' K_i
-#' @note internal
+#' @keywords internal
 K.coo <- function(gammas, xbar, mu) {
 	1 + gammas * (xbar - mu) ^2
 }
@@ -15,37 +15,42 @@ K.coo <- function(gammas, xbar, mu) {
 #' l;i
 #' @param xbar observed ratios
 #' @param mu predicted ratios
-#' @note internal
+#' @keywords internal
 li.coo <- function(xbar, mu, gammas, nu.tildes, K = K.coo(gammas, xbar, mu)) {
 	(2 * gammas * nu.tildes) / K * (xbar - mu)
 }
 
 #' l;ii
-#' @note internal
+#' @keywords internal
 lii.coo <- function(xbar, mu, gammas, nu.tildes, K = K.coo(gammas, xbar, mu)) {
 	(2 * gammas * nu.tildes) / K *  (2 * gammas / K * (xbar - mu)^2 - 1)
 }
 
 #' mu_i;c
+#' @keywords internal
 muic.coo <- function(c) {
 	return(1)
 }
 
 #' mu_i;s'
+#' @keywords internal
 muis.prime.coo <- function(o.prime, Iis, tis) {
 	Iis * (-1 / (1 - o.prime) + tis * ( 1 / o.prime + 1 / (1 - o.prime)))
 }
 
 #' mu_i;s'
+#' @keywords internal
 muis.coo <- function(o, Iis, tis) {
 	Iis * (1 / (1 - o) - tis * ( 1 / o + 1 / (1 - o)))
 }
 
 #' mu_i;s's'
+#' @keywords internal
 muis.prime.2.coo <- function(o.prime, Iis, tis) {
 	Iis * (-1 / (1 - o.prime)^2 + tis * ( -1 / o.prime^2 + 1 / (1 - o.prime)^2))
 }
 #' mu_i;ss
+#' @keywords internal
 muis.2.coo <- function(o, Iis, tis) {
 	Iis * (1 / (1 - o)^2 - tis * ( -1 / o^2 + 1 / (1 - o)^2))
 }
@@ -61,6 +66,7 @@ muis.2.coo <- function(o, Iis, tis) {
 #' @param on.observed,off.observed counts of the # of times the site has been seen on and off - for the beta prior
 #' @param npeptides,nsites the number of peptides and sites under consideration
 #' @param use.prior the weight of the prior, typically 0 (ignore prior) or 1 (use prior). 
+#' @export
 fit.concentration.occupancy.objective <- function(coo, data, model, var.model,
 												  Iis, tis, 
 												  #on.observed, off.observed,

@@ -8,6 +8,7 @@
 #' 	\item log.previous.bias the bias of the new coo within the previous prior
 #' 	\item log.new.bias the bias of the previous coo within the new prior
 #' }
+#' @keywords internal
 draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2")) {
 	which.changes <- floor(runif(1, min=1, max = length(coo) + 1))
 	if (which.changes == 1) {
@@ -35,6 +36,7 @@ draw.new.coo.from.prior <- function(coo, c.sd = 0.05, o.sd = 0.05, beta.shape1 =
 #' 	\item log.previous.bias the bias of the new coo within the previous prior
 #' 	\item log.new.bias the bias of the previous coo within the new prior
 #' }
+#' @keywords internal
 draw.new.coo <- function(coo, c.sd = 0.05, o.sd = 0.05, k.scale = 1/100, beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2"), o.range = c(1e-5, 1-1e-5)) {
 	log.previous.bias <- log.new.bias <- 0
 	which.changes <- floor(runif(1, min=1, max = length(coo) + 1))
@@ -84,6 +86,7 @@ draw.new.coo <- function(coo, c.sd = 0.05, o.sd = 0.05, k.scale = 1/100, beta.sh
 #' @param on.observed,off.observed prior on the number of observations
 #' @return a matrix with ncol as the dimension of the problem + 1. Each row is one step of the simulation.
 #' The first column contains the c, the last the likelihood, and the middle ones the occupancy ratios corresponding to the coo.
+#' @export
 mc.occupancy <- function(coo.initial, x, var.model, Iis, tis, steps = 100000, burn.in.proportion = 0.3, prior.move.proportion = .02, npeptides = npeptides, nsites = nsites,
 						 beta.shape1 = getOption("MCMS.beta.shape1"), beta.shape2 = getOption("MCMS.beta.shape2")
 						 #on.observed, off.observed
@@ -156,6 +159,7 @@ library(matrixStats)
 #' @importFrom matrixStats colSds
 #' @importFrom stringr str_match
 #' @importFrom stringr str_replace
+#' @export
 read.mc.results <- function(dir = mc.dir, burn.in.proportion = 0.1) {
 	output.files <- list.files(dir, "\\.RData$", full.names = TRUE)
 	ENSPs <- str_match(output.files, ".+(ENSP\\d+)\\.RData")[, 2]
