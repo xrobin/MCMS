@@ -6,7 +6,7 @@
 #' \dontrun{
 #' # Refresh from the source file
 #' ENSTest <- read.csv(system.file("data/ENSTest.csv", package="MCMS", mustWork = TRUE))
-#' save(ENSTest, file="inst/data/ENSTest.csv")
+#' save(ENSTest, file="data/ENSTest.RData")
 #' }
 #' 
 NULL
