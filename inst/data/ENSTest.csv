@@ -1,4 +1,4 @@
-protein,sequence,peptide,start,end,length,sample,reference,ratio,q,n
+protein,sequence,modifications,start,end,length,sample,reference,ratio,q,n
 ENSTest,LPEQK,,1,5,5,620,480,0.6810050754,0.5542380986,11
 ENSTest,LPEQK,,1,5,5,P1,480,0.4297142288,0.4753535985,9
 ENSTest,LPEQK,,1,5,5,P1,620,0.4822123291,0.9002939751,9
