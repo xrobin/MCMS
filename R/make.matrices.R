@@ -1,11 +1,10 @@
 #' The \code{sample.dependency.matrix} defines the dependency between the concentration and samples.
 #' It will solve simple circular dependencies and encode the last link as a function of other samples
-#' @param data the MS data, specifically columns \code{}
+#' @param sample,reference the aligned vectors of sample names that represent the sample itself and its reference
 #' @examples
 #' data(ENSTest)
 #' make.sample.dependency.matrix(ENSTest$sample, ENSTest$reference)
 #' @export
-
 make.sample.dependency.matrix <- function(sample, reference) {
 	if (length(sample) != length(reference)) {
 		stop("'sample' and 'reference' must have the same length")
@@ -53,6 +52,58 @@ make.sample.dependency.matrix <- function(sample, reference) {
 			stop("Some rows in the matrix seem incorrect (sum not +1 or -2)")
 		}
 	}
-
 	return(m)
+}
+
+#' The \code{sites.coverage} matrix indicates which observed ratios (rows) cover which modification site (column)
+#' @param data the peptide data, as for the \code{\link{Protein}} function
+#' @param modifications the list of unique modifications to be considered
+#' @examples
+#' data(ENSTest)
+#' make.sites.coverage.matrix(ENSTest, unique(ENSTest$modifications))
+#' @import dplyr
+#' @importFrom stringr str_split
+#' @importFrom stringr str_replace
+#' @export
+make.sites.coverage.matrix <- function(data, modifications) {
+	acetylation.pos <- data %>%
+		filter(is.acetylated = str_detect(modifications, "^([A-Z]_[0-9]+;)*a(;[A-Z]_[0-9]+)*$")) %>%
+		select(start) %>%
+		distinct(start)
+	acetylation.pos <- acetylation.pos$start
+
+	modification.positions <- as.integer(str_replace(modifications, "[A-Z]_", ""))
+	modification.positions[modifications == "a"] <- acetylation.pos
+
+	# Matrix of peptide coverage
+	siteAtOrAfterStart <- outer(data$start, modification.positions, FUN = "<=")
+	siteAtOrBeforeEnd <- outer(data$end, modification.positions, FUN = ">=")
+	sites.coverage <- siteAtOrAfterStart & siteAtOrBeforeEnd
+
+	colnames(sites.coverage) <- modifications
+	rownames(sites.coverage) <- str_replace(paste(data$sequence, data$modifications, sep=";"), ";$", "")
+	return(sites.coverage + 0) # We want a 0/1 indicator matrix, not TRUE/FALSE
+}
+
+#' The \code{sites.activation} indicates which observed ratios (rows) cover have the given modification (column) active
+#' @param data the peptide data, as for the \code{\link{Protein}} function
+#' @param modifications the list of unique modifications to be considered
+#' @examples
+#' data(ENSTest)
+#' make.sites.activation.matrix(ENSTest, unique(ENSTest$modifications))
+#' @importFrom stringr str_detect
+#' @export
+make.sites.activation.matrix <- function(data, modifications) {
+	if (length(modifications) > 0) {
+		modification.regexes = paste("^((a|[A-Z]_[0-9]+);)*", modifications, "(;(a|[A-Z]_[0-9]+))*$", sep="")
+		mod.on <- outer(data$modifications, modification.regexes, str_detect)
+	}
+	else {
+		mod.on <- matrix(nrow = length(data$peptide), ncol = 0)
+	}
+
+
+	rownames(mod.on) <- str_replace(paste(data$sequence, data$modifications, sep=";"), ";$", "")
+	colnames(mod.on) <- modifications
+	return(mod.on + 0) # We want a 0/1 indicator matrix, not TRUE/FALSE
 }

@@ -55,7 +55,6 @@ setClass("Protein",
 #' Protein(ENSTest)
 #' @export
 Protein <- function(data) {
-	browser()
 	modifications <- unique(unlist(str_split(unique(data$modifications), ";")))
 	modifications <- modifications[modifications != ""]
 
@@ -70,7 +69,9 @@ Protein <- function(data) {
 		reference.sample.overlap = reference.sample.overlap
 		)
 
-	protein@sample.dependency = make.sample.dependency.matrix(protein@samples, protein@references),
-	protein@sites.coverage = make.sites.coverage.matrix()
-	protein@sites.activation <- make.sites.activation.matrix()
+	protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)
+	protein@sites.coverage <- make.sites.coverage.matrix(data, modifications)
+	protein@sites.activation <- make.sites.activation.matrix(data, modifications)
+
+	return(protein)
 }
