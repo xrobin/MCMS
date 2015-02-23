@@ -26,10 +26,15 @@ check_protein <- function(object) {
 }
 
 
+#' @name Protein-class
+#' @rdname Protein-class
+#' @exportClass Protein
+#' @title A class that describe a protein. Use the \code{\link{Protein}} function for easy object creation
 #' @slot data a data.frame with the data for one protein.
 #' @slot modifications vector listing all the modification sites
 #' @slot samples,references vector with the name of all the samples, reference or sample (unique and sorted)
 #' @slot reference.sample.overlap those sample that appear both as reference and as sample so one can "close the loop"
+#' @slot reference.sample.intersect all the sample and reference names. Will for instance correspond to all the occupancy ratios that need to be computed.
 #' @slot sample.dependency a matrix with all the sample_reference pairs in rows, and the columns over all non-redundant pairs. Useful to compute concentration ratios
 #' @slot site.coverage indicator matrix of which peptide covers which site
 #' @slot site.on.off indicator matrix of which sites are on or off. Meaningful only on the indices where \code{site.coverage} is 1
@@ -39,6 +44,7 @@ setClass("Protein",
 		 	modifications = "character",
 		 	samples = "character", references = "character",
 		 	reference.sample.overlap = "character",
+		 	reference.sample.intersect = "character",
 			sample.dependency = "matrix",
 			sites.coverage = "matrix",
 			sites.activation = "matrix"
@@ -61,12 +67,16 @@ Protein <- function(data) {
 	samples <-  sort(unique(data$sample))
 	references <- sort(unique(data$reference))
 	reference.sample.overlap = sort(intersect(samples, references))
+	reference.sample.intersect <- sort(unique(c(samples, references)))
+
+	data$pair <- paste(data$sample, data$reference, sep = "_")
 
 	protein <- new("Protein",
 		data = data,
 		modifications = modifications,
 		samples = samples, references = references,
-		reference.sample.overlap = reference.sample.overlap
+		reference.sample.overlap = reference.sample.overlap,
+		reference.sample.intersect = reference.sample.intersect
 		)
 
 	protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)

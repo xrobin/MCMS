@@ -1,5 +1,5 @@
 #' Compute the best guess from the model on the ratios
-#' @param c the 
+#' @param c the
 #' @param o,o.prime the occupancy ratios, as matrices of the same size as Iis and tis.
 #' @keywords internal
 mu.coo <- function(c, o, o.prime, Iis, tis, npeptides, nsites) {
@@ -65,17 +65,17 @@ muis.2.coo <- function(o, Iis, tis) {
 #' @param tis the t_is a logical matrix that define whether the modification sites (columns) are active or not for a given peptide (row)
 #' @param on.observed,off.observed counts of the # of times the site has been seen on and off - for the beta prior
 #' @param npeptides,nsites the number of peptides and sites under consideration
-#' @param use.prior the weight of the prior, typically 0 (ignore prior) or 1 (use prior). 
+#' @param use.prior the weight of the prior, typically 0 (ignore prior) or 1 (use prior).
 #' @export
 fit.concentration.occupancy.objective <- function(coo, data, model, var.model,
-												  Iis, tis, 
+												  Iis, tis,
 												  #on.observed, off.observed,
 												  npeptides, nsites
 												  ) {
 	c <- coo[1]
 	o <- matrix(coo[seq_len(nsites) + 1], nrow(tis), ncol(tis), byrow = TRUE)
 	o.prime <- matrix(coo[seq_len(nsites) + nsites + 1], nrow(tis), ncol(tis), byrow = TRUE)
-	
+
 	# Getting new ratios from the occupancy ratios
 	current.mu <- mu.coo(c, o, o.prime, Iis, tis, npeptides, nsites)
 	# Put it into the "model" data.frame and re-compute the bayesian variance estimate if possible
@@ -98,7 +98,7 @@ fit.concentration.occupancy.objective <- function(coo, data, model, var.model,
 	}
 
 	# Rating the fit
-	sum(- model$nu.tilde * log(K.coo(model$gamma, data$x, current.mu)) + log(model$gamma) / 2) + 
+	sum(- model$nu.tilde * log(K.coo(model$gamma, data$x, current.mu)) + log(model$gamma) / 2) +
 			#Beta prior
 			#sum(log(dbeta(o[1,], .5+on.observed*0, .5+off.observed*0))) +
 			#sum(log(dbeta(o.prime[1,], .5+on.observed*0, .5+off.observed*0))) +

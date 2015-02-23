@@ -45,10 +45,11 @@ make.sample.dependency.matrix <- function(sample, reference) {
 			ref1 <- paste0(x["sample"], "_", reference.sample)
 			ref2 <- paste0(x["reference"], "_", reference.sample)
 			# Find the sample-reference pair
-			m[linename, c(ref1, ref2)] <- -1
+			m[linename, c(ref1)] <- 1
+			m[linename, c(ref2)] <- -1
 		}
-		# Ensure we get either 1 or -2 in the rows
-		if (! all(rowSums(m) %in% c(-2, 1))) {
+		# Ensure we get either 1 or 0 in the rows (+C_ac - C_ab = 0)
+		if (! all(rowSums(m) %in% c(0, 1))) {
 			stop("Some rows in the matrix seem incorrect (sum not +1 or -2)")
 		}
 	}
