@@ -5,14 +5,16 @@
 
 using namespace Rcpp;
 
-// rcpp_hello_world
-List rcpp_hello_world();
-RcppExport SEXP MCMS_rcpp_hello_world() {
+// testUpdateRedundantC
+Rcpp::NumericVector testUpdateRedundantC(Rcpp::S4& aProtein, Rcpp::S4& aModel);
+RcppExport SEXP MCMS_testUpdateRedundantC(SEXP aProteinSEXP, SEXP aModelSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        List __result = rcpp_hello_world();
+        Rcpp::traits::input_parameter< Rcpp::S4& >::type aProtein(aProteinSEXP );
+        Rcpp::traits::input_parameter< Rcpp::S4& >::type aModel(aModelSEXP );
+        Rcpp::NumericVector __result = testUpdateRedundantC(aProtein, aModel);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);

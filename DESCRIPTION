@@ -13,6 +13,7 @@ Imports:
     Rcpp (>= 0.11.3),
     dplyr,
     stringr
+SystemRequirements: C++11
 LinkingTo: Rcpp
 Collate:
     'ENSTest.R'
