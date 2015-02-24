@@ -79,6 +79,7 @@ Protein <- function(data) {
 		reference.sample.intersect = reference.sample.intersect
 		)
 
+	warning("Modifications must be sorted in Protein!!! Failing to do so and the C++ code would crash.")
 	protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)
 	protein@sites.coverage <- make.sites.coverage.matrix(data, modifications)
 	protein@sites.activation <- make.sites.activation.matrix(data, modifications)

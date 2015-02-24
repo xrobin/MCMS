@@ -1,18 +1,15 @@
 check_peptides <- function(object) {
 
 	errors <- character()
-	if (length(object@c) + 1 != nrow(object@o)) {
-		# TODO: make sure this is the general case and not a special case that we're having now!
-		msg <- paste0("Expected to have n concentrations and n+1 occupancy numbers, not n + ", length(object@o) - length(object@c))
-		errors <- c(errors, msg)
-	}
 	if (length(object@c) != object@num.c || length(object@c) != length(object@names.c) ) {
 		msg <- paste0("Inconsistent number of parameters c + ", length(object@c), ", not ", object@num.c, " or ", length(object@names.c))
 		errors <- c(errors, msg)
 	}
-	if (length(object@o) != object@num.o || length(object@o) != prod(sapply(object@names.o, length))) {
-		msg <- paste0("Inconsistent number of parameters o + ", length(object@o), ", not ", object@num.o, " or ", length(object@names.o))
-		errors <- c(errors, msg)
+	# Ensure o and its name have the same dimensions
+	o.dim <- sapply(object@o, length, simplify = FALSE)
+	o.names.dim <- sapply(object@o, length, simplify = FALSE)
+	if (!identical(o.dim, o.names.dim)) {
+		msg <- paste0("Inconsistent number of parameters o.")
 	}
 
 	if (length(errors) == 0) TRUE else errors
@@ -30,9 +27,9 @@ check_peptides <- function(object) {
 setClass("Peptides",
 		 representation(
 		 	c = "numeric",
-		 	o = "matrix",
+		 	o = "list",
 		 	num.c = "numeric",
-		 	num.o = "numeric",
+		 	#num.o = "numeric",
 		 	names.c = "character",
 		 	names.o = "list",
 		 	protein = "Protein"),
@@ -60,23 +57,31 @@ PeptidesModel <- function(protein) {
 	c.initial <- median.ratios$ratio
 
 	# Set the o's to 0.5 for now
-	o.initial <- matrix(0.5,
-						nrow = length(protein@reference.sample.intersect),
-						ncol = length(protein@modifications),
-						dimnames = list(
-							sample = protein@reference.sample.intersect,
-							site = protein@modifications
-							)
-						)
-	names.o <- dimnames(o.initial)
-	num.o <- prod(dim(o.initial))
+	o.initial <- sapply(protein@reference.sample.intersect, function(sample) {
+		idx <- protein@data$sample == sample | protein@data$reference == sample
+		sample.coverage <- protein@sites.coverage[idx,]
+		sample.modifications <- colSums(sample.coverage) > 0
+		sample.modifications[sample.modifications] <- 0.5
+		return(sample.modifications[sample.modifications == 0.5])
+	}, simplify = FALSE)
+	names.o <- sapply(o.initial, names, simplify = FALSE)
+
+	#o.initial <- matrix(0.5,
+	#					nrow = length(protein@reference.sample.intersect),
+	#					ncol = length(protein@modifications),
+	#					dimnames = list(
+	#						sample = protein@reference.sample.intersect,
+	#						site = protein@modifications
+	#						)
+	#					)
+	#names.o <- dimnames(o.initial)
+	#num.o <- prod(dim(o.initial))
 	# o's with no covering a sample should be NA
 
 	peptides <- new("Peptides",
 		c = c.initial,
 		o = o.initial,
 		num.c = num.c,
-		num.o = num.o,
 		names.c = names.c,
 		names.o = names.o,
 		protein = protein)
