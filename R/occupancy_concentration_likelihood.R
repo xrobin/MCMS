@@ -1,10 +1,4 @@
-#' Compute the best guess from the model on the ratios
-#' @param c the
-#' @param o,o.prime the occupancy ratios, as matrices of the same size as Iis and tis.
-#' @keywords internal
-mu.coo <- function(c, o, o.prime, Iis, tis, npeptides, nsites) {
-	c + rowSums( Iis * (log((1 - o.prime) / (1 - o)) + tis * (log(o.prime / (1 - o.prime)) - log(o / (1 - o)))))
-}
+
 
 #' K_i
 #' @keywords internal

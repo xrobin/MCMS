@@ -1,7 +1,7 @@
 check_peptides <- function(object) {
 
 	errors <- character()
-	if (length(object@c) + 1 != length(object@o)) {
+	if (length(object@c) + 1 != nrow(object@o)) {
 		# TODO: make sure this is the general case and not a special case that we're having now!
 		msg <- paste0("Expected to have n concentrations and n+1 occupancy numbers, not n + ", length(object@o) - length(object@c))
 		errors <- c(errors, msg)
@@ -10,7 +10,7 @@ check_peptides <- function(object) {
 		msg <- paste0("Inconsistent number of parameters c + ", length(object@c), ", not ", object@num.c, " or ", length(object@names.c))
 		errors <- c(errors, msg)
 	}
-	if (length(object@o) != object@num.o || length(object@o) != length(object@names.o) ) {
+	if (length(object@o) != object@num.o || length(object@o) != prod(sapply(object@names.o, length))) {
 		msg <- paste0("Inconsistent number of parameters o + ", length(object@o), ", not ", object@num.o, " or ", length(object@names.o))
 		errors <- c(errors, msg)
 	}
@@ -30,11 +30,11 @@ check_peptides <- function(object) {
 setClass("Peptides",
 		 representation(
 		 	c = "numeric",
-		 	o = "numeric",
+		 	o = "matrix",
 		 	num.c = "numeric",
 		 	num.o = "numeric",
 		 	names.c = "character",
-		 	names.o = "character",
+		 	names.o = "list",
 		 	protein = "Protein"),
 		 validity = check_peptides)
 
@@ -64,8 +64,8 @@ PeptidesModel <- function(protein) {
 						nrow = length(protein@reference.sample.intersect),
 						ncol = length(protein@modifications),
 						dimnames = list(
-							sample = newdata@reference.sample.intersect,
-							site = newdata@modifications
+							sample = protein@reference.sample.intersect,
+							site = protein@modifications
 							)
 						)
 	names.o <- dimnames(o.initial)

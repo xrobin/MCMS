@@ -22,6 +22,7 @@ Collate:
     'PeptidesClass.R'
     'RcppExports.R'
     'make.matrices.R'
+    'objective.R'
     'occupancy_concentration_likelihood.R'
     'occupancy_concentration_likelihood_mc.R'
     'onLoad.R'

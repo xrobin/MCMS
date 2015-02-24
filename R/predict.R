@@ -21,15 +21,20 @@ predict.Peptides <- function(object, newdata = object@protein) {
 	#o.ref <- object@o[match(data$reference, object@names.o)]
 	#o.sample <- object@o[match(data$sample, object@names.o)]
 
+	all.pairs <- unique(data$pair)
+	mu <- rep(NA, nrow(data))
+	for (current.pair in all.pairs) {
+		print(current.pair)
+		row.numbers <- which(data$pair == current.pair)
+		data.rows <- data[row.numbers,]
 
-	for (i in 1:seq_along(newdata@data$ratio)) {
-		row <- newdata@data[i, ]
-		# Get o.ref and o.sample
-		o.ref <- object@o[row$reference,]
-		o.sample <- object@o[row$sample,]
+		o.ref <- object@o[data.rows[1, 'reference'],]
+		o.sample <- object@o[data.rows[1, 'sample'],]
 
+		mu[row.numbers] <- predicted.ratios(c[current.pair], o.ref, o.sample, newdata@sites.coverage[row.numbers,, drop=FALSE], newdata@sites.activation[row.numbers,, drop=FALSE])
 	}
-	browser()
+
+	return(mu)
 }
 
 #setMethod("predict", signature(object = "Peptides"), predict.Peptides)
