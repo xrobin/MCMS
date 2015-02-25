@@ -25,6 +25,20 @@ check_protein <- function(object) {
 	if (length(errors) == 0) TRUE else errors
 }
 
+# sorts the modifications by site order (a simple sort() would sort by modification type)
+sort_modifications <- function(modifications) {
+	tmp <- modifications
+	if (any(modifications == "a")) {
+		warning("Assuming acetylation is at position 0")
+		tmp <- str_replace(tmp, "^a$", "a_0") # Assume A is at the very beginning...
+	}
+	num <- as.numeric(str_split_fixed(tmp, "_", 2)[,2])
+	if (any(nas <- is.na(num))) {
+		stop(paste0("Modifications with no positional information can't be sorted: ", paste0(tmp[nas], collapse = ", ")))
+	}
+	return(modifications[order(num)])
+}
+
 
 #' @name Protein-class
 #' @rdname Protein-class
@@ -63,6 +77,7 @@ setClass("Protein",
 Protein <- function(data) {
 	modifications <- unique(unlist(str_split(unique(data$modifications), ";")))
 	modifications <- modifications[modifications != ""]
+	modifications <- sort_modifications(modifications)
 
 	samples <-  sort(unique(data$sample))
 	references <- sort(unique(data$reference))
@@ -79,7 +94,6 @@ Protein <- function(data) {
 		reference.sample.intersect = reference.sample.intersect
 		)
 
-	warning("Modifications must be sorted in Protein!!! Failing to do so and the C++ code would crash.")
 	protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)
 	protein@sites.coverage <- make.sites.coverage.matrix(data, modifications)
 	protein@sites.activation <- make.sites.activation.matrix(data, modifications)
