@@ -1,16 +1,17 @@
+#include "conversions.hpp"
+#include "LikelihoodParams.hpp"
 #include <Rcpp.h>
 
 
-using namespace Rcpp;
+namespace Rcpp {
+	template <> oParams as(SEXP anOList) {
+		oParams::o_type anOMap = convertListToOMap(as<List>(anOList));
+		oParams anO(anOMap);
+		return(anO);
+	}
 
-//namespace Rcpp {
-//	// LikelihoodParams
-//	template <> LikelihoodParams as(Rcpp::S4& someParams) {
-//		NumericMatrix sampleDependency = someParams.slot("sample.dependency");
-//	}
-//
-//	template <> Rcpp::List wrap(const LikelihoodParams<> &someParams) {
-//		stop("Not implemented");
-//	}
-//
-//}
+	template <> SEXP wrap(const oParams& anOParams) {
+		throw std::runtime_error(std::string("not implemented"));
+		//wrap(List)
+	}
+}

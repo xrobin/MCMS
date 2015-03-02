@@ -3,5 +3,6 @@
 #include <string>
 
 double Peptide::computeLikelihood() {
-	throw std::runtime_error(std::string("not implemented"));
+	std::cerr << "computeLikelihood not implemented" << std::endl;
+	return(0);
 }

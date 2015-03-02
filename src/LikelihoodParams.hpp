@@ -1,7 +1,8 @@
 #pragma once
 
-#include <vector>
 #include <map>
+#include <vector>
+#include "prettyprint.hpp"
 #include <Rcpp.h>
 #include <string>
 
@@ -50,53 +51,67 @@
 class cParams {
 	typedef std::vector<double>::size_type size_t;
 	const Rcpp::NumericMatrix sampleDependence;
-	std::vector<double> c;
-	std::vector<double> redundantC;
-	std::unordered_map<std::string, size_t> cNames; // so from a name we know which c to update
+	std::vector<double> c, redundantC;
+	std::unordered_map<std::string, size_t> cNames, redundantCNames; // so from a name we know which c to update
+	std::vector<std::vector<size_t>> redundantCToC; // Maps a redundantC to one or more c on which it depends
 
-	public:
-	cParams() {} // Default constructor. TODO: remove?
-	cParams(std::vector<double> someC, std::vector<std::string> someNames): c(someC) {
-		if (someC.size() != someNames.size()) {
-			throw std::invalid_argument( "someC and someNames sizes don't match" );
-		}
-		for (size_t i = 0; i < someNames.size(); ++i) {
-			cNames.emplace(someNames[i], i);
-		}
-		updateRedundantC();
-	}
+public:
+	typedef std::map<std::string, double> c_type;
+	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix);
+
 	/** Updates the value of c at element i or key. */
-	void updateC(size_t i, double newC) {
+	void updateC(const size_t i, const double newC) {
 		c.at(i) = newC;
 		updateRedundantC();
 	}
-	void updateC(std::string key, double newC) {
+	void updateC(const std::string& key, double newC) {
 		updateC(cNames.at(key), newC);
 	}
 
-	/** Get a pointer to the redundant C at position i or key*/
-//	*double getPointerToC() {
-//		&c;
-//	}
-	double * getPointerToC(size_t i) {
+	/** Get a pointer to the C redundant C at position i or key*/
+	double * getPointerToC(const size_t i) {
 		return &(c.at(i));
 	}
-	double * getPointerToC(std::string key) {
+	double * getPointerToC(const std::string& key) {
 		return &(c.at(cNames.at(key)));
+	}
+	double * getPointerToRedundantC(const size_t i) {
+		return &(redundantC.at(i));
+	}
+	double * getPointerToRedundantC(const std::string& key) {
+		return &(redundantC.at(redundantCNames.at(key)));
+	}
+
+	/** Discover index from key */
+	size_t getIndexOnC(const std::string& key) const {
+		return cNames.at(key);
+	}
+	size_t getIndexOnRedundantC(const std::string& key) const {
+		return redundantCNames.at(key);
+	}
+
+	/** When I have a redundant c, which non redundant c(s) are involved? */
+	std::vector<size_t> getNonRedundantCFromRedundantC(const size_t i) const {
+		return redundantCToC.at(i);
+	}
+
+	/** How many parameters do we have? */
+	size_t size() const {
+		return c.size();
+	}
+	size_t redundantSize() const {
+		return redundantC.size();
+	}
+
+	void prettyprint() const {
+		std::cout << "c = " << c << std::endl;
+		std::cout << "cNames = " << cNames << std::endl;
+		std::cout << "redundantCNames = " << redundantCNames << std::endl;
+		std::cout << "redundantCToC = " << redundantCToC << std::endl;
 	}
 
 	private:
-	void updateRedundantC() {
-		for (int row = 0; row < sampleDependence.nrow(); ++row) {
-			redundantC[row] = 0;
-			for (int col = 0; col < sampleDependence.ncol(); ++col) {
-				int elem = sampleDependence(row, col);
-				if (elem != 0) {
-					redundantC[row] += elem * c[col];
-				}
-			}
-		}
-	}
+	void updateRedundantC();
 };
 
 
@@ -107,58 +122,58 @@ class oParams {
 	std::unordered_map<std::string, size_t> sampleNames; // so from a name we know which sample number it is
 	std::vector<std::unordered_map<std::string, size_t>> siteNames; // so from sample number and name we know which site it is
 
-	public:
+public:
+	/** Constructor from an o_type map*/
 	typedef std::map<std::string, std::map<std::string, double>> o_type;
+	oParams(const o_type &anOMap);
+
 	/** Updates the value of o */
-	void updateO(size_t sample, size_t site, double newO) {
+	void updateO(const size_t sample, const size_t site, const double newO) {
 		o.at(sample).at(site) = newO;
 	}
-	void updateO(size_t sample, std::string site, double newO) {
+	void updateO(const size_t sample, const std::string& site, double newO) {
 		updateO(sample, siteNames.at(sample).at(site), newO);
 	}
-	void updateO(std::string sample, std::string site, double newO) {
+	void updateO(const std::string& sample, const std::string& site, double newO) {
 		updateO(sampleNames.at(sample), site, newO);
 	}
 
 	/** Get a pointer to the relevant o */
-	double * getPointerToO(size_t sample, size_t site) {
+	double * getPointerToO(const size_t sample, const size_t site) {
 		return &(o.at(sample).at(site));
 	}
-	double * getPointerToO(size_t sample, std::string site) {
+	double * getPointerToO(const size_t sample, const std::string& site) {
 		return getPointerToO(sample, siteNames.at(sample).at(site));
 	}
-	double * getPointerToO(std::string sample, std::string site) {
+	double * getPointerToO(const std::string& sample, const std::string& site) {
 		return getPointerToO(sampleNames.at(sample), site);
 	}
 
-	oParams() {} // Default constructor. TODO: remove?
-	oParams(o_type anOMap) {
-		size_t sampleNumber = 0;
-		for (auto& samplePair: anOMap) {
-		//for(auto sample_iterator = anOMap.begin(); sample_iterator != anOMap.end(); ++sample_iterator) {
-			std::string sampleName = samplePair.first;
-			std::map<std::string, double> sampleSites = samplePair.second;
-			std::vector<double> sampleOs;
-			sampleOs.reserve(sampleSites.size());
-			std::unordered_map<std::string, size_t> sampleSiteNames;
-			sampleSiteNames.reserve(sampleSites.size());
-			// Loop over sites
-			size_t siteNumber = 0;
-			for (auto& sitesPair: sampleSites) {
-			//for(auto site_iterator = sampleSites.begin() ; site_iterator != sampleSites.end(); ++site_iterator) {
-				std::string siteName = sitesPair.first;
-				double siteO = sitesPair.second;
-				sampleSiteNames.emplace(siteName, siteNumber);
-				sampleOs.push_back(siteO);
-				++siteNumber;
-			}
-			siteNames.push_back(sampleSiteNames);
-			o.push_back(sampleOs);
-			sampleNames[sampleName] = sampleNumber;
-			++sampleNumber;
-		}
-    // iterator->first = key
-    // iterator->second = value
-    // Repeat if you also want to iterate through the second map.
+	/** How many parameters do we have? */
+	size_t size() const {
+		return o.size();
+	}
+	size_t size(const size_t sample) const {
+		return o.at(sample).size();
+	}
+	size_t size(const std::string& sample) const {
+		return size(sampleNames.at(sample));
+	}
+
+	/** Get indices */
+	size_t getFirstIndexOnO(const std::string& sample) const {
+		return sampleNames.at(sample);
+	}
+	size_t getSecondIndexOnO(const std::string& sample, const std::string& site) const {
+		return getSecondIndexOnO(sampleNames.at(sample), site);
+	}
+	size_t getSecondIndexOnO(const size_t sample, const std::string& site) const {
+		return siteNames.at(sample).at(site);
+	}
+
+	void prettyprint() const {
+		std::cout << "o = " << o << std::endl;
+		std::cout << "sampleNames = " << sampleNames << std::endl;
+		std::cout << "siteNames = " << siteNames << std::endl;
 	}
 };

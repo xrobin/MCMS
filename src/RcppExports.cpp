@@ -5,19 +5,16 @@
 
 using namespace Rcpp;
 
-// testUpdateRedundantC
-Rcpp::NumericVector testUpdateRedundantC(Rcpp::S4& aProtein, Rcpp::S4& aModel);
-RcppExport SEXP MCMS_testUpdateRedundantC(SEXP aProteinSEXP, SEXP aModelSEXP) {
+// testCpp
+void testCpp(const Rcpp::S4& aProtein, const Rcpp::S4& aModel);
+RcppExport SEXP MCMS_testCpp(SEXP aProteinSEXP, SEXP aModelSEXP) {
 BEGIN_RCPP
-    SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< Rcpp::S4& >::type aProtein(aProteinSEXP );
-        Rcpp::traits::input_parameter< Rcpp::S4& >::type aModel(aModelSEXP );
-        Rcpp::NumericVector __result = testUpdateRedundantC(aProtein, aModel);
-        PROTECT(__sexp_result = Rcpp::wrap(__result));
+        Rcpp::traits::input_parameter< const Rcpp::S4& >::type aProtein(aProteinSEXP );
+        Rcpp::traits::input_parameter< const Rcpp::S4& >::type aModel(aModelSEXP );
+        testCpp(aProtein, aModel);
     }
-    UNPROTECT(1);
-    return __sexp_result;
+    return R_NilValue;
 END_RCPP
 }

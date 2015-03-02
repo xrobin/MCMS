@@ -10,6 +10,11 @@ class PeptideLikelihood {
 	public:
 	Peptide peptide;
 	double likelihood;
+	/** Constructors */
+	PeptideLikelihood(const Peptide& aPeptide):
+		peptide(aPeptide), likelihood(0) {};
+	PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
+		peptide(aPeptide), likelihood(aLikelihood) {};
 };
 
 class Likelihood {
@@ -25,12 +30,14 @@ class Likelihood {
 
 	// mapping from param to peptides that must be updated
 	// Maps an index on the c to a vector of indices on Peptides and likelihoods to be updated
-	std::vector<std::vector<oPair*>> onupdate_c;
+	std::vector<std::vector<PeptideLikelihood*>> onupdate_c;
 	//   c           peptide indices
 	// Maps an index on the o to a vector of indices on Peptides and likelihoods to be updated
-	std::vector<std::vector<std::vector<oPair*>>> onupdate_o;
+	std::vector<std::vector<std::vector<PeptideLikelihood*>>> onupdate_o;
 	//  sample     site       peptide indices
 
+	/** Link the peptides and parameters */
+	void linkParamsAndPeptides();
 	/** Computes the whole likelihood */
 	void computeLikelihood();
 	//void bindPeptidesAndParameters();
@@ -50,5 +57,5 @@ class Likelihood {
 //		computeLikelihood();
 //	};
 
-	Likelihood(const Rcpp::S4& aProtein, const Rcpp::S4&);
+	Likelihood(const std::vector<Peptide>&, const cParams&, const oParams&);
 };

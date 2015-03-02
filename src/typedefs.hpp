@@ -2,7 +2,7 @@
 #include <vector>
 //#include <map>
 
-typedef Rcpp::LogicalVector lv_type;
+// typedef Rcpp::LogicalVector lv_type;
 //typedef Rcpp::LogicalVector::const_iterator::difference_type lv_ptrdiff_t;
 
 //typedef std::vector<double> c_type;
