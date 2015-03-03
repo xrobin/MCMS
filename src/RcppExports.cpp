@@ -6,14 +6,14 @@
 using namespace Rcpp;
 
 // testCpp
-void testCpp(const Rcpp::S4& aProtein, const Rcpp::S4& aModel);
-RcppExport SEXP MCMS_testCpp(SEXP aProteinSEXP, SEXP aModelSEXP) {
+void testCpp(const S4& aModel, const List& aVarianceModelAsList);
+RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP) {
 BEGIN_RCPP
     {
         Rcpp::RNGScope __rngScope;
-        Rcpp::traits::input_parameter< const Rcpp::S4& >::type aProtein(aProteinSEXP );
-        Rcpp::traits::input_parameter< const Rcpp::S4& >::type aModel(aModelSEXP );
-        testCpp(aProtein, aModel);
+        Rcpp::traits::input_parameter< const S4& >::type aModel(aModelSEXP );
+        Rcpp::traits::input_parameter< const List& >::type aVarianceModelAsList(aVarianceModelAsListSEXP );
+        testCpp(aModel, aVarianceModelAsList);
     }
     return R_NilValue;
 END_RCPP

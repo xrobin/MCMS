@@ -1,4 +1,5 @@
 #include "Likelihood.hpp"
+//#include "prettyprint.hpp"
 #include <Rcpp.h>
 
 using namespace Rcpp;
@@ -11,7 +12,7 @@ void Likelihood::computeLikelihood() {
 	// Iterate over all peptides
 	for (auto& pl: peptideLikelihoods) {
 		// store individual likelihood in the peptideLikelihood
-		pl.likelihood = pl.peptide.computeLikelihood();
+		pl.likelihood = pl.peptide.computeLikelihood(constants.varianceModel);
 		// and increment the global likelihood
 		likelihood += pl.likelihood;
 	}
@@ -46,7 +47,7 @@ void Likelihood::linkParamsAndPeptides() {
 		}
 
 		// Iterate over sites
-		for (siteSpec& site: peptideLikelihood.peptide.getSiteSpecs()) {
+		for (SiteSpecs& site: peptideLikelihood.peptide.getSiteSpecs()) {
 			// Link peptide to o
 			site.params.sample = o.getPointerToO(sampleName, site.siteName);
 			site.params.reference = o.getPointerToO(refName, site.siteName);
@@ -58,15 +59,12 @@ void Likelihood::linkParamsAndPeptides() {
 			onupdate_o.at(refIdx).at(o.getSecondIndexOnO(refIdx, site.siteName)).push_back(&peptideLikelihood);
 		}
 	}
-	c.prettyprint();
-	std::cout << "onupdate_c = " << onupdate_c << std::endl;
-	o.prettyprint();
-	std::cout << "onupdate_o = " << onupdate_o << std::endl;
 }
 
 
-Likelihood::Likelihood(const std::vector<Peptide> &peptides, const cParams &aC, const oParams &anO):
-	c(aC), o(anO) {
+Likelihood::Likelihood(const std::vector<Peptide> &peptides, const cParams &aC, const oParams &anO,
+                       const LikelihoodConstants &aLikelihoodConstants):
+	c(aC), o(anO), constants(aLikelihoodConstants) {
 	peptideLikelihoods.reserve(peptides.size());
 	for (auto &peptide: peptides) {
 		peptideLikelihoods.push_back(PeptideLikelihood(peptide));
@@ -75,3 +73,4 @@ Likelihood::Likelihood(const std::vector<Peptide> &peptides, const cParams &aC, 
 	linkParamsAndPeptides();
 	computeLikelihood();
 }
+

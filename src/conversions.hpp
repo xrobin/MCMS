@@ -12,7 +12,7 @@
  */
 oParams::o_type convertListToOMap(const Rcpp::List&);
 cParams::c_type convertVectorToCMap(const Rcpp::NumericVector&);
-Likelihood convertS4ToLikelihood(const Rcpp::S4&, const Rcpp::S4&);
+Likelihood convertS4ToLikelihood(const Rcpp::S4&, const VarianceModel&);
 
 
 //vector<Peptides> convertListToPeptidesVector(List aDataList, ...) {

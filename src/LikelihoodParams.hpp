@@ -2,20 +2,21 @@
 
 #include <map>
 #include <vector>
-#include "prettyprint.hpp"
+// #include "prettyprint.hpp"
 #include <Rcpp.h>
 #include <string>
+#include "VarianceModel.hpp"
 
 //#include "typedefs.hpp"
 
 
-///** Constant variables during the Monte Carlo sampling */
-//class LikelihoodConstants {
-//	public:
-//	const Rcpp::NumericMatrix& sampleDependence;
-//	explicit LikelihoodConstants(const Rcpp::NumericMatrix& aSampleDependenceMatrix):
-//		sampleDependence(aSampleDependenceMatrix) {};
-//};
+/** Constant variables during the Monte Carlo sampling */
+class LikelihoodConstants {
+	public:
+	const VarianceModel varianceModel;
+	explicit LikelihoodConstants(const VarianceModel& aVarianceModel):
+		varianceModel(aVarianceModel) {};
+};
 
 ///** Parameters for the Monte Carlo sampling */
 //class LikelihoodParams {
@@ -103,12 +104,15 @@ public:
 		return redundantC.size();
 	}
 
-	void prettyprint() const {
-		std::cout << "c = " << c << std::endl;
-		std::cout << "cNames = " << cNames << std::endl;
-		std::cout << "redundantCNames = " << redundantCNames << std::endl;
-		std::cout << "redundantCToC = " << redundantCToC << std::endl;
-	}
+//	void prettyprint() const {
+//		std::cout << "c = " << c << std::endl;
+//		std::cout << "cNames = " << cNames << std::endl;
+//		std::cout << "redundantCNames = " << redundantCNames << std::endl;
+//		std::cout << "redundantCToC = " << redundantCToC << std::endl;
+//	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const cParams &aCParams);
 
 	private:
 	void updateRedundantC();
@@ -171,9 +175,12 @@ public:
 		return siteNames.at(sample).at(site);
 	}
 
-	void prettyprint() const {
-		std::cout << "o = " << o << std::endl;
-		std::cout << "sampleNames = " << sampleNames << std::endl;
-		std::cout << "siteNames = " << siteNames << std::endl;
-	}
+//	void prettyprint() const {
+//		std::cout << "o = " << o << std::endl;
+//		std::cout << "sampleNames = " << sampleNames << std::endl;
+//		std::cout << "siteNames = " << siteNames << std::endl;
+//	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const oParams &anOParams);
 };

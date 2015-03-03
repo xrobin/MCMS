@@ -1,10 +1,12 @@
 #pragma once
+
+#include <iostream> // cout
+#include "LikelihoodParams.hpp"
 #include <map>
+#include "Peptide.hpp"
 #include <Rcpp.h>
 #include <vector>
 
-#include "LikelihoodParams.hpp"
-#include "Peptide.hpp"
 
 class PeptideLikelihood {
 	public:
@@ -15,7 +17,10 @@ class PeptideLikelihood {
 		peptide(aPeptide), likelihood(0) {};
 	PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
 		peptide(aPeptide), likelihood(aLikelihood) {};
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const PeptideLikelihood &aPeptideLikelihood);
 };
+
 
 class Likelihood {
 	std::vector<PeptideLikelihood> peptideLikelihoods;
@@ -26,6 +31,7 @@ class Likelihood {
 	// Store likelihood parameters
 	cParams c;
 	oParams o;
+	const LikelihoodConstants constants;
 
 
 	// mapping from param to peptides that must be updated
@@ -57,5 +63,25 @@ class Likelihood {
 //		computeLikelihood();
 //	};
 
-	Likelihood(const std::vector<Peptide>&, const cParams&, const oParams&);
+	/** Constructor */
+	Likelihood(const std::vector<Peptide>&, const cParams&, const oParams&, const LikelihoodConstants&);
+	/** Delete copy/assign constructors */
+	Likelihood(const Likelihood&) = delete;
+	Likelihood& operator=(const Likelihood&) = delete;
+	/** Use a move constructor instead */
+	Likelihood(Likelihood&& old) :
+		peptideLikelihoods(std::move(old.peptideLikelihoods)),
+		likelihood(std::move(old.likelihood)),
+		c(std::move(old.c)),
+		o(std::move(old.o)),
+		constants(std::move(old.constants)),
+		onupdate_c(std::move(old.onupdate_c)),
+		onupdate_o(std::move(old.onupdate_o)) {
+			// No need to re-link after a move (swap)
+			// linkParamsAndPeptides(); // Just in case. TODO: check it is not needed and remove
+		}
+
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const Likelihood &Likelihood);
 };

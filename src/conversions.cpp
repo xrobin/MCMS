@@ -45,51 +45,52 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 }
 
 
-Likelihood convertS4ToLikelihood(const Rcpp::S4& aProtein, const Rcpp::S4& aModel) {
-	string proteinClass = string(as<CharacterVector>(aProtein.attr("class"))[0]);
-	if (proteinClass != "Protein") {
-		stop(string("aProtein of class Protein expected, ") + proteinClass + " received");
-	}
-	string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
+Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel) {
+	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
 	if (modelClass != "Peptides") {
 		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
+	}
+	const Rcpp::S4 aProtein = as<Rcpp::S4>(aModel.slot("protein"));
+	const string proteinClass = string(as<CharacterVector>(aProtein.attr("class"))[0]);
+	if (proteinClass != "Protein") {
+		stop(string("aProtein of class Protein expected, ") + proteinClass + " received");
 	}
 
 	// Build the parameters
 	// First O
-	oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
-	oParams anO(anOMap);
+	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
+	const oParams anO(anOMap);
 
 	// Then C
-	cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
-	NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
-	cParams aC(aCMap, sampleDependency);
+	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
+	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
+	const cParams aC(aCMap, sampleDependency);
 //	NumericVector aC = aModel.slot("c");
 
 	// Create the peptides
 	std::vector<Peptide> peptides;
 	// Extract them from the data
-	DataFrame data = as<DataFrame>(aProtein.slot("data"));
-	NumericMatrix sitesCoverage = as<NumericMatrix>(aProtein.slot("sites.coverage"));
-	NumericMatrix sitesActivation = as<NumericMatrix>(aProtein.slot("sites.activation"));
+	const DataFrame data = as<DataFrame>(aProtein.slot("data"));
+	const NumericMatrix sitesCoverage = as<NumericMatrix>(aProtein.slot("sites.coverage"));
+	const NumericMatrix sitesActivation = as<NumericMatrix>(aProtein.slot("sites.activation"));
 	// Extract the columns in data for faster access
-	NumericVector ratios = data["ratio"];
-	NumericVector qs = data["q"];
-	NumericVector nEffs = data["n"];
-	vector<string> sampleNames = data["sample"];
-	vector<string> referenceNames = data["reference"];
-	vector<string> pairNames = data["pair"];
+	const NumericVector ratios = data["ratio"];
+	const NumericVector qs = data["q"];
+	const NumericVector nEffs = data["n"];
+	const vector<string> sampleNames = data["sample"];
+	const vector<string> referenceNames = data["reference"];
+	const vector<string> pairNames = data["pair"];
 	// Indexed over number of sites
-	vector<string> siteNames = as<vector<string>>(Rcpp::colnames(sitesCoverage));
+	const vector<string> siteNames = as<vector<string>>(Rcpp::colnames(sitesCoverage));
 	// Now loop over all this
 	for (int i = 0; i < data.nrows(); ++i) {
-		std::vector<siteSpec> siteSpecs;
+		std::vector<SiteSpecs> siteSpecs;
 		// Loop over the sites
 		for (int j = 0; j < sitesCoverage.ncol(); ++j) {
 			if (sitesCoverage(i, j) == 1) {
 				bool newSiteActivity = sitesActivation(i, j);
 				string newSiteName = siteNames[j];
-				siteSpecs.push_back(siteSpec(newSiteActivity, newSiteName));
+				siteSpecs.push_back(SiteSpecs(newSiteActivity, newSiteName));
 			}
 			else {
 				string newSiteName = siteNames[j];
@@ -102,7 +103,8 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aProtein, const Rcpp::S4& aMode
 		peptides.push_back(newPeptide);
 	}
 
-	Likelihood l (peptides, aC, anO);
+	Likelihood l (peptides, aC, anO, LikelihoodConstants(aVarianceModel));
+	//Rcpp::Rcout << l;
 	return(l);
 }
 

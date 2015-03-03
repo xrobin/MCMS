@@ -1,11 +1,12 @@
 #pragma once
 
-//#include <Rcpp.h>
-//#include <vector>
 //#include <cstddef>
+#include <iostream> // cout
+//#include <Rcpp.h>
 #include <string>
 #include "typedefs.hpp"
 #include <vector>
+#include "VarianceModel.hpp"
 
 // Describes a pair of pointers to occupancy ratios for the sample and reference class.
 class oPair {
@@ -13,15 +14,17 @@ class oPair {
 	double *reference, *sample;
 };
 
-class siteSpec {
+class SiteSpecs {
 	public:
 	const bool siteActivity;
 	const std::string siteName;
 	oPair params;
-	siteSpec(const bool aSiteActivity, const std::string &aSiteName):
+	SiteSpecs(const bool aSiteActivity, const std::string &aSiteName):
 		siteActivity(aSiteActivity), siteName(aSiteName) {};
-	siteSpec(const bool aSiteActivity, const std::string &aSiteName, const oPair &aParams):
+	SiteSpecs(const bool aSiteActivity, const std::string &aSiteName, const oPair &aParams):
 		siteActivity(aSiteActivity), siteName(aSiteName), params(aParams) {};
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const SiteSpecs &aSiteSpec);
 };
 
 class Peptide {
@@ -32,10 +35,11 @@ class Peptide {
 
 	// Pointers to the parameters
 	double *c;
-	std::vector<siteSpec> siteSpecs;
+	std::vector<SiteSpecs> siteSpecs;
 	//o_value_type *oRef, *oSample;
 
-	//double previousLikelihood;
+	/** private functions */
+	double calcRatio() const;
 
 	public:
 	Peptide(const double aRatio,
@@ -44,7 +48,7 @@ class Peptide {
 			const std::string &theSampleName,
 			const std::string &theRefName,
 			const std::string &thePairName,
-			std::vector<siteSpec> &theSiteSpecs
+			std::vector<SiteSpecs> &theSiteSpecs
 			):
 			ratio(aRatio), nEff(aNEff), q(aQ),
 			sampleName(theSampleName), refName(theRefName), pairName(thePairName),
@@ -52,7 +56,7 @@ class Peptide {
 			{};
 
 	//double computeLikelihood(double *c, double[] *oSample, double[] *oRef);
-	double computeLikelihood();
+	double computeLikelihood(const VarianceModel&) const;
 
 	/** Getters */
 	std::string getSampleName() const {
@@ -65,10 +69,9 @@ class Peptide {
 		return(pairName);
 	}
 	/** Give access to the site specs by reference */
-	std::vector<siteSpec>& getSiteSpecs() {
+	std::vector<SiteSpecs>& getSiteSpecs() {
 		return siteSpecs;
 	}
-
 
 	/** Functions to set the pointers */
 	void setC(double * targetC) {
@@ -85,5 +88,8 @@ class Peptide {
 //	void setOSample(c_type *targetOSample) {
 //		oSample = targetOSample;
 //	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const Peptide &aPeptide);
 
 };
