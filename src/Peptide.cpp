@@ -23,5 +23,5 @@ double Peptide::computeLikelihood(const VarianceModel &aVarianceModel) const {
 	double gamma = aVarianceModel.calcGamma(predictedRatio, nEff, q);
 	double nuTilde = aVarianceModel.calcNuTilde(nEff);
 	std::cerr << "No prior on the likelihood" << std::endl;
-	return nuTilde * log(1 + gamma * std::pow(ratio - predictedRatio, 2));
+	return - nuTilde * log1p(gamma * std::pow(ratio - predictedRatio, 2));
 }
