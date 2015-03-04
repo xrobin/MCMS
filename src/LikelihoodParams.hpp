@@ -3,6 +3,7 @@
 #include <map>
 #include <vector>
 // #include "prettyprint.hpp"
+#include "Priors.hpp"
 #include <Rcpp.h>
 #include <string>
 #include "VarianceModel.hpp"
@@ -65,6 +66,7 @@ class cParams {
 	std::unordered_map<std::string, size_t> cNames, redundantCNames; // so from a name we know which c to update
 	std::vector<std::vector<size_t>> redundantCToC; // Maps a redundantC to one or more c on which it depends
 	std::vector<std::vector<size_t>> cToRedundantC; // Maps a c to one or more redundantC which depend on it
+	NormalPrior normalPrior;
 
 public:
 	typedef std::map<std::string, double> c_type;
@@ -115,6 +117,9 @@ public:
 		return redundantC.size();
 	}
 
+	/** Calculate the normal prior we have on all the o parameters */
+	double calcPrior();
+
 //	void prettyprint() const {
 //		std::cout << "c = " << c << std::endl;
 //		std::cout << "cNames = " << cNames << std::endl;
@@ -138,11 +143,14 @@ class oParams {
 	std::vector<std::vector<double>> o;
 	std::unordered_map<std::string, size_t> sampleNames; // so from a name we know which sample number it is
 	std::vector<std::unordered_map<std::string, size_t>> siteNames; // so from sample number and name we know which site it is
+	BetaPrior betaPrior;
 
 public:
 	/** Constructor from an o_type map*/
 	typedef std::map<std::string, std::map<std::string, double>> o_type;
-	oParams(const o_type &anOMap);
+	oParams(const o_type &anOMap, const BetaPrior& aBetaPrior);
+	oParams(const o_type &anOMap, const double aShape1, const double aShape2):
+		oParams(anOMap, BetaPrior(aShape1, aShape2)) {};
 
 	/** Updates the value of o */
 	void updateO(const size_t sample, const size_t site, const double newO) {
@@ -176,6 +184,9 @@ public:
 	size_t size(const std::string& sample) const {
 		return size(sampleNames.at(sample));
 	}
+
+	/** Calculate the beta prior we have on all the o parameters */
+	double calcPrior();
 
 	/** Get indices */
 	size_t getFirstIndexOnO(const std::string& sample) const {

@@ -44,8 +44,8 @@ class Likelihood {
 
 	/** Link the peptides and parameters */
 	void linkParamsAndPeptides();
-	/** Computes the whole likelihood */
-	void computeLikelihood();
+	/** Computes the whole likelihood and stores it */
+	void updateLikelihood();
 	//void bindPeptidesAndParameters();
 
 	public:
@@ -80,7 +80,6 @@ class Likelihood {
 			// No need to re-link after a move (swap)
 			// linkParamsAndPeptides(); // Just in case. TODO: check it is not needed and remove
 		}
-
 
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const Likelihood &Likelihood);

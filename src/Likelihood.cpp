@@ -6,7 +6,7 @@ using namespace Rcpp;
 using std::string;
 using std::vector;
 
-void Likelihood::computeLikelihood() {
+void Likelihood::updateLikelihood() {
 	// Reset likelihood
 	likelihood = 0;
 	// Iterate over all peptides
@@ -16,6 +16,9 @@ void Likelihood::computeLikelihood() {
 		// and increment the global likelihood
 		likelihood += pl.likelihood;
 	}
+
+	likelihood += c.calcPrior();
+	likelihood += o.calcPrior();
 }
 
 void Likelihood::linkParamsAndPeptides() {
@@ -71,6 +74,6 @@ Likelihood::Likelihood(const std::vector<Peptide> &peptides, const cParams &aC, 
 	}
 
 	linkParamsAndPeptides();
-	computeLikelihood();
+	updateLikelihood();
 }
 

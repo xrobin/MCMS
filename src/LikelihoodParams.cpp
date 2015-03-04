@@ -31,7 +31,7 @@ void cParams::updateRedundantC(const std::vector<size_t> &is) {
 	}
 }
 
-oParams::oParams(const o_type &anOMap) {
+oParams::oParams(const o_type &anOMap, const BetaPrior &aBetaPrior): betaPrior(aBetaPrior) {
 	size_t sampleNumber = 0;
 	for (auto& samplePair: anOMap) {
 	//for(auto sample_iterator = anOMap.begin(); sample_iterator != anOMap.end(); ++sample_iterator) {
@@ -112,4 +112,25 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 	}
 
 	updateRedundantC();
+}
+
+double oParams::calcPrior() {
+	double prior = 0;
+	// Loop over all the o:
+	for (auto &sample: o) {
+		for (double site: sample) {
+			prior += betaPrior(site);
+		}
+	}
+	return prior;
+}
+
+
+double cParams::calcPrior() {
+	double prior = 0;
+	// Loop over all the o:
+	for (auto &aC: c) {
+		prior += normalPrior(aC);
+	}
+	return prior;
 }
