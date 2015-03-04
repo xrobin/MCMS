@@ -50,20 +50,31 @@ class LikelihoodConstants {
 
 /** Storing the c parameters */
 class cParams {
+	class DependencyPair { // Subclass to store the index and sign of the dependency
+		public:
+		double mult;
+		size_t i; // index on redundantC
+		DependencyPair(const double aMult, const size_t anI) :
+			mult(aMult), i(anI) {}
+	};
+
 	typedef std::vector<double>::size_type size_t;
-	const Rcpp::NumericMatrix sampleDependence;
+	//const Rcpp::NumericMatrix sampleDependence;
+	std::vector<std::vector<DependencyPair>> dependencyPairs;
 	std::vector<double> c, redundantC;
 	std::unordered_map<std::string, size_t> cNames, redundantCNames; // so from a name we know which c to update
 	std::vector<std::vector<size_t>> redundantCToC; // Maps a redundantC to one or more c on which it depends
+	std::vector<std::vector<size_t>> cToRedundantC; // Maps a c to one or more redundantC which depend on it
 
 public:
 	typedef std::map<std::string, double> c_type;
+
 	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix);
 
 	/** Updates the value of c at element i or key. */
 	void updateC(const size_t i, const double newC) {
 		c.at(i) = newC;
-		updateRedundantC();
+		updateRedundantC( cToRedundantC.at(i) );
 	}
 	void updateC(const std::string& key, double newC) {
 		updateC(cNames.at(key), newC);
@@ -116,6 +127,8 @@ public:
 
 	private:
 	void updateRedundantC();
+	void updateRedundantC(const size_t i);
+	void updateRedundantC(const std::vector<size_t> &i);
 };
 
 

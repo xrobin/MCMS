@@ -1,4 +1,5 @@
 #include "LikelihoodParams.hpp"
+//#include "prettyprint.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames
 #include <string>
@@ -8,15 +9,25 @@ using Rcpp::as;
 using std::vector;
 using std::string;
 
-void cParams::updateRedundantC(){
-	for (int row = 0; row < sampleDependence.nrow(); ++row) {
-		redundantC[row] = 0;
-		for (int col = 0; col < sampleDependence.ncol(); ++col) {
-			int elem = sampleDependence(row, col);
-			if (elem != 0) {
-				redundantC[row] += elem * c[col];
-			}
-		}
+void cParams::updateRedundantC() {
+	for (size_t i = 0; i < dependencyPairs.size(); ++i) { // over redundantC
+		updateRedundantC(i);
+	}
+}
+
+inline void cParams::updateRedundantC(const size_t i) {
+	const auto& cVec = dependencyPairs[i];
+	double newRedundantC = 0;
+	for (size_t j = 0; j < cVec.size(); ++j) { // over c
+		const DependencyPair &pair = cVec[j];
+		newRedundantC += pair.mult * c[pair.i];
+	}
+	redundantC[i] += newRedundantC;
+}
+
+void cParams::updateRedundantC(const std::vector<size_t> &is) {
+	for (size_t i = 0; i < is.size(); ++i) { // over redundantC
+		updateRedundantC(is[i]);
 	}
 }
 
@@ -48,10 +59,14 @@ oParams::oParams(const o_type &anOMap) {
 }
 
 cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix):
-		sampleDependence(aSampleDependenceMatrix),
+		dependencyPairs(),
 		c(), redundantC(aSampleDependenceMatrix.nrow()),
 		cNames(), redundantCNames(),
-		redundantCToC(aSampleDependenceMatrix.nrow()) {
+		redundantCToC(aSampleDependenceMatrix.nrow()), cToRedundantC() {
+	// Info from the sample Dependency Matrix
+	int ncol = aSampleDependenceMatrix.ncol();
+	int nrow = aSampleDependenceMatrix.nrow();
+
 	// Populate the main c and cNames
 	size_t cNumber = 0;
 	for (auto& samplePairPar: aCMap) {
@@ -59,25 +74,39 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 		cNames[samplePairPar.first] = cNumber;
 		++cNumber;
 	}
+	cToRedundantC.resize(c.size());
+
 	// populate redundantCNames from the matrix
 	vector<string> redundantNames = as<vector<string>>(Rcpp::rownames(aSampleDependenceMatrix));
 	for (size_t redundantCNumber = 0; redundantCNumber < redundantNames.size(); ++redundantCNumber) {
 		redundantCNames[redundantNames[redundantCNumber]] = redundantCNumber;
 	}
-	// Populate the redundantCToC indices
 
+	// Populate dependencyPairs from matrix
+	// Loop over redundantC (rows)
+	for (int i = 0; i < nrow; ++i) {
+		vector<DependencyPair> responsibleCs; // The c's impacting the redundantC i
+		for (int j = 0; j < ncol; ++j) {
+			double aMult = aSampleDependenceMatrix(i, j);
+			if (aMult != 0) {
+				responsibleCs.push_back(DependencyPair(aMult, static_cast<size_t>(j)));
+			}
+		}
+		dependencyPairs.push_back(responsibleCs);
+	}
+
+	// Populate the redundantCToC indices
 	vector<string> nonRedundantNames = as<vector<string>>(Rcpp::colnames(aSampleDependenceMatrix));
-	int ncol = aSampleDependenceMatrix.ncol();
-	int nrow = aSampleDependenceMatrix.nrow();
 	// Iterate over the columns first
 	for (int j = 0; j < ncol; ++j) {
 		// Get the index on c for the column
-		size_t colIdx = getIndexOnC(nonRedundantNames[j]);
+		//size_t colIdx = getIndexOnC(nonRedundantNames[j]);
 		// Then go through the rows
 		for (int i = 0; i < nrow; ++i) {
 			if (aSampleDependenceMatrix(i, j) != 0) {
 				// and then find the rows that are != 0
 				redundantCToC.at(i).push_back(static_cast<size_t>(j));
+				cToRedundantC.at(j).push_back(static_cast<size_t>(i));
 			}
 		}
 	}
