@@ -55,6 +55,7 @@ PeptidesModel <- function(protein) {
 		summarize(ratio = median(ratio)) %>%
 		slice(match(names.c, pair))
 	c.initial <- median.ratios$ratio
+	names(c.initial) <- names.c
 
 	# Set the o's to 0.5 for now
 	o.initial <- sapply(protein@reference.sample.intersect, function(sample) {
