@@ -64,8 +64,11 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 	// Then C
 	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
 	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
-	const cParams aC(aCMap, sampleDependency);
+	cParams aC(aCMap, sampleDependency);
 //	NumericVector aC = aModel.slot("c");
+	//Rcpp::Rcout << aC;
+	//aC.updateC(0, 10);
+	//Rcpp::Rcout << aC;
 
 	// Create the peptides
 	std::vector<Peptide> peptides;
