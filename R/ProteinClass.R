@@ -73,6 +73,8 @@ setClass("Protein",
 #' @examples
 #' data(ENSTest)
 #' Protein(ENSTest)
+#' @importFrom stringr str_split_fixed
+#' @importFrom stringr str_replace
 #' @export
 Protein <- function(data) {
 	modifications <- unique(unlist(str_split(unique(data$modifications), ";")))
