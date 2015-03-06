@@ -114,7 +114,7 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 		peptides.push_back(newPeptide);
 	}
 
-	Likelihood l (peptides, aC, anO, LikelihoodConstants(aVarianceModel, sampleDependency));
+	Likelihood l (peptides, aC, anO, LikelihoodConstants(aVarianceModel, sampleDependency, scale, shape1, shape2));
 	//Rcpp::Rcout << l;
 	return(l);
 }
