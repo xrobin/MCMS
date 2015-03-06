@@ -1,5 +1,7 @@
 #pragma once
 
+#include <boost/random/uniform_int_distribution.hpp>
+#include "Helpers.hpp"
 #include "Likelihood.hpp"
 #include "Priors.hpp"
 
@@ -7,28 +9,16 @@ class ParamSpecs {
 	public:
 	enum ParamCategory { c, o };
 	const ParamCategory category;
-	const size_t index1, const index2; // 1: c or sample (o); 2, o only: site
+	const size_t index1, index2; // 1: c or sample (o); 2, o only: site
 
 	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1): // c
-		category(aCategory), index1(anIndex1) {}
+		category(aCategory), index1(anIndex1), index2(0) {}
 	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, const size_t anIndex2): // o
 		category(aCategory), index1(anIndex1), index2(anIndex2) {}
 };
 
 /** A linear representation of all the parameters */
-class ParamSpecsVector {
-	std::mt19937_64& rng;
-	std::uniform_int_distribution<size_t> dist;
-	const std::vector<ParamSpecs> paramSpecs;
-
-	public:
-	ParamSpecsVector(const std::vector<ParamSpecs>& someParamSpecs, std::mt19937_64& anRNG):
-		rng(anRNG), dist(0, someParamSpecs.size()), paramSpecs(someParamSpecs) {}
-
-	ParamSpecs& getRandomParamSpecByReference() {
-		return paramSpecs[dist(rng)];
-	}
-};
+typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector;
 
 class MonteCarlo {
 	cParams c;
@@ -41,14 +31,15 @@ class MonteCarlo {
 	static ParamSpecsVector makeParamSpecsVector(const cParams& c, const oParams& o);
 
 	public:
-	MonteCarlo(const Likelihood& aLikelihood,
-		const cParams& aC, const oParams& anO,
+	MonteCarlo(const std::vector<Peptide>& peptides,
+		const cParams::c_type& aCMap, const oParams::o_type& anOMap,
+		const LikelihoodConstants& constants,
 		std::mt19937_64& anRNG):
-		c(aC),
-		o(anO),
-		p(aC, anO),
-		l(aLikelihood),
-		paramSpecs(makeParamSpecs(aC, anO), anRNG),
+		c(aCMap, constants.sampleDependenceMatrix),
+		o(anOMap),
+		p(c, o, constants.scale, constants.shape1, constants.shape2),
+		l(peptides, c, o, constants),
+		paramSpecs(makeParamSpecsVector(c, o)),
 		rng(anRNG){}
 
 	void iterate(unsigned long);

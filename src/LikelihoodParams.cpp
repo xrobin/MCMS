@@ -58,7 +58,7 @@ oParams::oParams(const o_type &anOMap) {
 	}
 }
 
-cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix, const double aScale):
+cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix):
 		dependencyPairs(),
 		c(), redundantC(aSampleDependenceMatrix.nrow()),
 		cNames(), redundantCNames(),

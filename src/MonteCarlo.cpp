@@ -2,8 +2,8 @@
 
 void MonteCarlo::iterate() {
 	// Choose parameter to change
-	ParamSpecs& randomParam = paramsSpecs.getRandomElementByReference();
-	if (randomParam.category == randomParam::ParamCategory::c) {
+	const ParamSpecs& randomParam = paramSpecs.getRandomElementByReference(rng);
+	if (randomParam.category == ParamSpecs::ParamCategory::c) {
 		// 1. resample a new c
 		double newC = resample(c);
 		// 2. Update the parameter
@@ -26,13 +26,13 @@ void MonteCarlo::iterate() {
 }
 
 
-void MonteCarlo::iterate(unsigned int i) {
+void MonteCarlo::iterate(unsigned long i) {
 	while (i--) {
 		iterate();
 	}
 }
 
-static ParamSpecsVector makeParamSpecsVector(const cParams& c, const oParams& o) {
+ParamSpecsVector MonteCarlo::makeParamSpecsVector(const cParams& c, const oParams& o) {
 	std::vector<ParamSpecs> paramSpecs;
 	// Fill the paramSpecs vector with o and c
 	for (size_t i = 0; i < c.size(); ++i) {

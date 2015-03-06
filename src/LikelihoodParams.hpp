@@ -14,8 +14,12 @@
 class LikelihoodConstants {
 	public:
 	const VarianceModel varianceModel;
-	explicit LikelihoodConstants(const VarianceModel& aVarianceModel):
-		varianceModel(aVarianceModel) {};
+	const Rcpp::NumericMatrix sampleDependenceMatrix;
+	const double shape1, shape2, scale;
+	explicit LikelihoodConstants(const VarianceModel& aVarianceModel, const Rcpp::NumericMatrix &aSampleDependenceMatrix,
+		const double aShape1, const double aShape2, const double aScale):
+		varianceModel(aVarianceModel), sampleDependenceMatrix(aSampleDependenceMatrix),
+		shape1(aShape1), shape2(aShape2), scale(aScale) {};
 };
 
 ///** Parameters for the Monte Carlo sampling */
@@ -69,7 +73,7 @@ class cParams {
 public:
 	typedef std::map<std::string, double> c_type;
 
-	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix, const double aScale = 2);
+	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix);
 	/** Delete copy/assign constructors */
 	cParams(const cParams&) = delete;
 	cParams& operator=(const cParams&) = delete;

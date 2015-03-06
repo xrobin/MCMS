@@ -98,6 +98,8 @@ class ParamPriors {
 class Prior {
 	//cParams &c;
 	//oParams &o;
+	LaplacePrior laplace;
+	BetaPrior beta;
 	std::vector<ParamPriors<LaplacePrior>> cPriors;
 	std::vector<std::vector<ParamPriors<BetaPrior>>> oPriors;
 	double priorTotal, temptativePriorTotal;
@@ -111,10 +113,15 @@ class Prior {
 	double updateO(const size_t, const size_t);
 
 	Prior(cParams &aC, oParams &anO,
-		LaplacePrior &aLaplacePrior, BetaPrior &aBetaPrior):
-			cPriors(makeCPriors(aC, aLaplacePrior)), oPriors(makeOPriors(anO, aBetaPrior)) {
+		const LaplacePrior &aLaplacePrior, const BetaPrior &aBetaPrior):
+			laplace(aLaplacePrior), beta(aBetaPrior),
+			cPriors(makeCPriors(aC, laplace)), oPriors(makeOPriors(anO, beta)) {
 		updateAll();
 	}
+	Prior(cParams &aC, oParams &anO,
+		const double aScale, const double aShape1, const double aShape2):
+			Prior(aC, anO, LaplacePrior(aScale), BetaPrior(aShape1, aShape2)) {}
+
 	double changedO(const size_t sample, const size_t site) {
 		return oPriors.at(sample).at(site).changed();
 	}
