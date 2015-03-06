@@ -56,7 +56,9 @@ using std::string;
 //' testCpp(ENSTestProtein, ENSTestModel)
 //' @export
 // [[Rcpp::export]]
-void testCpp(const S4& aModel, const List& aVarianceModelAsList, const double scale, const double shape1, const double shape2) {
+void testCpp(const S4& aModel, const List& aVarianceModelAsList,
+	const double scale, const double shape1, const double shape2,
+	const double prior.move.proportion, const double c.sd, const double o.sd) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
 
 //	oParams::o_type anOMap = convertListToO(oList);
@@ -76,6 +78,6 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList, const double sc
 //	aC.updateC("P1_480", 1.01);
 //	Rcout << ptr << " = " << *ptr << "\n";
 
-	Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2);
+	Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior.move.proportion, c.sd, o.sd);
 	//Rcpp::Rcout << l;
 }

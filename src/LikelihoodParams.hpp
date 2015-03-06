@@ -16,10 +16,14 @@ class LikelihoodConstants {
 	const VarianceModel varianceModel;
 	const Rcpp::NumericMatrix sampleDependenceMatrix;
 	const double shape1, shape2, scale;
+	const double priorMoveProportion;
+	const double c_sd, o_sd;
 	explicit LikelihoodConstants(const VarianceModel& aVarianceModel, const Rcpp::NumericMatrix &aSampleDependenceMatrix,
-		const double aShape1, const double aShape2, const double aScale):
+		const double aShape1, const double aShape2, const double aScale,
+		const double aPriorMoveProportion, const double aC_sd, const double anO_sd):
 		varianceModel(aVarianceModel), sampleDependenceMatrix(aSampleDependenceMatrix),
-		shape1(aShape1), shape2(aShape2), scale(aScale) {};
+		shape1(aShape1), shape2(aShape2), scale(aScale),
+		priorMoveProportion(aPriorMoveProportion), c_sd(aC_sd), o_sd(anO_sd) {};
 };
 
 ///** Parameters for the Monte Carlo sampling */
