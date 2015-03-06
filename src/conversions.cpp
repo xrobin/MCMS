@@ -47,7 +47,7 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 
 
 Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
-		const double shape1, const double shape2, const double scale) {
+		const double scale, const double shape1, const double shape2) {
 	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
 	if (modelClass != "Peptides") {
 		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
