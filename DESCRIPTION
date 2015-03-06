@@ -14,7 +14,7 @@ Imports:
     dplyr,
     stringr
 SystemRequirements: C++11
-LinkingTo: Rcpp
+LinkingTo: Rcpp, BH
 Collate:
     'ENSTest.R'
     'MCMS.R'
