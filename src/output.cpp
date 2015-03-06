@@ -13,15 +13,13 @@ using std::vector;
 
 ostream& operator<< (ostream &out, const Likelihood &Likelihood) {
 	out << Likelihood.peptideLikelihoods << endl;
-	out << Likelihood.c;
-	out << Likelihood.o;
 	out << "onpudate_c = " << Likelihood.onupdate_c << endl;
 	out << "onpudate_o = " << Likelihood.onupdate_o << endl;
 	return out;
 }
 
 ostream& operator<< (ostream &out, const PeptideLikelihood &aPeptideLikelihood) {
-	out << "<PeptideLikelihood@" << &aPeptideLikelihood << ": {" << aPeptideLikelihood.likelihood << ", ";
+	out << "<PeptideLikelihood@" << &aPeptideLikelihood << ": {" << aPeptideLikelihood.likelihoodValue << ", ";
 	out << aPeptideLikelihood.peptide;
 	out << "}";
 	return out;

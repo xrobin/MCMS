@@ -11,12 +11,41 @@
 class PeptideLikelihood {
 	public:
 	Peptide peptide;
-	double likelihood;
+	private:
+	double likelihoodValue, temptativeLikelihoodValue;
+	const VarianceModel& varianceModel;
+	public:
 	/** Constructors */
-	PeptideLikelihood(const Peptide& aPeptide):
-		peptide(aPeptide), likelihood(0) {};
-	PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
-		peptide(aPeptide), likelihood(aLikelihood) {};
+	PeptideLikelihood(const Peptide& aPeptide, const VarianceModel& aVarianceModel):
+		peptide(aPeptide), likelihoodValue(peptide.computeLikelihood(aVarianceModel)),
+		temptativeLikelihoodValue(0), varianceModel(aVarianceModel) {};
+	//PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
+	//	peptide(aPeptide), likelihood(aLikelihood) {};
+
+	/** MC functions */
+	double changed() { /** Called just after a parameter was changed */
+		double previousLikelihoodValue = likelihoodValue;
+		likelihoodValue = peptide.computeLikelihood(varianceModel);
+		return likelihoodValue - previousLikelihoodValue;
+	}
+	/** The parameter just changed temptatively, update temptativePriorValue */
+	double temptativeChanged() {
+		temptativeLikelihoodValue = peptide.computeLikelihood(varianceModel);
+		return temptativeLikelihoodValue - likelihoodValue;
+	}
+	void accept() {
+		likelihoodValue = temptativeLikelihoodValue;
+	}
+
+	double update() { // just update and return
+		likelihoodValue = peptide.computeLikelihood(varianceModel);
+		return likelihoodValue;
+	}
+
+	double getValue() const {
+		return likelihoodValue;
+	}
+
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const PeptideLikelihood &aPeptideLikelihood);
 };
@@ -26,12 +55,12 @@ class Likelihood {
 	std::vector<PeptideLikelihood> peptideLikelihoods;
 	//std::vector<Peptide> peptides;
 	//std::vector<double> likelihoods;
-	double likelihood;
+	double likelihoodValue, temptativeLikelihoodValue;
 
 	// Store likelihood parameters
-	cParams c;
-	oParams o;
-	const LikelihoodConstants constants;
+	//cParams c;
+	//oParams o;
+	//const LikelihoodConstants constants;
 
 
 	// mapping from param to peptides that must be updated
@@ -43,9 +72,7 @@ class Likelihood {
 	//  sample     site       peptide indices
 
 	/** Link the peptides and parameters */
-	void linkParamsAndPeptides();
-	/** Computes the whole likelihood and stores it */
-	void updateLikelihood();
+	void linkParamsAndPeptides(cParams&, oParams&);
 	//void bindPeptidesAndParameters();
 
 	public:
@@ -64,22 +91,57 @@ class Likelihood {
 //	};
 
 	/** Constructor */
-	Likelihood(const std::vector<Peptide>&, const cParams&, const oParams&, const LikelihoodConstants&);
+	Likelihood(const std::vector<Peptide>&, cParams&, oParams&, const LikelihoodConstants&);
 	/** Delete copy/assign constructors */
 	Likelihood(const Likelihood&) = delete;
 	Likelihood& operator=(const Likelihood&) = delete;
 	/** Use a move constructor instead */
 	Likelihood(Likelihood&& old) :
 		peptideLikelihoods(std::move(old.peptideLikelihoods)),
-		likelihood(std::move(old.likelihood)),
-		c(std::move(old.c)),
-		o(std::move(old.o)),
-		constants(std::move(old.constants)),
+		likelihoodValue(std::move(old.likelihoodValue)),
+		temptativeLikelihoodValue(std::move(old.temptativeLikelihoodValue)),
 		onupdate_c(std::move(old.onupdate_c)),
 		onupdate_o(std::move(old.onupdate_o)) {
 			// No need to re-link after a move (swap)
 			// linkParamsAndPeptides(); // Just in case. TODO: check it is not needed and remove
 		}
+
+	/** MC functions */
+
+	/** Updates the likelihood (potentially only some peptides linked with the given parameter)
+	 * and returns the new total likelihood */
+	double updateAll();
+	double updateC(const size_t);
+	double updateO(const size_t, const size_t);
+
+	/** After a parameter was changed, updates the likelihood and returns the change */
+	double changedC(const size_t);
+	double changedO(const size_t, const size_t);
+
+	/** After a parameter was changed temptatively, updates the temptative likelihood values and returns the change
+	 * Does not change the likelihood itself. */
+	double temptativeChangedC(const size_t);
+	double temptativeChangedO(const size_t, const size_t);
+
+	/** After a tempative change, makes the change effective.
+	 * Warning: no checking is done, make sure to pass the same indices
+	 */
+	void acceptC(const size_t);
+	void acceptO(const size_t, const size_t);
+
+//	double getC(const size_t i) {
+//		return c.getC(i);
+//	}
+//
+//
+//	double getO(const size_t sample, const size_t site) {
+//		return o.getO(sample, site);
+//	}
+
+	/** Computes the whole likelihood and stores it */
+	double getLikelihood() {
+		return likelihoodValue;
+	}
 
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const Likelihood &Likelihood);

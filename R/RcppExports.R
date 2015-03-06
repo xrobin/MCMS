@@ -3,5 +3,16 @@
 
 rcpp_hello_world <- function() {
     .Call('MCMS_rcpp_hello_world', PACKAGE = 'MCMS')
+#' @useDynLib MCMS
+#' @title a test C++ function
+#' @examples
+#' data(ENSTest)
+#' ENSTestProtein <- Protein(ENSTest)
+#' ENSTestModel <- PeptidesModel(ENSTestProtein)
+#' # testCpp(slot(ENSTestModel, "c"), slot(ENSTestProtein, "sample.dependency"))
+#' testCpp(ENSTestProtein, ENSTestModel)
+#' @export
+testCpp <- function(aModel, aVarianceModelAsList, shape1, shape2) {
+    invisible(.Call('MCMS_testCpp', PACKAGE = 'MCMS', aModel, aVarianceModelAsList, shape1, shape2))
 }
 

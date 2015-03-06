@@ -31,7 +31,7 @@ void cParams::updateRedundantC(const std::vector<size_t> &is) {
 	}
 }
 
-oParams::oParams(const o_type &anOMap, const BetaPrior &aBetaPrior): betaPrior(aBetaPrior) {
+oParams::oParams(const o_type &anOMap) {
 	size_t sampleNumber = 0;
 	for (auto& samplePair: anOMap) {
 	//for(auto sample_iterator = anOMap.begin(); sample_iterator != anOMap.end(); ++sample_iterator) {
@@ -58,7 +58,7 @@ oParams::oParams(const o_type &anOMap, const BetaPrior &aBetaPrior): betaPrior(a
 	}
 }
 
-cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix):
+cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix, const double aScale):
 		dependencyPairs(),
 		c(), redundantC(aSampleDependenceMatrix.nrow()),
 		cNames(), redundantCNames(),
@@ -112,25 +112,4 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 	}
 
 	updateRedundantC();
-}
-
-double oParams::calcPrior() {
-	double prior = 0;
-	// Loop over all the o:
-	for (auto &sample: o) {
-		for (double site: sample) {
-			prior += betaPrior(site);
-		}
-	}
-	return prior;
-}
-
-
-double cParams::calcPrior() {
-	double prior = 0;
-	// Loop over all the o:
-	for (auto &aC: c) {
-		prior += normalPrior(aC);
-	}
-	return prior;
 }

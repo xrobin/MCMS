@@ -6,7 +6,7 @@
 
 namespace Rcpp {
 	// oParams
-	template <> oParams as(SEXP);
+	template <> oParams::o_type as(SEXP);
 	template <> SEXP wrap(const oParams&);
 
 	// VarianceModel

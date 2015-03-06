@@ -3,7 +3,6 @@
 #include <map>
 #include <vector>
 // #include "prettyprint.hpp"
-#include "Priors.hpp"
 #include <Rcpp.h>
 #include <string>
 #include "VarianceModel.hpp"
@@ -66,20 +65,28 @@ class cParams {
 	std::unordered_map<std::string, size_t> cNames, redundantCNames; // so from a name we know which c to update
 	std::vector<std::vector<size_t>> redundantCToC; // Maps a redundantC to one or more c on which it depends
 	std::vector<std::vector<size_t>> cToRedundantC; // Maps a c to one or more redundantC which depend on it
-	NormalPrior normalPrior;
 
 public:
 	typedef std::map<std::string, double> c_type;
 
-	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix);
+	cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix, const double aScale = 2);
+	/** Delete copy/assign constructors */
+	cParams(const cParams&) = delete;
+	cParams& operator=(const cParams&) = delete;
 
-	/** Updates the value of c at element i or key. */
-	void updateC(const size_t i, const double newC) {
+	/** Updates the value of c at element i or key and returns the previous value. */
+	double setC(const size_t i, const double newC) {
+		double previousC = c.at(i);
 		c.at(i) = newC;
 		updateRedundantC( cToRedundantC.at(i) );
+		return previousC;
 	}
-	void updateC(const std::string& key, double newC) {
-		updateC(cNames.at(key), newC);
+	double setC(const std::string& key, double newC) {
+		return setC(cNames.at(key), newC);
+	}
+
+	double getC(const size_t i) {
+		return c.at(i);
 	}
 
 	/** Get a pointer to the C redundant C at position i or key*/
@@ -117,9 +124,6 @@ public:
 		return redundantC.size();
 	}
 
-	/** Calculate the normal prior we have on all the o parameters */
-	double calcPrior();
-
 //	void prettyprint() const {
 //		std::cout << "c = " << c << std::endl;
 //		std::cout << "cNames = " << cNames << std::endl;
@@ -143,24 +147,30 @@ class oParams {
 	std::vector<std::vector<double>> o;
 	std::unordered_map<std::string, size_t> sampleNames; // so from a name we know which sample number it is
 	std::vector<std::unordered_map<std::string, size_t>> siteNames; // so from sample number and name we know which site it is
-	BetaPrior betaPrior;
 
 public:
 	/** Constructor from an o_type map*/
 	typedef std::map<std::string, std::map<std::string, double>> o_type;
-	oParams(const o_type &anOMap, const BetaPrior& aBetaPrior);
-	oParams(const o_type &anOMap, const double aShape1, const double aShape2):
-		oParams(anOMap, BetaPrior(aShape1, aShape2)) {};
+	oParams(const o_type &anOMap);
+	/** Delete copy/assign constructors */
+	oParams(const oParams&) = delete;
+	oParams& operator=(const oParams&) = delete;
 
 	/** Updates the value of o */
-	void updateO(const size_t sample, const size_t site, const double newO) {
+	double setO(const size_t sample, const size_t site, const double newO) {
+		double previousO = o.at(sample).at(site);
 		o.at(sample).at(site) = newO;
+		return previousO;
 	}
-	void updateO(const size_t sample, const std::string& site, double newO) {
-		updateO(sample, siteNames.at(sample).at(site), newO);
+	double setO(const size_t sample, const std::string& site, double newO) {
+		return setO(sample, siteNames.at(sample).at(site), newO);
 	}
-	void updateO(const std::string& sample, const std::string& site, double newO) {
-		updateO(sampleNames.at(sample), site, newO);
+	double setO(const std::string& sample, const std::string& site, double newO) {
+		return setO(sampleNames.at(sample), site, newO);
+	}
+
+	double getO(const size_t sample, const size_t site) {
+		return o.at(sample).at(site);
 	}
 
 	/** Get a pointer to the relevant o */
@@ -184,9 +194,6 @@ public:
 	size_t size(const std::string& sample) const {
 		return size(sampleNames.at(sample));
 	}
-
-	/** Calculate the beta prior we have on all the o parameters */
-	double calcPrior();
 
 	/** Get indices */
 	size_t getFirstIndexOnO(const std::string& sample) const {

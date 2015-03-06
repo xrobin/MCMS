@@ -6,14 +6,16 @@
 using namespace Rcpp;
 
 // testCpp
-void testCpp(const S4& aModel, const List& aVarianceModelAsList);
-RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP) {
+void testCpp(const S4& aModel, const List& aVarianceModelAsList, const double shape1, const double shape2);
+RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP shape1SEXP, SEXP shape2SEXP) {
 BEGIN_RCPP
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< const S4& >::type aModel(aModelSEXP );
         Rcpp::traits::input_parameter< const List& >::type aVarianceModelAsList(aVarianceModelAsListSEXP );
-        testCpp(aModel, aVarianceModelAsList);
+        Rcpp::traits::input_parameter< const double >::type shape1(shape1SEXP );
+        Rcpp::traits::input_parameter< const double >::type shape2(shape2SEXP );
+        testCpp(aModel, aVarianceModelAsList, shape1, shape2);
     }
     return R_NilValue;
 END_RCPP

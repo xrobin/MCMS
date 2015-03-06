@@ -1,5 +1,6 @@
 #include "conversions.hpp"
 #include "LikelihoodParams.hpp"
+#include "Priors.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames
 #include <string>
@@ -45,7 +46,8 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 }
 
 
-Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel, const double shape1, const double shape2) {
+Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
+		const double shape1, const double shape2, const double scale) {
 	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
 	if (modelClass != "Peptides") {
 		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
@@ -59,7 +61,7 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 	// Build the parameters
 	// First O
 	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
-	const oParams anO(anOMap, shape1, shape2);
+	oParams anO(anOMap);
 
 	// Then C
 	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
@@ -69,6 +71,12 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 	//Rcpp::Rcout << aC;
 	//aC.updateC(0, 10);
 	//Rcpp::Rcout << aC;
+
+	// The priors
+	BetaPrior beta(shape1, shape2);
+	LaplacePrior laplace(scale);
+	Prior paramPrior(aC, anO, laplace, beta);
+
 
 	// Create the peptides
 	std::vector<Peptide> peptides;

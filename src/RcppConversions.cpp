@@ -5,10 +5,8 @@
 
 
 namespace Rcpp {
-	template <> oParams as(SEXP anOList) {
-		oParams::o_type anOMap = convertListToOMap(as<List>(anOList));
-		oParams anO(anOMap);
-		return(anO);
+	template <> oParams::o_type as(SEXP anOList) {
+		return convertListToOMap(as<List>(anOList));
 	}
 
 	template <> SEXP wrap(const oParams& anOParams) {

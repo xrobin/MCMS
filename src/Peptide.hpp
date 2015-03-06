@@ -39,7 +39,7 @@ class Peptide {
 	//o_value_type *oRef, *oSample;
 
 	/** private functions */
-	double calcRatio() const;
+	double calcRatio() const; // predicts a ratio
 
 	public:
 	Peptide(const double aRatio,
