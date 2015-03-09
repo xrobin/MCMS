@@ -217,19 +217,6 @@ class ParamSpecs {
 				throw std::invalid_argument("Two argument constructor expects to receive an 'o' category param");
 			}
 		}
-
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1): // c
-		category(aCategory), index1(anIndex1), index2(0) {
-			if (category != c) {
-				throw std::invalid_argument("One argument constructor expects to receive a 'c' category param");
-			}
-		}
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, const size_t anIndex2): // o
-		category(aCategory), index1(anIndex1), index2(anIndex2) {
-			if (category != o) {
-				throw std::invalid_argument("Two argument constructor expects to receive an 'o' category param");
-			}
-		}
 };
 
 /** A linear representation of all the parameters */
