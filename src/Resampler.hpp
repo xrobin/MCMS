@@ -23,11 +23,11 @@ class Resampler {
 	const boost::random::normal_distribution<double> o_normal;
 	//const boost::random::normal_distribution<double>::param_type o_normal_params;
 
+	public:
 	Resampler(std::mt19937_64& aRNG, const Constants& someConstants):
 		constants(someConstants), rng(aRNG),
 		unif01(0, 1), c_normal(0, constants.c_sd), o_normal(0, constants.o_sd) {}
 
-	public:
 	/** Randomly choose if we're doing a prior move */
 	bool priorMove() {
 		return unif01(rng) > (1 - constants.priorMoveProportion);
