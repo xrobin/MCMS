@@ -12,8 +12,4 @@ namespace Rcpp {
 	// VarianceModel
 	template <> VarianceModel as(SEXP);
 	//template <> SEXP wrap(const VarianceModel<>&);
-
-//	// LikelihoodParams
-//	template <> LikelihoodParams as(Rcpp::S4 someParams);
-//	template <> Rcpp::List wrap(const LikelihoodParams<> &someParams);
 }
