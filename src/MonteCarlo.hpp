@@ -21,6 +21,7 @@ class ParamSpecs {
 typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector;
 
 class MonteCarlo {
+	const Constants constants;
 	cParams c;
 	oParams o;
 	Prior p;
@@ -33,8 +34,9 @@ class MonteCarlo {
 	public:
 	MonteCarlo(const std::vector<Peptide>& peptides,
 		const cParams::c_type& aCMap, const oParams::o_type& anOMap,
-		const LikelihoodConstants& constants,
+		const Constants& someConstants,
 		std::mt19937_64& anRNG):
+		constants(someConstants),
 		c(aCMap, constants.sampleDependenceMatrix),
 		o(anOMap),
 		p(c, o, constants.scale, constants.shape1, constants.shape2),

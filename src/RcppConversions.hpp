@@ -1,6 +1,6 @@
 #pragma once
 
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include <Rcpp.h>
 #include "VarianceModel.hpp"
 

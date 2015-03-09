@@ -1,4 +1,4 @@
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 //#include "prettyprint.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames

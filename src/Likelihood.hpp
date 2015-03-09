@@ -1,7 +1,7 @@
 #pragma once
 
 #include <iostream> // cout
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include <map>
 #include "Peptide.hpp"
 #include <Rcpp.h>
@@ -60,7 +60,7 @@ class Likelihood {
 	// Store likelihood parameters
 	//cParams c;
 	//oParams o;
-	//const LikelihoodConstants constants;
+	//const Constants constants;
 
 
 	// mapping from param to peptides that must be updated
@@ -91,7 +91,7 @@ class Likelihood {
 //	};
 
 	/** Constructor */
-	Likelihood(const std::vector<Peptide>&, cParams&, oParams&, const LikelihoodConstants&);
+	Likelihood(const std::vector<Peptide>&, cParams&, oParams&, const Constants&);
 	/** Delete copy/assign constructors */
 	Likelihood(const Likelihood&) = delete;
 	Likelihood& operator=(const Likelihood&) = delete;

@@ -2,7 +2,7 @@
 
 #include <boost/math/distributions/beta.hpp>
 #include <boost/math/distributions/laplace.hpp>
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 //#include <cmath>
 #include <random>
 //#include <boost/math/distributions/normal.hpp>

@@ -1,5 +1,5 @@
 #include "conversions.hpp"
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include "Priors.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames
@@ -115,7 +115,7 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 		peptides.push_back(newPeptide);
 	}
 
-	Likelihood l (peptides, aC, anO, LikelihoodConstants(aVarianceModel, sampleDependency,
+	Likelihood l (peptides, aC, anO, Constants(aVarianceModel, sampleDependency,
 		scale, shape1, shape2,
 		prior.move.proportion, c.sd, o.sd));
 	//Rcpp::Rcout << l;

@@ -1,5 +1,5 @@
 #include "conversions.hpp"
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include <Rcpp.h>
 #include "RcppConversions.hpp"
 #include <string>
@@ -29,7 +29,7 @@ using std::string;
 //	}
 //
 //	NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
-//	//LikelihoodConstants lc(sampleDependency);
+//	//Constants lc(sampleDependency);
 //
 //	NumericVector aC = aModel.slot("c");
 //	oParams::o_type anO = convertListToO(aModel.slot("o"));

@@ -51,10 +51,10 @@ void Likelihood::linkParamsAndPeptides(cParams &aC, oParams &anO) {
 
 
 Likelihood::Likelihood(const std::vector<Peptide> &peptides, cParams &aC, oParams &anO,
-                       const LikelihoodConstants &aLikelihoodConstants) {
+                       const Constants &someConstants) {
 	peptideLikelihoods.reserve(peptides.size());
 	for (auto &peptide: peptides) {
-		peptideLikelihoods.push_back(PeptideLikelihood(peptide, aLikelihoodConstants.varianceModel));
+		peptideLikelihoods.push_back(PeptideLikelihood(peptide, someConstants.varianceModel));
 	}
 
 	linkParamsAndPeptides(aC, anO);

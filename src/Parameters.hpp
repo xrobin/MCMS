@@ -11,49 +11,20 @@
 
 
 /** Constant variables during the Monte Carlo sampling */
-class LikelihoodConstants {
+class Constants {
 	public:
 	const VarianceModel varianceModel;
 	const Rcpp::NumericMatrix sampleDependenceMatrix;
 	const double shape1, shape2, scale;
 	const double priorMoveProportion;
-	const double c_sd, o_sd;
-	explicit LikelihoodConstants(const VarianceModel& aVarianceModel, const Rcpp::NumericMatrix &aSampleDependenceMatrix,
+	const double c_sd, o_sd, o_k_scale; // sd for resampling c and o, scale for the o
+	explicit Constants(const VarianceModel& aVarianceModel, const Rcpp::NumericMatrix &aSampleDependenceMatrix,
 		const double aShape1, const double aShape2, const double aScale,
-		const double aPriorMoveProportion, const double aC_sd, const double anO_sd):
+		const double aPriorMoveProportion, const double aC_sd, const double anO_sd, const double anO_k_scale):
 		varianceModel(aVarianceModel), sampleDependenceMatrix(aSampleDependenceMatrix),
 		shape1(aShape1), shape2(aShape2), scale(aScale),
-		priorMoveProportion(aPriorMoveProportion), c_sd(aC_sd), o_sd(anO_sd) {};
+		priorMoveProportion(aPriorMoveProportion), c_sd(aC_sd), o_sd(anO_sd), o_k_scale(anO_k_scale) {};
 };
-
-///** Parameters for the Monte Carlo sampling */
-//class LikelihoodParams {
-//	//const LikelihoodConstants constants;
-//	//cParams c;
-//	//oParams o;
-//	// Indicative names for c, redundantC and o
-//	//CharacterVector cNames, redundantCNames, oNames;
-//
-//	public:
-//	LikelihoodParams(const LikelihoodConstants& someLikelihoodConstants, const c_type& aC, const o_type& anO):
-//		constants(someLikelihoodConstants), c(aC), redundantC(someLikelihoodConstants.sampleDependence.nrow()),
-//		o(anO) {
-//		updateRedundantC();
-//	}
-//
-//	LikelihoodParams(const LikelihoodConstants& someLikelihoodConstants): constants(someLikelihoodConstants) {}
-//
-////	c_type getC() {
-////		return(redundantC);
-////	}
-////	double getC(c_type::size_type i) {
-////		return(redundantC[c]);
-////	}
-////
-////	c_type::iterator getO(std::string key) {
-////		return(o.at(key).begin());
-////	}
-//};
 
 
 /** Storing the c parameters */

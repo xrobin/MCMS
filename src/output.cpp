@@ -1,6 +1,6 @@
 #include <iostream> // cout
 #include "Likelihood.hpp"
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include "Peptide.hpp"
 #include "prettyprint.hpp"
 #include <vector>

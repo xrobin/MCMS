@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Likelihood.hpp"
-#include "LikelihoodParams.hpp"
+#include "Parameters.hpp"
 #include <Rcpp.h>
 #include "typedefs.hpp"
 
