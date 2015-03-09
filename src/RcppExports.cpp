@@ -6,16 +6,20 @@
 using namespace Rcpp;
 
 // testCpp
-void testCpp(const S4& aModel, const List& aVarianceModelAsList, const double shape1, const double shape2);
-RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP shape1SEXP, SEXP shape2SEXP) {
+void testCpp(const S4& aModel, const List& aVarianceModelAsList, const double scale, const double shape1, const double shape2, const double prior.move.proportion, const double c.sd, const double o.sd);
+RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP scaleSEXP, SEXP shape1SEXP, SEXP shape2SEXP, SEXP prior.move.proportionSEXP, SEXP c.sdSEXP, SEXP o.sdSEXP) {
 BEGIN_RCPP
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< const S4& >::type aModel(aModelSEXP );
         Rcpp::traits::input_parameter< const List& >::type aVarianceModelAsList(aVarianceModelAsListSEXP );
+        Rcpp::traits::input_parameter< const double >::type scale(scaleSEXP );
         Rcpp::traits::input_parameter< const double >::type shape1(shape1SEXP );
         Rcpp::traits::input_parameter< const double >::type shape2(shape2SEXP );
-        testCpp(aModel, aVarianceModelAsList, shape1, shape2);
+        Rcpp::traits::input_parameter< const double >::type prior.move.proportion(prior.move.proportionSEXP );
+        Rcpp::traits::input_parameter< const double >::type c.sd(c.sdSEXP );
+        Rcpp::traits::input_parameter< const double >::type o.sd(o.sdSEXP );
+        testCpp(aModel, aVarianceModelAsList, scale, shape1, shape2, prior.move.proportion, c.sd, o.sd);
     }
     return R_NilValue;
 END_RCPP
