@@ -10,8 +10,8 @@ class MoveSpec {
 	const double oldParam, newParam;
 	const double logPreviousBias, logNewBias;
 
-	MoveSpec(const double anOldParam, const double aNewParam, const GenericPrior& aPrior):
-		oldParam(anOldParam), newParam(aNewParam) {}
+	MoveSpec(const double anOldParam, const double aNewParam, const double logPreviousBias, const double logNewBias):
+		oldParam(anOldParam), newParam(aNewParam), logPreviousBias(logPreviousBias), logNewBias(logNewBias) {}
 	bool accept();
 };
 
