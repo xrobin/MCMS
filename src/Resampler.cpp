@@ -9,7 +9,7 @@ double calcSigma(const BetaPrior& prior, const double o, const double o_sd, cons
 	return 1 / (std::abs(k) + 1 / o_sd);
 }
 
-static const boost::random::uniform_int_distribution<size_t> MoveSpec::unif01(0, 1);
+const boost::random::uniform_real_distribution<double> MoveSpec::unif01(0.0, 1.0); // static initialization
 
 inline MoveSpec Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
