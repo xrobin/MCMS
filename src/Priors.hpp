@@ -8,12 +8,12 @@
 //#include <boost/math/distributions/normal.hpp>
 //#include <random>
 
-//class GenericPrior {
-//	double pdf(double x) = 0;
-//	double sample(std::mt19937_64& rng) = 0;
-//};
+class GenericPrior {
+	double pdf(double x) = 0;
+	double sample(std::mt19937_64& rng) = 0;
+};
 
-class BetaPrior {
+class BetaPrior: public GenericPrior {
 	typedef boost::math::policies::policy<
 		boost::math::policies::overflow_error<
 			boost::math::policies::ignore_error>>
@@ -33,7 +33,7 @@ class BetaPrior {
 	}
 };
 
-class LaplacePrior {
+class LaplacePrior: public GenericPrior {
 	boost::math::laplace_distribution<double> laplace;
 	std::uniform_real_distribution<double> unif01;
 
@@ -121,6 +121,9 @@ class Prior {
 	Prior(cParams &aC, oParams &anO,
 		const double aScale, const double aShape1, const double aShape2):
 			Prior(aC, anO, LaplacePrior(aScale), BetaPrior(aShape1, aShape2)) {}
+
+	LaplacePrior& getLaplacePrior() {return laplace;}
+	BetaPrior& getBetaPrior() {return beta;}
 
 	double changedO(const size_t sample, const size_t site) {
 		return oPriors.at(sample).at(site).changed();

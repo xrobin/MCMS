@@ -78,6 +78,6 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 //	aC.updateC("P1_480", 1.01);
 //	Rcout << ptr << " = " << *ptr << "\n";
 
-	Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior.move.proportion, c.sd, o.sd);
+	Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior.move.proportion, c.sd, o.sd, o_k_scale);
 	//Rcpp::Rcout << l;
 }
