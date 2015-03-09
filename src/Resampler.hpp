@@ -3,6 +3,14 @@
 #include  <boost/random/normal_distribution.hpp>
 #include "Parameters.hpp"
 
+class MoveSpec {
+	public:
+	const double oldParam, newParam;
+	const double logPreviousBias, logNewBias;
+	MoveSpec(const double anOldParam, const double aNewParam, const GenericPrior& aPrior):
+		oldParam(anOldParam), newParam(aNewParam) {}
+};
+
 class Resampler {
 	const Constants& constants;
 	std::mt19937_64& rng;
@@ -21,11 +29,11 @@ class Resampler {
 		return unif01(rng) > (1 - constants.priorMoveProportion);
 	}
 
-    double resampleC(const ParamSpecs& paramSpec, const double param);
-    double resampleO(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleC(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleO(const ParamSpecs& paramSpec, const double param);
 
-    double resampleCFromPrior(const ParamSpecs& paramSpec, const double param);
-    double resampleOFromPrior(const ParamSpecs& paramSpec, const double param);
-    double resampleCStandard(const ParamSpecs& paramSpec, const double param);
-    double resampleOStandard(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleCFromPrior(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleOFromPrior(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleCStandard(const ParamSpecs& paramSpec, const double param);
+    MoveSpec resampleOStandard(const ParamSpecs& paramSpec, const double param);
 };

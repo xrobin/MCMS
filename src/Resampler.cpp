@@ -1,8 +1,15 @@
+
+#include <boost/math/distributions/normal.hpp>
+#include <cmath>
 #include "Parameters.hpp"
 #include "Resample.hpp"
 
+double calcSigma(const BetaPrior& prior, const double o, const double o_sd, const double k_scale) {
+	double k = prior.pdf(o) * (1 / (2 * (1 - o)) - 1 / (2 * o)) * k_scale;
+	return 1 / (std::abs(k) + 1 / o_sd);
+}
 
-inline double Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
+inline MoveSpec Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
 		resampleCFromPrior(paramSpec, param);
 	}
@@ -12,7 +19,7 @@ inline double Resampler::resampleC(const ParamSpecs& paramSpec, const double par
 }
 
 
-inline double Resampler::resampleO(const ParamSpecs& paramSpec, const double param) {
+inline MoveSpec Resampler::resampleO(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
 		resampleOFromPrior(paramSpec, param);
 	}
@@ -21,19 +28,37 @@ inline double Resampler::resampleO(const ParamSpecs& paramSpec, const double par
 	}
 }
 
-inline double resampleCFromPrior(const ParamSpecs& paramSpec, const double param) {
-	return paramSpec.prior.pdf(param);
+inline MoveSpec resampleCFromPrior(const ParamSpecs& paramSpec, const double oldC) {
+	double logPreviousBias = std::log(paramSpec.prior.pdf(oldC));
+	double newC = paramSpec.prior.pdf(oldC);
+	double logNewBias = std::log(paramSpec.prior.pdf(newC));
+	return MoveSpec(oldC, newC, logPreviousBias, logNewBias);
 }
-inline double resampleOFromPrior(const ParamSpecs& paramSpec, const double param) {
-	return paramSpec.prior.pdf(param);
+inline MoveSpec resampleOFromPrior(const ParamSpecs& paramSpec, const double oldO) {
+	double logPreviousBias = std::log(paramSpec.prior.pdf(oldO));
+	double newO = paramSpec.prior.pdf(oldO);
+	double logNewBias = std::log(paramSpec.prior.pdf(newO));
+	return MoveSpec(oldO, newO, logPreviousBias, logNewBias);
 }
 
-inline double resampleCStandard(const ParamSpecs& paramSpec, const double param) {
-	return param + c_normal(rng);
+inline MoveSpec resampleCStandard(const ParamSpecs& paramSpec, const double oldC) {
+	double newC = oldC + c_normal(rng);
+	return MoveSpec(oldC, newC, 0, 0); // there is no change in the bias when we resample a c, still have a normal(0, c_sd)
 }
 
-inline double resampleOStandard(const ParamSpecs& paramSpec, const double param) {
-	double k = paramSpec.prior.pdf(param) * (1 / (2 * (1 - param)) - 1 / (2 * param)) * constants.k_scale;
-	boost::random::normal_distribution<double>::param_type local_params(0, k);
-	return o + o_normal(rng, local_params);
+inline MoveSpec resampleOStandard(const ParamSpecs& paramSpec, const double oldO) {
+	// Compute the sd for normal
+	double oldSigma = calcSigma(paramSpec.prior, oldO, constants.o_sd, constants.k_scale)
+	// Resample a new O
+	boost::random::normal_distribution<double>::param_type local_params(0, oldSigma);
+	double newO =  o + o_normal(rng, local_params);
+	// Calculate the biases
+	// Previous
+	boost::math::normal_distribution<double> oldNormal(oldO, oldSigma);
+	double logPreviousBias = std::log(pdf(oldNormal, newO));
+	// New
+	boost::math::normal_distribution<double> newNormal(newO, newSigma);
+	double logNewBias = std::log(pdf(newNormal, oldO));
+
+	return MoveSpec(oldO, newOlogPreviousBias, logNewBias);
 }
