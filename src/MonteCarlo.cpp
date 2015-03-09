@@ -5,19 +5,25 @@ void MonteCarlo::iterate() {
 	// Choose parameter to change
 	const ParamSpecs& randomParam = paramSpecs.getRandomElementByReference(rng);
 	if (randomParam.category == ParamSpecs::ParamCategory::c) {
-		// 1. resample a new c
-		double newC = resampleC(randomParam, constants);
-		// 2. Update the parameter
-		double oldC = c.setC(randomParam.index1, newC);
-		// 3. Query new likelihood
-		// 4. Query new prior
-		// 5 decide acceptance
-		if (accept) {
+		// 1. Get previous C
+		double oldC = c.getC(randomParam.index1);
+		// 2. resample a new c
+		MoveSpec move = resampler.resampleC(randomParam, oldC);
+		double newC =
+		// 3. Update the parameter
+		c.setC(randomParam.index1, newC);
+		// 4. Query new likelihood
+		double likelihoodChange = l.temptativeChangedC(randomParam.index1);
+		// 5. Query new prior
+		double priorChange = p.temptativeChangedC(randomParam.index1);
+		// 6 decide acceptance
+		if (move.accept(likelihoodChange + priorChange, rng)) {
 			l.accept(randomParam.index1);
-			prior.accept(randomParam.index1);
+			p.accept(randomParam.index1);
 		}
 		else {
 			c.setC(randomParam.index1, oldC);
+			// There is no need for explicit reject
 		}
 
 	}

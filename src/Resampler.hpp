@@ -4,11 +4,15 @@
 #include "Parameters.hpp"
 
 class MoveSpec {
+	static const boost::random::uniform_int_distribution<size_t> unif01;
+
 	public:
 	const double oldParam, newParam;
 	const double logPreviousBias, logNewBias;
+
 	MoveSpec(const double anOldParam, const double aNewParam, const GenericPrior& aPrior):
 		oldParam(anOldParam), newParam(aNewParam) {}
+	bool accept();
 };
 
 class Resampler {

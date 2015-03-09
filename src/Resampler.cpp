@@ -9,6 +9,8 @@ double calcSigma(const BetaPrior& prior, const double o, const double o_sd, cons
 	return 1 / (std::abs(k) + 1 / o_sd);
 }
 
+static const boost::random::uniform_int_distribution<size_t> MoveSpec::unif01(0, 1);
+
 inline MoveSpec Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
 		resampleCFromPrior(paramSpec, param);
@@ -61,4 +63,11 @@ inline MoveSpec resampleOStandard(const ParamSpecs& paramSpec, const double oldO
 	double logNewBias = std::log(pdf(newNormal, oldO));
 
 	return MoveSpec(oldO, newOlogPreviousBias, logNewBias);
+}
+
+bool MoveSpec::accept(const double lpChange, std::mt19937_64& rng) {
+	double nominator = likelihoodChange + logNewBias;
+	double denominator = logPreviousBias;
+
+	return (nominator > denominator || unif01(rng) < std::exp(nominator - denominator)));
 }

@@ -4,6 +4,7 @@
 #include "Helpers.hpp"
 #include "Likelihood.hpp"
 #include "Priors.hpp"
+#include "Resampler.hpp"
 #include <stdexcept>
 
 class ParamSpecs {
@@ -38,6 +39,7 @@ class MonteCarlo {
 	Prior p;
 	Likelihood l;
 	const ParamSpecsVector paramSpecs; // a vector with all the parameters
+	Resampler resampler;
 	std::mt19937_64& rng; // The random numbers for the whole MC run
 
 	static ParamSpecsVector makeParamSpecsVector(const cParams& c, const oParams& o, Prior& p);
@@ -53,6 +55,7 @@ class MonteCarlo {
 		p(c, o, constants.scale, constants.shape1, constants.shape2),
 		l(peptides, c, o, constants),
 		paramSpecs(makeParamSpecsVector(c, o, p)),
+		resampler(anRNG, constants),
 		rng(anRNG){}
 
 	void iterate(unsigned long);
