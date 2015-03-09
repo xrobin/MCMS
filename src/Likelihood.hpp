@@ -16,9 +16,12 @@ class PeptideLikelihood {
 	const VarianceModel& varianceModel;
 	public:
 	/** Constructors */
-	PeptideLikelihood(const Peptide& aPeptide, const VarianceModel& aVarianceModel):
-		peptide(aPeptide), likelihoodValue(peptide.computeLikelihood(aVarianceModel)),
+	/** With a given likelihood (avoids computing it before we've linked the parameters) */
+	PeptideLikelihood(const Peptide& aPeptide, const VarianceModel& aVarianceModel, const double aLikelihood):
+		peptide(aPeptide), likelihoodValue(aLikelihood),
 		temptativeLikelihoodValue(0), varianceModel(aVarianceModel) {};
+	PeptideLikelihood(const Peptide& aPeptide, const VarianceModel& aVarianceModel):
+		PeptideLikelihood(aPeptide, aVarianceModel, peptide.computeLikelihood(aVarianceModel)) {};
 	//PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
 	//	peptide(aPeptide), likelihood(aLikelihood) {};
 

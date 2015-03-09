@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Likelihood.hpp"
+//#include "Likelihood.hpp"
+#include "MonteCarlo.hpp"
 #include "Parameters.hpp"
 #include <Rcpp.h>
 #include "typedefs.hpp"
@@ -12,8 +13,13 @@
  */
 oParams::o_type convertListToOMap(const Rcpp::List&);
 cParams::c_type convertVectorToCMap(const Rcpp::NumericVector&);
-Likelihood convertS4ToLikelihood(const Rcpp::S4&, const VarianceModel&, const double scale, const double shape1, const double shape2,
-	const double prior.move.proportion, const double c.sd, const double o.sd, const double o_k_scale);
+MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4&, const VarianceModel&, const double scale, const double shape1, const double shape2,
+	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
 
 
 //vector<Peptides> convertListToPeptidesVector(List aDataList, ...) {
+
+
+/** Initialize a PRNG using the seed from R */
+std::mt19937_64 seedFromR();
+

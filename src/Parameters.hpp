@@ -54,6 +54,16 @@ public:
 	/** Delete copy/assign constructors */
 	cParams(const cParams&) = delete;
 	cParams& operator=(const cParams&) = delete;
+	/** Use a move constructor instead */
+	cParams(cParams&& old) :
+		dependencyPairs(std::move(old.dependencyPairs)),
+		c(std::move(old.c)),
+		redundantC(std::move(old.redundantC)),
+		cNames(std::move(old.cNames)),
+		redundantCNames(std::move(old.redundantCNames)),
+		redundantCToC(std::move(old.redundantCToC)),
+		cToRedundantC(std::move(old.cToRedundantC))
+	{}
 
 	/** Updates the value of c at element i or key and returns the previous value. */
 	double setC(const size_t i, const double newC) {
@@ -136,6 +146,12 @@ public:
 	/** Delete copy/assign constructors */
 	oParams(const oParams&) = delete;
 	oParams& operator=(const oParams&) = delete;
+	/** Use a move constructor instead */
+	oParams(oParams&& old) :
+		o(std::move(old.o)),
+		sampleNames(std::move(old.sampleNames)),
+		siteNames(std::move(old.siteNames))
+	{}
 
 	/** Updates the value of o */
 	double setO(const size_t sample, const size_t site, const double newO) {
@@ -204,22 +220,27 @@ class ParamSpecs {
 	enum ParamCategory { c, o };
 	const ParamCategory category;
 	const size_t index1, index2; // 1: c or sample (o); 2, o only: site
-	GenericPrior& prior;
+	const double *param; // pointer to the parameter itself
+	const GenericPrior& prior;
 
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, GenericPrior& aPrior): // c
-		category(aCategory), index1(anIndex1), index2(0), prior(aPrior) {
+	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const size_t anIndex1, GenericPrior& aPrior): // c
+		category(aCategory), index1(anIndex1), index2(0), param(aParamPointer), prior(aPrior) {
 			if (category != c) {
 				throw std::invalid_argument("One argument constructor expects to receive a 'c' category param");
 			}
 		}
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, const size_t anIndex2, GenericPrior& aPrior): // o
-		category(aCategory), index1(anIndex1), index2(anIndex2), prior(aPrior) {
+	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const size_t anIndex1, const size_t anIndex2, GenericPrior& aPrior): // o
+		category(aCategory), index1(anIndex1), index2(anIndex2), param(aParamPointer), prior(aPrior) {
 			if (category != o) {
 				throw std::invalid_argument("Two argument constructor expects to receive an 'o' category param");
 			}
 		}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream &out, const ParamSpecs &aParamSpecs);
+
 };
 
 /** A linear representation of all the parameters */
 //typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector; // can't be const because of the distributions :(
-typedef RandomizingVector<ParamSpecs> ParamSpecsVector;
+typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector;

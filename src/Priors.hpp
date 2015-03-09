@@ -2,6 +2,8 @@
 
 #include <boost/math/distributions/beta.hpp>
 #include <boost/math/distributions/laplace.hpp>
+#include <boost/random/uniform_real_distribution.hpp>
+#include <iostream>
 #include "Parameters.hpp"
 //#include <cmath>
 #include <random>
@@ -9,8 +11,10 @@
 //#include <random>
 
 class GenericPrior {
-	virtual double pdf(double x) = 0;
-	virtual double sample(std::mt19937_64& rng) = 0;
+	public:
+	virtual double pdf(double x) const = 0;
+	virtual double sample(std::mt19937_64& rng) const = 0;
+    virtual void print(std::ostream &out) const = 0;
 };
 
 class BetaPrior: public GenericPrior {
@@ -18,35 +22,37 @@ class BetaPrior: public GenericPrior {
 		boost::math::policies::overflow_error<
 			boost::math::policies::ignore_error>>
 		ignore_error_policy;
-	boost::math::beta_distribution<double, ignore_error_policy> beta;
-	std::uniform_real_distribution<double> unif01;
+	const boost::math::beta_distribution<double, ignore_error_policy> beta;
+	const boost::random::uniform_real_distribution<double> unif01;
 
 	public:
 	BetaPrior(const double aShape1, const double aShape2):
 		beta(aShape1, aShape2), unif01(0.0, 1.0) {}
-	double pdf(double x) override {
+	double pdf(double x) const override {
 		return boost::math::pdf(beta, x);
 	}
-	double sample(std::mt19937_64& rng) override  {
+	double sample(std::mt19937_64& rng) const override  {
 		double uniform = unif01(rng);
 		return quantile(beta, uniform);
 	}
+	void print(std::ostream &out) const override;
 };
 
 class LaplacePrior: public GenericPrior {
-	boost::math::laplace_distribution<double> laplace;
-	std::uniform_real_distribution<double> unif01;
+	const boost::math::laplace_distribution<double> laplace;
+	const boost::random::uniform_real_distribution<double> unif01;
 
 	public:
 	LaplacePrior(const double aScale):
 		laplace(0, aScale), unif01(0.0, 1.0) {}
-	double pdf(double x) override {
+	double pdf(double x) const override {
 		return boost::math::pdf(laplace, x);
 	}
-	double sample(std::mt19937_64& rng) override {
+	double sample(std::mt19937_64& rng) const override {
 		double uniform = unif01(rng);
 		return quantile(laplace, uniform);
 	}
+	void print(std::ostream &out) const override;
 };
 
 template <typename PriorType>

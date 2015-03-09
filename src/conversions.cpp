@@ -1,4 +1,6 @@
 #include "conversions.hpp"
+#include <limits>
+#include "MonteCarlo.hpp"
 #include "Parameters.hpp"
 #include "Priors.hpp"
 #include <Rcpp.h>
@@ -46,9 +48,11 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 }
 
 
-Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
+MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
 		const double scale, const double shape1, const double shape2,
-		const double prior.move.proportion, const double c.sd, const double o.sd, const double o_k_scale) {
+		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
+			using Rcpp::Rcout;
+	Rcout << "In conversion function" << "\n";
 	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
 	if (modelClass != "Peptides") {
 		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
@@ -59,27 +63,29 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 		stop(string("aProtein of class Protein expected, ") + proteinClass + " received");
 	}
 
+	Rcout << "Building o and c maps" << "\n";
 	// Build the parameters
 	// First O
 	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
-	oParams anO(anOMap);
+	//oParams anO(anOMap);
 
 	// Then C
 	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
 	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
-	cParams aC(aCMap, sampleDependency);
+	//cParams aC(aCMap, sampleDependency);
 //	NumericVector aC = aModel.slot("c");
 	//Rcpp::Rcout << aC;
 	//aC.updateC(0, 10);
 	//Rcpp::Rcout << aC;
 
 	// The priors
-	BetaPrior beta(shape1, shape2);
-	LaplacePrior laplace(scale);
-	Prior paramPrior(aC, anO, laplace, beta);
+	//BetaPrior beta(shape1, shape2);
+	//LaplacePrior laplace(scale);
+	//Prior paramPrior(aC, anO, laplace, beta);
 
 
 	// Create the peptides
+	Rcout << "Building peptides" << "\n";
 	std::vector<Peptide> peptides;
 	// Extract them from the data
 	const DataFrame data = as<DataFrame>(aProtein.slot("data"));
@@ -114,12 +120,20 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 			siteSpecs);
 		peptides.push_back(newPeptide);
 	}
+	Rcout << "Getting random numbers" << "\n";
 
-	Likelihood l (peptides, aC, anO, Constants(aVarianceModel, sampleDependency,
-		scale, shape1, shape2,
-		prior.move.proportion, c.sd, o.sd, o_k_scale));
+	// Get a RNG seeded from R
+	std::mt19937_64 prng = seedFromR();
+
+	Rcout << "Inititalizing the MC object" << "\n";
+	MonteCarlo m(peptides, aCMap, anOMap,
+		Constants(aVarianceModel, sampleDependency, scale, shape1, shape2,
+			prior_move_proportion, c_sd, o_sd, o_k_scale),
+		prng
+	);
+	Rcout << "Returning the MC object" << "\n";
 	//Rcpp::Rcout << l;
-	return(l);
+	return m;
 }
 
 
@@ -141,3 +155,13 @@ Likelihood convertS4ToLikelihood(const Rcpp::S4& aModel, const VarianceModel& aV
 //	peps.reserve()
 //	return(anO);
 //}
+
+std::mt19937_64 seedFromR() {
+	NumericVector numericSeed = Rcpp::round(Rcpp::runif(10, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()), 0);
+	typedef std::uint_least32_t seed_int_t;
+	std::vector<seed_int_t> seedVector;
+	transform(numericSeed.begin(), numericSeed.end(), back_inserter(seedVector),
+        [](double const& val) {return seed_int_t(val);});
+	std::seed_seq sseq(seedVector.begin(), seedVector.end());
+	return std::mt19937_64(sseq);
+}

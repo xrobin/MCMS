@@ -3,6 +3,8 @@
 #include "Parameters.hpp"
 #include "Peptide.hpp"
 #include "prettyprint.hpp"
+#include "Priors.hpp"
+#include "Resampler.hpp"
 #include <vector>
 
 using std::endl;
@@ -38,6 +40,35 @@ ostream& operator<< (ostream &out, const SiteSpecs &aSiteSpec) {
 	out << "<SiteSpecs@" << &aSiteSpec << ": " << aSiteSpec.siteName << " (" << (aSiteSpec.siteActivity ? "on" : "off") << "); ";
 	out << "o = {" << *(aSiteSpec.params.sample) << " (" << aSiteSpec.params.sample << "), ";
 	out << *(aSiteSpec.params.reference) << " (" << aSiteSpec.params.reference << ")}>" << endl;
+	return out;
+}
+
+ostream& operator<< (ostream &out, const GenericPrior &aPrior) {
+	aPrior.print(out);
+	return out;
+}
+
+void BetaPrior::print(ostream &out) const {
+	out << "<BetaPrior@" << this << "(" << beta.alpha() << ", "  << beta.beta() << ")>";
+}
+
+void LaplacePrior::print(ostream &out) const {
+	out << "<LaplacePrior@" << this << "(" << laplace.location() << ", "  << laplace.scale() << ")>";
+}
+
+ostream& operator<< (ostream &out, const ParamSpecs &aParamSpecs) {
+	out << "<ParamSpecs@" << &aParamSpecs << ": " << aParamSpecs.category;
+	out << ", " << aParamSpecs.index1 << ", " << aParamSpecs.index2;
+	out << "; param@" << aParamSpecs.param << " (" << *(aParamSpecs.param) << "), ";
+	out << aParamSpecs.prior << ">";
+	return out;
+}
+
+ostream& operator<< (std::ostream &out, const MoveSpec &aMoveSpec) {
+	out << "<MoveSpec@" << &aMoveSpec << ": (";
+	out << aMoveSpec.oldParam << " -> " << aMoveSpec.newParam;
+	out << "; bias = " << aMoveSpec.logPreviousBias << " -> " << aMoveSpec.logNewBias;
+	out << ")>";
 	return out;
 }
 

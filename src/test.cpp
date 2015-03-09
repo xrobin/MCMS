@@ -54,11 +54,14 @@ using std::string;
 //' ENSTestModel <- PeptidesModel(ENSTestProtein)
 //' # testCpp(slot(ENSTestModel, "c"), slot(ENSTestProtein, "sample.dependency"))
 //' testCpp(ENSTestProtein, ENSTestModel)
+//' testCpp(ENSTestModel, var.model,
+//' 	scale = 1, shape1 = .5, shape2 = .5,
+//' 	prior_move_proportion = .02, c_sd = 0.05, o_sd = 0.05, o_k_scale = 1/100)
 //' @export
 // [[Rcpp::export]]
 void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 	const double scale, const double shape1, const double shape2,
-	const double prior.move.proportion, const double c.sd, const double o.sd) {
+	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
 
 //	oParams::o_type anOMap = convertListToO(oList);
@@ -76,8 +79,18 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 //	double * ptr = aC.getPointerToC("P1_480");
 //	Rcout << ptr << " = " << *ptr << "\n";
 //	aC.updateC("P1_480", 1.01);
-//	Rcout << ptr << " = " << *ptr << "\n";
 
-	Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior.move.proportion, c.sd, o.sd, o_k_scale);
+	using Rcpp::Rcout;
+	Rcout << "In testCpp" << "\n";
+
+
+	// Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
+	MonteCarlo m = convertS4ToMonteCarlo(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
+
+	Rcout << "Got the MC object" << "\n";
+
+	m.iterate(10);
+
+	Rcout << "Done!" << "\n";
 	//Rcpp::Rcout << l;
 }

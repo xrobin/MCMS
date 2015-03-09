@@ -32,6 +32,7 @@ void cParams::updateRedundantC(const std::vector<size_t> &is) {
 }
 
 oParams::oParams(const o_type &anOMap) {
+	Rcpp::Rcout << "Constructing O\n";
 	size_t sampleNumber = 0;
 	for (auto& samplePair: anOMap) {
 	//for(auto sample_iterator = anOMap.begin(); sample_iterator != anOMap.end(); ++sample_iterator) {
@@ -56,6 +57,7 @@ oParams::oParams(const o_type &anOMap) {
 		sampleNames[sampleName] = sampleNumber;
 		++sampleNumber;
 	}
+	Rcpp::Rcout << "Constructed O\n";
 }
 
 cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependenceMatrix):
@@ -63,6 +65,7 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 		c(), redundantC(aSampleDependenceMatrix.nrow()),
 		cNames(), redundantCNames(),
 		redundantCToC(aSampleDependenceMatrix.nrow()), cToRedundantC() {
+	Rcpp::Rcout << "Constructing C\n";
 	// Info from the sample Dependency Matrix
 	int ncol = aSampleDependenceMatrix.ncol();
 	int nrow = aSampleDependenceMatrix.nrow();
