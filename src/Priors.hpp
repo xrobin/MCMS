@@ -9,8 +9,8 @@
 //#include <random>
 
 class GenericPrior {
-	double pdf(double x) = 0;
-	double sample(std::mt19937_64& rng) = 0;
+	virtual double pdf(double x) = 0;
+	virtual double sample(std::mt19937_64& rng) = 0;
 };
 
 class BetaPrior: public GenericPrior {
@@ -24,10 +24,10 @@ class BetaPrior: public GenericPrior {
 	public:
 	BetaPrior(const double aShape1, const double aShape2):
 		beta(aShape1, aShape2), unif01(0.0, 1.0) {}
-	double pdf(double x) {
+	double pdf(double x) override {
 		return boost::math::pdf(beta, x);
 	}
-	double sample(std::mt19937_64& rng) {
+	double sample(std::mt19937_64& rng) override  {
 		double uniform = unif01(rng);
 		return quantile(beta, uniform);
 	}
@@ -40,10 +40,10 @@ class LaplacePrior: public GenericPrior {
 	public:
 	LaplacePrior(const double aScale):
 		laplace(0, aScale), unif01(0.0, 1.0) {}
-	double pdf(double x) {
+	double pdf(double x) override {
 		return boost::math::pdf(laplace, x);
 	}
-	double sample(std::mt19937_64& rng) {
+	double sample(std::mt19937_64& rng) override {
 		double uniform = unif01(rng);
 		return quantile(laplace, uniform);
 	}
