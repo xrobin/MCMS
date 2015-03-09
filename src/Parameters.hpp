@@ -1,12 +1,13 @@
 #pragma once
 
+#include "Helpers.hpp"
 #include <map>
-#include <vector>
 // #include "prettyprint.hpp"
 #include <Rcpp.h>
 #include <stdexcept>
 #include <string>
 #include "VarianceModel.hpp"
+#include <vector>
 
 //#include "typedefs.hpp"
 
