@@ -24,7 +24,7 @@ class RandomizingVector {
         std::vector<T> myVector;
 
         public:
-        RandomizingConstVector(const std::vector<T>& aVector):
+        RandomizingVector(const std::vector<T>& aVector):
                 uniform(0, aVector.size() - 1), myVector(aVector) {}
 
         const T& getRandomElementByReference(std::mt19937_64& rng) {
