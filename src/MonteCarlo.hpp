@@ -5,32 +5,6 @@
 #include "Likelihood.hpp"
 #include "Priors.hpp"
 #include "Resampler.hpp"
-#include <stdexcept>
-
-class ParamSpecs {
-	public:
-	enum ParamCategory { c, o };
-	const ParamCategory category;
-	const size_t index1, index2; // 1: c or sample (o); 2, o only: site
-	GenericPrior& prior;
-
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, GenericPrior& aPrior): // c
-		category(aCategory), index1(anIndex1), index2(0), prior(aPrior) {
-			if (category != c) {
-				throw std::invalid_argument("One argument constructor expects to receive a 'c' category param");
-			}
-		}
-	ParamSpecs(const ParamCategory& aCategory, const size_t anIndex1, const size_t anIndex2, GenericPrior& aPrior): // o
-		category(aCategory), index1(anIndex1), index2(anIndex2), prior(aPrior) {
-			if (category != o) {
-				throw std::invalid_argument("Two argument constructor expects to receive an 'o' category param");
-			}
-		}
-};
-
-/** A linear representation of all the parameters */
-//typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector; // can't be const because of the distributions :(
-typedef RandomizingVector<ParamSpecs> ParamSpecsVector;
 
 class MonteCarlo {
 	const Constants constants;
