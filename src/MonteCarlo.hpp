@@ -28,7 +28,8 @@ class ParamSpecs {
 };
 
 /** A linear representation of all the parameters */
-typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector;
+//typedef RandomizingConstVector<ParamSpecs> ParamSpecsVector; // can't be const because of the distributions :(
+typedef RandomizingVector<ParamSpecs> ParamSpecsVector;
 
 class MonteCarlo {
 	const Constants constants;
