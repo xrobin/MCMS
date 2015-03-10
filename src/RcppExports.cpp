@@ -5,16 +5,17 @@
 
 using namespace Rcpp;
 
-// testCpp
-NumericVector testCpp(const S4& aModel, const List& aVarianceModelAsList, const unsigned long i, const double scale, const double shape1, const double shape2, const double o_restrict, const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
-RcppExport SEXP MCMS_testCpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP iSEXP, SEXP scaleSEXP, SEXP shape1SEXP, SEXP shape2SEXP, SEXP o_restrictSEXP, SEXP prior_move_proportionSEXP, SEXP c_sdSEXP, SEXP o_sdSEXP, SEXP o_k_scaleSEXP) {
+// run_MCMC_Cpp
+NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList, const unsigned long n, const unsigned long n_out, const double scale, const double shape1, const double shape2, const double o_restrict, const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
+RcppExport SEXP MCMS_run_MCMC_Cpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP nSEXP, SEXP n_outSEXP, SEXP scaleSEXP, SEXP shape1SEXP, SEXP shape2SEXP, SEXP o_restrictSEXP, SEXP prior_move_proportionSEXP, SEXP c_sdSEXP, SEXP o_sdSEXP, SEXP o_k_scaleSEXP) {
 BEGIN_RCPP
     SEXP __sexp_result;
     {
         Rcpp::RNGScope __rngScope;
         Rcpp::traits::input_parameter< const S4& >::type aModel(aModelSEXP );
         Rcpp::traits::input_parameter< const List& >::type aVarianceModelAsList(aVarianceModelAsListSEXP );
-        Rcpp::traits::input_parameter< const unsigned long >::type i(iSEXP );
+        Rcpp::traits::input_parameter< const unsigned long >::type n(nSEXP );
+        Rcpp::traits::input_parameter< const unsigned long >::type n_out(n_outSEXP );
         Rcpp::traits::input_parameter< const double >::type scale(scaleSEXP );
         Rcpp::traits::input_parameter< const double >::type shape1(shape1SEXP );
         Rcpp::traits::input_parameter< const double >::type shape2(shape2SEXP );
@@ -23,7 +24,7 @@ BEGIN_RCPP
         Rcpp::traits::input_parameter< const double >::type c_sd(c_sdSEXP );
         Rcpp::traits::input_parameter< const double >::type o_sd(o_sdSEXP );
         Rcpp::traits::input_parameter< const double >::type o_k_scale(o_k_scaleSEXP );
-        NumericVector __result = testCpp(aModel, aVarianceModelAsList, i, scale, shape1, shape2, o_restrict, prior_move_proportion, c_sd, o_sd, o_k_scale);
+        NumericVector __result = run_MCMC_Cpp(aModel, aVarianceModelAsList, n, n_out, scale, shape1, shape2, o_restrict, prior_move_proportion, c_sd, o_sd, o_k_scale);
         PROTECT(__sexp_result = Rcpp::wrap(__result));
     }
     UNPROTECT(1);
