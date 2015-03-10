@@ -37,14 +37,14 @@ MoveSpec Resampler::resampleO(const ParamSpecs& paramSpec, const double param) {
 
 MoveSpec Resampler::resampleCFromPrior(const ParamSpecs& paramSpec, const double oldC) {
 	double logPreviousBias = std::log(paramSpec.prior.pdf(oldC));
-	double newC = paramSpec.prior.pdf(oldC);
+	double newC = paramSpec.prior.sample(rng);
 	double logNewBias = std::log(paramSpec.prior.pdf(newC));
 	return MoveSpec(oldC, newC, logPreviousBias, logNewBias);
 }
 
 MoveSpec Resampler::resampleOFromPrior(const ParamSpecs& paramSpec, const double oldO) {
 	double logPreviousBias = std::log(paramSpec.prior.pdf(oldO));
-	double newO = paramSpec.prior.pdf(oldO);
+	double newO = paramSpec.prior.sample(rng);
 	double logNewBias = std::log(paramSpec.prior.pdf(newO));
 	return MoveSpec(oldO, newO, logPreviousBias, logNewBias);
 }
