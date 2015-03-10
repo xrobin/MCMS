@@ -1,5 +1,6 @@
 #include <iostream> // cout
 #include "Likelihood.hpp"
+#include "MonteCarlo.hpp"
 #include "Parameters.hpp"
 #include "Peptide.hpp"
 #include "prettyprint.hpp"
@@ -56,15 +57,47 @@ void LaplacePrior::print(ostream &out) const {
 	out << "<LaplacePrior@" << this << "(" << laplace.location() << ", "  << laplace.scale() << ")>";
 }
 
+ostream& operator<< (ostream& out, const VarianceModel& aVarianceModel) {
+	out << "<VarianceModel@" << &aVarianceModel << " (";
+	out << "rate0 = " << aVarianceModel.rate0;
+	out << ", rate1 = " << aVarianceModel.rate1;
+	out << ", rate2 = " << aVarianceModel.rate2;
+	out << ", shape0 = " << aVarianceModel.shape0;
+	out << ")>";
+	return out;
+}
+
+
+ostream& operator<< (ostream& out, const Constants& someConstants) {
+	out << "<Constants@" << &someConstants << " (";
+	out << "varianceModel = " << someConstants.varianceModel << endl;
+	out << "sampleDependenceMatrix = " << someConstants.sampleDependenceMatrix << endl;
+	out << ", shape1 = " << someConstants.shape1;
+	out << ", shape2 = " << someConstants.shape2;
+	out << ", scale = " << someConstants.scale;
+	out << ", priorMoveProportion = " << someConstants.priorMoveProportion;
+	out << ", c_sd = " << someConstants.c_sd;
+	out << ", o_sd = " << someConstants.o_sd;
+	out << ", o_k_scale = " << someConstants.o_k_scale;
+	out << ", shape1 = " << someConstants.shape1;
+	out << ")>";
+	return out;
+}
+
 ostream& operator<< (ostream &out, const ParamSpecs &aParamSpecs) {
-	out << "<ParamSpecs@" << &aParamSpecs << ": " << aParamSpecs.category;
+	out << "<ParamSpecs@" << &aParamSpecs << ": ";
+	// Print the category as text (default for an enum is integer)
+	switch(aParamSpecs.category) {
+		case ParamSpecs::c: out << "c"; break;
+		case ParamSpecs::o: out << "o"; break;
+	}
 	out << ", " << aParamSpecs.index1 << ", " << aParamSpecs.index2;
 	out << "; param@" << aParamSpecs.param << " (" << *(aParamSpecs.param) << "), ";
 	out << aParamSpecs.prior << ">";
 	return out;
 }
 
-ostream& operator<< (std::ostream &out, const MoveSpec &aMoveSpec) {
+ostream& operator<< (ostream &out, const MoveSpec &aMoveSpec) {
 	out << "<MoveSpec@" << &aMoveSpec << ": (";
 	out << aMoveSpec.oldParam << " -> " << aMoveSpec.newParam;
 	out << "; bias = " << aMoveSpec.logPreviousBias << " -> " << aMoveSpec.logNewBias;
@@ -136,5 +169,29 @@ ostream& operator<< (ostream &out, const oParams &anOParams) {
 		}
 	}
 	out << "]" << endl;
+	return out;
+}
+
+
+ostream& operator<< (ostream& out, const Prior& aPrior) {
+	out << "<aPrior@" << &aPrior << ":" << endl;
+	//out << aPrior.laplace << endl;
+	//out << aPrior.beta << endl;
+	//out << "cPriors = " << aPrior.cPriors << endl;
+	//out << "oPriors = " << aPrior.oPriors << endl;
+	return out;
+}
+
+
+ostream& operator<< (ostream &out, const MonteCarlo &aMonteCarlo) {
+	out << "<MonteCarlo@" << &aMonteCarlo << ":" << endl;
+	out << aMonteCarlo.constants << endl;
+	out << aMonteCarlo.c << endl;
+	out << aMonteCarlo.o << endl;
+	//out << aMonteCarlo.p << endl;
+	out << aMonteCarlo.l << endl;
+	//out << aMonteCarlo.paramSpecs << endl;
+	out << "<Resampler@" << &(aMonteCarlo.resampler)  << ">" << endl;
+	out << ">" << endl;
 	return out;
 }

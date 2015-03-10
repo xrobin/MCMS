@@ -80,17 +80,15 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 //	Rcout << ptr << " = " << *ptr << "\n";
 //	aC.updateC("P1_480", 1.01);
 
-	using Rcpp::Rcout;
-	Rcout << "In testCpp" << "\n";
-
-
 	// Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
 	MonteCarlo m = convertS4ToMonteCarlo(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
 
-	Rcout << "Got the MC object" << "\n";
+	Rcpp::Rcout << m;
 
-	m.iterate(10);
+	m.iterate(100);
 
-	Rcout << "Done!" << "\n";
+	Rcpp::Rcout << m.getCByReference() << std::endl;
+	Rcpp::Rcout << m.getOByReference() << std::endl;
+
 	//Rcpp::Rcout << l;
 }

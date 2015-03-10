@@ -46,4 +46,14 @@ class MonteCarlo {
 
 	void iterate(unsigned long);
 	void iterate();
+
+	oParams& getOByReference() {
+		return o;
+	}
+	cParams& getCByReference() {
+		return c;
+	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream&, const MonteCarlo&);
 };

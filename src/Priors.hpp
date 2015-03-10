@@ -93,8 +93,16 @@ class ParamPriors {
 	}
 
 	/** Output */
-	//friend std::ostream& operator<< (std::ostream &out, const PeptideLikelihood &aPeptideLikelihood);
+	friend std::ostream& operator<< (std::ostream&, const ParamPriors<PriorType>&);
 };
+
+template <typename PriorType>
+std::ostream& operator<< (std::ostream &out, const ParamPriors<PriorType> &someParamPriors) {
+	out << "<ParamPriors@" << &someParamPriors;
+	out << ": " << someParamPriors.param << " (" << *(someParamPriors.param) << "), " << someParamPriors.priorValue;
+	out << someParamPriors.prior;
+	out << ">";
+}
 
 
 /** This class complements the likelihood in the Monte Carlo estimation and computes the prior
@@ -149,4 +157,7 @@ class Prior {
 	void acceptC(const size_t i) {
 		cPriors.at(i).accept();
 	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream&, const Prior&);
 };

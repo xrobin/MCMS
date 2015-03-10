@@ -8,7 +8,7 @@ using std::endl;
 void MonteCarlo::iterate() {
 	// Choose parameter to change
 	const ParamSpecs& randomParam = paramSpecs.getRandomElementByReference(rng);
-	cout << randomParam << endl;
+	cout << endl << randomParam << endl;
 	if (randomParam.category == ParamSpecs::c) {
 		// 1. Get previous C
 		double oldC = c.getC(randomParam.index1);
@@ -48,10 +48,12 @@ void MonteCarlo::iterate() {
 		double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
 		cout << "Prior change: " << priorChange << endl;
 		if (move.accept(likelihoodChange + priorChange, rng)) {
+			cout << "Accepted!" << endl;
 			l.acceptO(randomParam.index1, randomParam.index2);
 			p.acceptO(randomParam.index1, randomParam.index2);
 		}
 		else {
+			cout << "Rejected!" << endl;
 			o.setO(randomParam.index1, randomParam.index2, oldO);
 		}
 	}
@@ -60,7 +62,6 @@ void MonteCarlo::iterate() {
 
 
 void MonteCarlo::iterate(unsigned long i) {
-	Rcpp::Rcout << i << "\n";
 	while (i--) {
 		iterate();
 	}

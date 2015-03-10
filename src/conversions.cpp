@@ -2,6 +2,7 @@
 #include <limits>
 #include "MonteCarlo.hpp"
 #include "Parameters.hpp"
+#include "prettyprint.hpp"
 #include "Priors.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames
@@ -52,7 +53,6 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 		const double scale, const double shape1, const double shape2,
 		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 			using Rcpp::Rcout;
-	Rcout << "In conversion function" << "\n";
 	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
 	if (modelClass != "Peptides") {
 		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
@@ -63,7 +63,6 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 		stop(string("aProtein of class Protein expected, ") + proteinClass + " received");
 	}
 
-	Rcout << "Building o and c maps" << "\n";
 	// Build the parameters
 	// First O
 	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
@@ -85,7 +84,6 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 
 
 	// Create the peptides
-	Rcout << "Building peptides" << "\n";
 	std::vector<Peptide> peptides;
 	// Extract them from the data
 	const DataFrame data = as<DataFrame>(aProtein.slot("data"));
@@ -120,18 +118,15 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 			siteSpecs);
 		peptides.push_back(newPeptide);
 	}
-	Rcout << "Getting random numbers" << "\n";
 
 	// Get a RNG seeded from R
 	std::mt19937_64 prng = seedFromR();
 
-	Rcout << "Inititalizing the MC object" << "\n";
 	MonteCarlo m(peptides, aCMap, anOMap,
 		Constants(aVarianceModel, sampleDependency, scale, shape1, shape2,
 			prior_move_proportion, c_sd, o_sd, o_k_scale),
 		prng
 	);
-	Rcout << "Returning the MC object" << "\n";
 	//Rcpp::Rcout << l;
 	return m;
 }
@@ -157,11 +152,14 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 //}
 
 std::mt19937_64 seedFromR() {
+	Rcpp::RNGScope scope;		// ensure RNG gets set/reset
+
 	NumericVector numericSeed = Rcpp::round(Rcpp::runif(10, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()), 0);
 	typedef std::uint_least32_t seed_int_t;
 	std::vector<seed_int_t> seedVector;
 	transform(numericSeed.begin(), numericSeed.end(), back_inserter(seedVector),
         [](double const& val) {return seed_int_t(val);});
+	Rcpp::Rcout << seedVector << std::endl;
 	std::seed_seq sseq(seedVector.begin(), seedVector.end());
 	return std::mt19937_64(sseq);
 }

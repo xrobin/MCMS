@@ -29,4 +29,7 @@ class VarianceModel {
 		double nu_s = nu + 2 * calcPriorShape();
 		return (nu_s + 1) / 2;
 	}
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream&, const VarianceModel&);
 };

@@ -26,6 +26,9 @@ class Constants {
 		varianceModel(aVarianceModel), sampleDependenceMatrix(aSampleDependenceMatrix),
 		shape1(aShape1), shape2(aShape2), scale(aScale),
 		priorMoveProportion(aPriorMoveProportion), c_sd(aC_sd), o_sd(anO_sd), o_k_scale(anO_k_scale) {};
+
+	/** Output */
+	friend std::ostream& operator<< (std::ostream&, const Constants&);
 };
 
 
