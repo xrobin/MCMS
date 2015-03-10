@@ -15,6 +15,9 @@ class GenericPrior {
 	virtual double pdf(double x) const = 0;
 	virtual double sample(std::mt19937_64& rng) const = 0;
     virtual void print(std::ostream &out) const = 0;
+    virtual bool isValid(double x) const { //valid by default...
+    	return true;
+    }
 };
 
 class BetaPrior: public GenericPrior {
@@ -24,16 +27,31 @@ class BetaPrior: public GenericPrior {
 		ignore_error_policy;
 	const boost::math::beta_distribution<double, ignore_error_policy> beta;
 	const boost::random::uniform_real_distribution<double> unif01;
+	const double o_restrict;
 
 	public:
-	BetaPrior(const double aShape1, const double aShape2):
-		beta(aShape1, aShape2), unif01(0.0, 1.0) {}
+	BetaPrior(const double aShape1, const double aShape2,
+		const double anO_restrict):
+		beta(aShape1, aShape2), unif01(0.0, 1.0),
+		o_restrict(anO_restrict) {}
+
 	double pdf(double x) const override {
+		if (!isValid(x)) {
+			return 0;
+		}
 		return boost::math::pdf(beta, x);
 	}
 	double sample(std::mt19937_64& rng) const override  {
 		double uniform = unif01(rng);
-		return quantile(beta, uniform);
+		double val = quantile(beta, uniform);
+		if (!isValid(val)) {
+			return std::numeric_limits<double>::signaling_NaN();
+		}
+		return val;
+	}
+	/** Returns true if x is in the range between lowerBound and upperBound, false otherwise */
+	bool isValid(double x) const override {
+		return x > o_restrict && x < (1 - o_restrict);
 	}
 	void print(std::ostream &out) const override;
 };
@@ -133,8 +151,9 @@ class Prior {
 		updateAll();
 	}
 	Prior(cParams &aC, oParams &anO,
-		const double aScale, const double aShape1, const double aShape2):
-			Prior(aC, anO, LaplacePrior(aScale), BetaPrior(aShape1, aShape2)) {}
+		const double aScale, const double aShape1, const double aShape2,
+		const double anO_restrict):
+			Prior(aC, anO, LaplacePrior(aScale), BetaPrior(aShape1, aShape2, anO_restrict)) {}
 
 	LaplacePrior& getLaplacePrior() {return laplace;}
 	BetaPrior& getBetaPrior() {return beta;}

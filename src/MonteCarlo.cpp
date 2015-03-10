@@ -15,47 +15,49 @@ void MonteCarlo::iterate() {
 		// 2. resample a new c
 		MoveSpec move = resampler.resampleC(randomParam, oldC);
 		cout << "Move: " << move << endl;
-		double newC = move.newParam;
-		// 3. Update the parameter
-		c.setC(randomParam.index1, newC);
-		// 4. Query new likelihood
-		double likelihoodChange = l.temptativeChangedC(randomParam.index1);
-		cout << "Likelihood change: " << likelihoodChange << endl;
-		// 5. Query new prior
-		double priorChange = p.temptativeChangedC(randomParam.index1);
-		cout << "Prior change: " << priorChange << endl;
-		// 6 decide acceptance
-		if (move.accept(likelihoodChange + priorChange, rng)) {
-			cout << "Accepted!" << endl;
-			l.acceptC(randomParam.index1);
-			p.acceptC(randomParam.index1);
+		if (move.valid) {
+			// 3. Update the parameter
+			c.setC(randomParam.index1, move.newParam);
+			// 4. Query new likelihood
+			double likelihoodChange = l.temptativeChangedC(randomParam.index1);
+			cout << "Likelihood change: " << likelihoodChange << endl;
+			// 5. Query new prior
+			double priorChange = p.temptativeChangedC(randomParam.index1);
+			cout << "Prior change: " << priorChange << endl;
+			// 6 decide acceptance
+			if (move.accept(likelihoodChange + priorChange, rng)) {
+				cout << "Accepted!" << endl;
+				l.acceptC(randomParam.index1);
+				p.acceptC(randomParam.index1);
+			}
+			else {
+				cout << "Rejected!" << endl;
+				c.setC(randomParam.index1, oldC);
+				// There is no need for explicit reject
+			}
 		}
-		else {
-			cout << "Rejected!" << endl;
-			c.setC(randomParam.index1, oldC);
-			// There is no need for explicit reject
-		}
-
 	}
 	else { // we have an o
 		double oldO = o.getO(randomParam.index1, randomParam.index2);
 		MoveSpec move = resampler.resampleO(randomParam, oldO);
 		cout << "Move: " << move << endl;
-		double newO = move.newParam;
-		o.setO(randomParam.index1, randomParam.index2, newO);
-		double likelihoodChange = l.temptativeChangedO(randomParam.index1, randomParam.index2);
-		cout << "Likelihood change: " << likelihoodChange << endl;
-		double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
-		cout << "Prior change: " << priorChange << endl;
-		if (move.accept(likelihoodChange + priorChange, rng)) {
-			cout << "Accepted!" << endl;
-			l.acceptO(randomParam.index1, randomParam.index2);
-			p.acceptO(randomParam.index1, randomParam.index2);
+		if (move.valid) {
+			o.setO(randomParam.index1, randomParam.index2, move.newParam);
+			double likelihoodChange = l.temptativeChangedO(randomParam.index1, randomParam.index2);
+			cout << "Likelihood change: " << likelihoodChange << endl;
+			double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
+			cout << "Prior change: " << priorChange << endl;
+			if (move.accept(likelihoodChange + priorChange, rng)) {
+				cout << "Accepted!" << endl;
+				l.acceptO(randomParam.index1, randomParam.index2);
+				p.acceptO(randomParam.index1, randomParam.index2);
+			}
+			else {
+				cout << "Rejected!" << endl;
+				o.setO(randomParam.index1, randomParam.index2, oldO);
+			}
 		}
-		else {
-			cout << "Rejected!" << endl;
-			o.setO(randomParam.index1, randomParam.index2, oldO);
-		}
+
 	}
 	//throw std::runtime_error("Save the parameters & likelihood!");
 }

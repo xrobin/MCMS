@@ -60,7 +60,7 @@ using std::string;
 //' @export
 // [[Rcpp::export]]
 void testCpp(const S4& aModel, const List& aVarianceModelAsList,
-	const double scale, const double shape1, const double shape2,
+	const double scale, const double shape1, const double shape2, const double o_restrict,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
 
@@ -81,7 +81,8 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 //	aC.updateC("P1_480", 1.01);
 
 	// Likelihood l = convertS4ToLikelihood(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
-	MonteCarlo m = convertS4ToMonteCarlo(aModel, aVarianceModel, scale, shape1, shape2, prior_move_proportion, c_sd, o_sd, o_k_scale);
+	MonteCarlo m = convertS4ToMonteCarlo(aModel, aVarianceModel, scale, shape1, shape2, o_restrict,
+		prior_move_proportion, c_sd, o_sd, o_k_scale);
 
 	Rcpp::Rcout << m;
 

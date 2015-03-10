@@ -43,8 +43,11 @@ MoveSpec Resampler::resampleCFromPrior(const ParamSpecs& paramSpec, const double
 }
 
 MoveSpec Resampler::resampleOFromPrior(const ParamSpecs& paramSpec, const double oldO) {
-	double logPreviousBias = std::log(paramSpec.prior.pdf(oldO));
 	double newO = paramSpec.prior.sample(rng);
+	if (std::isnan(newO)) { // The resampled
+		return (MoveSpec(false));
+	}
+	double logPreviousBias = std::log(paramSpec.prior.pdf(oldO));
 	double logNewBias = std::log(paramSpec.prior.pdf(newO));
 	return MoveSpec(oldO, newO, logPreviousBias, logNewBias);
 }
@@ -60,6 +63,9 @@ MoveSpec Resampler::resampleOStandard(const ParamSpecs& paramSpec, const double 
 	// Resample a new O
 	boost::random::normal_distribution<double>::param_type local_params(0, oldSigma);
 	double newO =  oldO + o_normal(rng, local_params);
+	if (! paramSpec.prior.isValid(newO)) {
+		return (MoveSpec(false));
+	}
 	double newSigma = calcSigma(paramSpec.prior, newO, constants.o_sd, constants.o_k_scale);
 	// Calculate the biases
 	// Previous

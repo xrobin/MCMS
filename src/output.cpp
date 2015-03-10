@@ -75,6 +75,7 @@ ostream& operator<< (ostream& out, const Constants& someConstants) {
 	out << ", shape1 = " << someConstants.shape1;
 	out << ", shape2 = " << someConstants.shape2;
 	out << ", scale = " << someConstants.scale;
+	out << ", o_restrict = " << someConstants.o_restrict;
 	out << ", priorMoveProportion = " << someConstants.priorMoveProportion;
 	out << ", c_sd = " << someConstants.c_sd;
 	out << ", o_sd = " << someConstants.o_sd;

@@ -50,7 +50,7 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 
 
 MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
-		const double scale, const double shape1, const double shape2,
+		const double scale, const double shape1, const double shape2, const double o_restrict,
 		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 			using Rcpp::Rcout;
 	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
@@ -123,7 +123,7 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 	std::mt19937_64 prng = seedFromR();
 
 	MonteCarlo m(peptides, aCMap, anOMap,
-		Constants(aVarianceModel, sampleDependency, scale, shape1, shape2,
+		Constants(aVarianceModel, sampleDependency, scale, shape1, shape2, o_restrict,
 			prior_move_proportion, c_sd, o_sd, o_k_scale),
 		prng
 	);

@@ -4,16 +4,23 @@
 #include <boost/random/uniform_real_distribution.hpp>
 #include <iostream>
 #include "Parameters.hpp"
+#include <stdexcept>
 
 class MoveSpec {
 	static const boost::random::uniform_real_distribution<double> unif01;
 
 	public:
+	const bool valid;
 	const double oldParam, newParam;
 	const double logPreviousBias, logNewBias;
 
+	explicit MoveSpec(const bool aBool): valid(aBool), oldParam(0), newParam(0), logPreviousBias(0), logNewBias(0) {
+		if (valid) {
+			throw std::invalid_argument("MoveSpec constructor with bool can only be called with false");
+		}
+	}
 	MoveSpec(const double anOldParam, const double aNewParam, const double logPreviousBias, const double logNewBias):
-		oldParam(anOldParam), newParam(aNewParam), logPreviousBias(logPreviousBias), logNewBias(logNewBias) {}
+		valid(true), oldParam(anOldParam), newParam(aNewParam), logPreviousBias(logPreviousBias), logNewBias(logNewBias) {}
 	bool accept(const double, std::mt19937_64&);
 
 	/** Output */
