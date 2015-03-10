@@ -16,7 +16,8 @@ using Rcpp::NumericVector;
 using std::string;
 
 // [[Rcpp::export]]
-NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList, const unsigned long n, const unsigned long n_out,
+NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
+	const unsigned long n, const unsigned long n_out, const unsigned long burn_in,
 	const double scale, const double shape1, const double shape2, const double o_restrict,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
@@ -26,7 +27,7 @@ NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList, c
 
 	Rcpp::Rcout << m;
 
-	NumericMatrix res = m.iterate(n, n_out);
+	NumericMatrix res = m.iterate(n, n_out, burn_in);
 	Rcpp::colnames(res, as<CharacterVector>(Rcpp::wrap(m.getIterateNames())));
 
 	Rcpp::Rcout << m.getCByReference() << std::endl;

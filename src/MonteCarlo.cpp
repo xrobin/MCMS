@@ -12,7 +12,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-NumericVector MonteCarlo::iterate() {
+void MonteCarlo::iterate() {
 	// Choose parameter to change
 	const ParamSpecs& randomParam = paramSpecs.getRandomElementByReference(rng);
 //	cout << endl << randomParam << endl;
@@ -65,7 +65,9 @@ NumericVector MonteCarlo::iterate() {
 			}
 		}
 	}
+}
 
+NumericVector MonteCarlo::recordState() {
 	// Save the parameters
 	NumericVector McResult(paramSpecs.size() + 2);
 	int i = 0;
@@ -74,24 +76,24 @@ NumericVector MonteCarlo::iterate() {
 	}
 	McResult[i++] = l.getLikelihoodValue();
 	McResult[i++] = p.getPriorTotal();
-	//McResult.reserve(ParamSpecs.size() + 2)
-	//for (const ParamSpecs& val: paramSpecs) {
-	//	McResult.push_back(*(val.param));
-	//}
-	//transform(paramSpecs.begin(), paramSpecs.end(), std::back_inserter(McResult),
-    //    [](ParamSpecs const& val) {return *(val.param);});
-	// Also likelihood and prior
-	//McResult.push_back(l.getLikelihoodValue());
-	//McResult.push_back(p.getPriorTotal());
 	return McResult;
 }
 
 
-NumericMatrix MonteCarlo::iterate(unsigned long i) {
-	NumericMatrix McResult(i, paramSpecs.size() + 2);
+NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_out, const unsigned long burn_in) {
+	const unsigned long n2 = n - burn_in;
+	if (n2 % n_out != 0) {
+		throw std::invalid_argument("n - burn_in must be a multiple of n_out");
+	}
+	NumericMatrix McResult(n_out, paramSpecs.size() + 2);
 
-	for (unsigned long j = 0; j < i; ++j) {
-		McResult(j, Rcpp::_) = iterate();
+	size_t i = 0;
+	for (unsigned long j = 0; j < n; ++j) {
+		iterate();
+		if ((j >= burn_in) && ((j - burn_in) % (n2 / n_out)) == 0) {
+			McResult(i, Rcpp::_) = recordState();
+			++i;
+		}
 	}
 	return McResult;
 }

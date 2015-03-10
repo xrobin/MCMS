@@ -47,8 +47,9 @@ class MonteCarlo {
 		rng(std::move(old.rng)),
 		resampler(std::move(old.resampler)){}
 
-	Rcpp::NumericMatrix iterate(unsigned long);
-	Rcpp::NumericVector iterate();
+	Rcpp::NumericMatrix iterate(const unsigned long, const unsigned long, const unsigned long);
+	void iterate();
+	Rcpp::NumericVector recordState();
 
 	std::vector<std::string> getIterateNames();
 	std::vector<std::string> getParamNames();
