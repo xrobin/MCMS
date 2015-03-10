@@ -112,11 +112,12 @@ class ParamPriors {
 	}
 
 	/** Output */
-	friend std::ostream& operator<< (std::ostream&, const ParamPriors<PriorType>&);
+	template <typename T>
+	friend std::ostream& operator<< (std::ostream&, const ParamPriors<T>&);
 };
 
-template <typename PriorType>
-std::ostream& operator<< (std::ostream &out, const ParamPriors<PriorType> &someParamPriors) {
+template <typename T>
+std::ostream& operator<< (std::ostream &out, const ParamPriors<T> &someParamPriors) {
 	out << "<ParamPriors@" << &someParamPriors;
 	out << ": " << someParamPriors.param << " (" << *(someParamPriors.param) << "), " << someParamPriors.priorValue;
 	out << someParamPriors.prior;

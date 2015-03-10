@@ -39,7 +39,8 @@ class RandomizingConstVector {
 	};
 
 	/** Output */
-	friend std::ostream& operator<< (std::ostream&, const RandomizingConstVector&);
+	template<class Y>
+	friend std::ostream& operator<< (std::ostream&, const RandomizingConstVector<Y>&);
 };
 
 template <typename T>
@@ -84,19 +85,20 @@ class RandomizingVector {
 	};
 
 	/** Output */
-	friend std::ostream& operator<< (std::ostream&, const RandomizingVector&);
+	template<class Y>
+	friend std::ostream& operator<< (std::ostream&, const RandomizingVector<Y>&);
 };
 
 
 
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const RandomizingConstVector<T>& aCV) {
+template <typename Y>
+std::ostream& operator<< (std::ostream& out, const RandomizingConstVector<Y>& aCV) {
 	out << aCV.myVector;
 	return out;
 }
 
-template <typename T>
-std::ostream& operator<< (std::ostream& out, const RandomizingVector<T>& aV) {
+template <typename Y>
+std::ostream& operator<< (std::ostream& out, const RandomizingVector<Y>& aV) {
 	out << aV.myVector;
 	return out;
 }
