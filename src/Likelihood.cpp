@@ -148,7 +148,7 @@ double Likelihood::temptativeChangedO(const size_t sample, const size_t site) {
 	return temptativeLikelihoodValue - likelihoodValue;
 }
 
-void Likelihood::acceptC(const size_t i) {
+double Likelihood::acceptC(const size_t i) {
 	// Accept the local temptative likelihood value
 	likelihoodValue = temptativeLikelihoodValue;
 	std::vector<PeptideLikelihood*> affected = onupdate_c.at(i);
@@ -156,8 +156,9 @@ void Likelihood::acceptC(const size_t i) {
 	for (PeptideLikelihood* pl: affected) {
 		pl->accept();
 	}
+	return likelihoodValue;
 }
-void Likelihood::acceptO(const size_t sample, const size_t site) {
+double Likelihood::acceptO(const size_t sample, const size_t site) {
 	// Accept the local temptative likelihood value
 	likelihoodValue = temptativeLikelihoodValue;
 	std::vector<PeptideLikelihood*> affected = onupdate_o.at(sample).at(site);
@@ -165,4 +166,5 @@ void Likelihood::acceptO(const size_t sample, const size_t site) {
 	for (PeptideLikelihood* pl: affected) {
 		pl->accept();
 	}
+	return likelihoodValue;
 }

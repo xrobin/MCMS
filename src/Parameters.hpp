@@ -107,6 +107,10 @@ public:
 		return redundantCNames.at(key);
 	}
 
+	/** Discover key from index */
+	std::string getName(const size_t i) const;
+	std::string getRedundantName(const size_t i) const;
+
 	/** When I have a redundant c, which non redundant c(s) are involved? */
 	std::vector<size_t> getNonRedundantCFromRedundantC(const size_t i) const {
 		return redundantCToC.at(i);
@@ -207,6 +211,10 @@ public:
 	size_t getSecondIndexOnO(const size_t sample, const std::string& site) const {
 		return siteNames.at(sample).at(site);
 	}
+
+	/** Discover key from index */
+	std::string getSampleName(const size_t sample) const;
+	std::string getSiteName(const size_t sample, const size_t site) const;
 
 //	void prettyprint() const {
 //		std::cout << "o = " << o << std::endl;

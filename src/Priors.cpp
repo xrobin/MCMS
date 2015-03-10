@@ -35,3 +35,34 @@ double Prior::updateAll() {
 	}
 	return priorTotal;
 }
+
+double Prior::changedO(const size_t sample, const size_t site) {
+	double previousPriorTotal = priorTotal;
+	priorTotal += oPriors.at(sample).at(site).changed();
+	return priorTotal - previousPriorTotal;
+}
+double Prior::temptativeChangedO(const size_t sample, const size_t site) {
+	temptativePriorTotal = priorTotal;
+	temptativePriorTotal += oPriors.at(sample).at(site).temptativeChanged();
+	return temptativePriorTotal - priorTotal;
+}
+double Prior::acceptO(const size_t sample, const size_t site) {
+	oPriors.at(sample).at(site).accept();
+	priorTotal = temptativePriorTotal;
+	return priorTotal;
+}
+double Prior::changedC(const size_t i) {
+	double previousPriorTotal = priorTotal;
+	priorTotal += cPriors.at(i).changed();
+	return priorTotal - previousPriorTotal;
+}
+double Prior::temptativeChangedC(const size_t i) {
+	temptativePriorTotal = priorTotal;
+	temptativePriorTotal += cPriors.at(i).temptativeChanged();
+	return temptativePriorTotal - priorTotal;
+}
+double Prior::acceptC(const size_t i) {
+	cPriors.at(i).accept();
+	priorTotal = temptativePriorTotal;
+	return priorTotal;
+}

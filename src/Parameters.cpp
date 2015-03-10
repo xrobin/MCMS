@@ -113,3 +113,41 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 
 	updateRedundantC();
 }
+
+string cParams::getName(const size_t i) const {
+	for (const std::pair<string, size_t>& name: cNames) {
+		if (name.second == i) {
+			return name.first;
+		}
+	}
+	throw std::out_of_range("Index not found");
+}
+
+string cParams::getRedundantName(const size_t i) const {
+	for (const std::pair<string, size_t>& name: redundantCNames) {
+		if (name.second == i) {
+			return name.first;
+		}
+	}
+	throw std::out_of_range("Index not found");
+}
+
+string oParams::getSampleName(const size_t sample) const {
+	for (const std::pair<string, size_t>& name: sampleNames) {
+		if (name.second == sample) {
+			return name.first;
+		}
+	}
+	throw std::out_of_range("Index not found");
+}
+
+
+string oParams::getSiteName(const size_t sample, const size_t site) const {
+	const std::unordered_map<std::string, size_t>& sampleSiteNames = siteNames[sample];
+	for (const std::pair<string, size_t>& name: sampleSiteNames) {
+		if (name.second == site) {
+			return name.first;
+		}
+	}
+	throw std::out_of_range("Index not found");
+}

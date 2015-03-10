@@ -97,8 +97,9 @@ class ParamPriors {
 		temptativePriorValue = prior.pdf(*param);
 		return temptativePriorValue - priorValue;
 	}
-	void accept() {
+	double accept() {
 		priorValue = temptativePriorValue;
+		return priorValue;
 	}
 
 	double update() { // just update and return
@@ -158,24 +159,14 @@ class Prior {
 	LaplacePrior& getLaplacePrior() {return laplace;}
 	BetaPrior& getBetaPrior() {return beta;}
 
-	double changedO(const size_t sample, const size_t site) {
-		return oPriors.at(sample).at(site).changed();
-	}
-	double temptativeChangedO(const size_t sample, const size_t site) {
-		return oPriors.at(sample).at(site).temptativeChanged();
-	}
-	void acceptO(const size_t sample, const size_t site) {
-		oPriors.at(sample).at(site).accept();
-	}
-	double changedC(const size_t i) {
-		return cPriors.at(i).changed();
-	}
-	double temptativeChangedC(const size_t i) {
-		return cPriors.at(i).temptativeChanged();
-	}
-	void acceptC(const size_t i) {
-		cPriors.at(i).accept();
-	}
+	double getPriorTotal() {return priorTotal;}
+
+	double changedO(const size_t sample, const size_t site);
+	double temptativeChangedO(const size_t sample, const size_t site);
+	double acceptO(const size_t sample, const size_t site);
+	double changedC(const size_t i);
+	double temptativeChangedC(const size_t i);
+	double acceptC(const size_t i);
 
 	/** Output */
 	friend std::ostream& operator<< (std::ostream&, const Prior&);

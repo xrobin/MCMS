@@ -14,11 +14,9 @@ const boost::random::uniform_real_distribution<double> MoveSpec::unif01(0.0, 1.0
 
 MoveSpec Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
-		std::cout << "Resampling a C from prior\n";
 		return resampleCFromPrior(paramSpec, param);
 	}
 	else {
-		std::cout << "Resampling a C normally\n";
 		return resampleCStandard(paramSpec, param);
 	}
 }
@@ -26,11 +24,9 @@ MoveSpec Resampler::resampleC(const ParamSpecs& paramSpec, const double param) {
 
 MoveSpec Resampler::resampleO(const ParamSpecs& paramSpec, const double param) {
 	if(priorMove()) {
-		std::cout << "Resampling an O from prior\n";
 		return resampleOFromPrior(paramSpec, param);
 	}
 	else {
-		std::cout << "Resampling an O normally\n";
 		return resampleOStandard(paramSpec, param);
 	}
 }

@@ -3,7 +3,10 @@
 #include <boost/random/uniform_int_distribution.hpp>
 #include "Likelihood.hpp"
 #include "Priors.hpp"
+#include <Rcpp.h>
 #include "Resampler.hpp"
+#include <string>
+#include <vector>
 
 class MonteCarlo {
 	const Constants constants;
@@ -44,13 +47,16 @@ class MonteCarlo {
 		rng(std::move(old.rng)),
 		resampler(std::move(old.resampler)){}
 
-	void iterate(unsigned long);
-	void iterate();
+	Rcpp::NumericMatrix iterate(unsigned long);
+	Rcpp::NumericVector iterate();
 
-	oParams& getOByReference() {
+	std::vector<std::string> getIterateNames();
+	std::vector<std::string> getParamNames();
+
+	const oParams& getOByReference() const {
 		return o;
 	}
-	cParams& getCByReference() {
+	const cParams& getCByReference() const {
 		return c;
 	}
 

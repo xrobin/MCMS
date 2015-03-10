@@ -2,13 +2,17 @@
 #include "Parameters.hpp"
 #include <Rcpp.h>
 #include "RcppConversions.hpp"
+#include "RcppHelpers.hpp"
 #include <string>
 #include <vector>
 #include "VarianceModel.hpp"
 
 using Rcpp::as;
+using Rcpp::CharacterVector;
 using Rcpp::S4;
 using Rcpp::List;
+using Rcpp::NumericMatrix;
+using Rcpp::NumericVector;
 using std::string;
 
 //// For more on using Rcpp click the Help button on the editor toolbar
@@ -59,7 +63,7 @@ using std::string;
 //' 	prior_move_proportion = .02, c_sd = 0.05, o_sd = 0.05, o_k_scale = 1/100)
 //' @export
 // [[Rcpp::export]]
-void testCpp(const S4& aModel, const List& aVarianceModelAsList,
+NumericVector testCpp(const S4& aModel, const List& aVarianceModelAsList, const unsigned long i,
 	const double scale, const double shape1, const double shape2, const double o_restrict,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
@@ -86,10 +90,12 @@ void testCpp(const S4& aModel, const List& aVarianceModelAsList,
 
 	Rcpp::Rcout << m;
 
-	m.iterate(100);
+	NumericMatrix res = m.iterate(i);
+	Rcpp::colnames(res, as<CharacterVector>(Rcpp::wrap(m.getIterateNames())));
 
 	Rcpp::Rcout << m.getCByReference() << std::endl;
 	Rcpp::Rcout << m.getOByReference() << std::endl;
 
+	return res;
 	//Rcpp::Rcout << l;
 }

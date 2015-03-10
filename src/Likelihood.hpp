@@ -36,8 +36,9 @@ class PeptideLikelihood {
 		temptativeLikelihoodValue = peptide.computeLikelihood(varianceModel);
 		return temptativeLikelihoodValue - likelihoodValue;
 	}
-	void accept() {
+	double accept() {
 		likelihoodValue = temptativeLikelihoodValue;
+		return likelihoodValue;
 	}
 
 	double update() { // just update and return
@@ -109,6 +110,8 @@ class Likelihood {
 			// linkParamsAndPeptides(); // Just in case. TODO: check it is not needed and remove
 		}
 
+	double getLikelihoodValue() {return likelihoodValue;}
+
 	/** MC functions */
 
 	/** Updates the likelihood (potentially only some peptides linked with the given parameter)
@@ -129,8 +132,8 @@ class Likelihood {
 	/** After a tempative change, makes the change effective.
 	 * Warning: no checking is done, make sure to pass the same indices
 	 */
-	void acceptC(const size_t);
-	void acceptO(const size_t, const size_t);
+	double acceptC(const size_t);
+	double acceptO(const size_t, const size_t);
 
 //	double getC(const size_t i) {
 //		return c.getC(i);
@@ -141,10 +144,10 @@ class Likelihood {
 //		return o.getO(sample, site);
 //	}
 
-	/** Computes the whole likelihood and stores it */
-	double getLikelihood() {
-		return likelihoodValue;
-	}
+//	/** Computes the whole likelihood and stores it */
+//	double getLikelihood() {
+//		return likelihoodValue;
+//	}
 
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const Likelihood &Likelihood);
