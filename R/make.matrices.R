@@ -12,7 +12,7 @@ make.sample.dependency.matrix <- function(sample, reference) {
 	# List all samples that are reference at some point
 	ref.as.sample <- intersect(sample, reference)
 	# List unique sample-reference sets
-	unique.sample.pairs <- unique(data.frame(sample, reference))
+	unique.sample.pairs <- unique(data.frame(sample, reference, stringsAsFactors = FALSE))
 	# If no intersection, easy
 	if (length(ref.as.sample) == 0) {
 		m <- diag(nrow(unique.sample.pairs))
