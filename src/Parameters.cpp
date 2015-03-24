@@ -22,7 +22,7 @@ inline void cParams::updateRedundantC(const size_t i) {
 		const DependencyPair &pair = cVec[j];
 		newRedundantC += pair.mult * c[pair.i];
 	}
-	redundantC[i] += newRedundantC;
+	redundantC[i] = newRedundantC;
 }
 
 void cParams::updateRedundantC(const std::vector<size_t> &is) {
