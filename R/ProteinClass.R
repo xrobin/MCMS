@@ -25,6 +25,30 @@ check_protein <- function(object) {
 	if (length(errors) == 0) TRUE else errors
 }
 
+# Make a list of unique modifications by cleaning up the "modifications" column of the data
+make_unique_modifications <- function(data, modifications) {
+	# Make the list of all the modifications we have
+	unique.mods <- unique(unlist(str_split(unique(modifications), ";"))) # And split the multiply-modified peptides
+	unique.mods <- unique.mods[unique.mods != ""] # Remove unmodified
+	has.acetylations <- any(unique.mods == "a")
+
+	# Where do we have acetylations?
+	if (has.acetylations) {
+		# Remove acetylation first
+		unique.mods <- unique.mods[unique.mods != "a"]
+		# Detect where it occurs
+		acetylation.pos <- data %>%
+			filter(is.acetylated = str_detect(modifications, "^([A-Z]_[0-9]+;)*a(;[A-Z]_[0-9]+)*$")) %>%
+			select(start) %>%
+			distinct(start)
+		acetylation.pos <- unique(acetylation.pos$start)
+		# Add it to the unique mods
+		unique.mods <- c(unique.mods, paste("a", acetylation.pos, sep = "_"))
+	}
+
+	return(sort_modifications(unique.mods))
+}
+
 # sorts the modifications by site order (a simple sort() would sort by modification type)
 sort_modifications <- function(modifications) {
 	tmp <- modifications
@@ -77,9 +101,7 @@ setClass("Protein",
 #' @importFrom stringr str_replace
 #' @export
 Protein <- function(data) {
-	modifications <- unique(unlist(str_split(unique(data$modifications), ";")))
-	modifications <- modifications[modifications != ""]
-	modifications <- sort_modifications(modifications)
+	modifications <- make_unique_modifications(data, data$modifications)
 
 	samples <-  sort(unique(data$sample))
 	references <- sort(unique(data$reference))

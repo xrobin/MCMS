@@ -58,7 +58,7 @@ make.sample.dependency.matrix <- function(sample, reference) {
 
 #' The \code{sites.coverage} matrix indicates which observed ratios (rows) cover which modification site (column)
 #' @param data the peptide data, as for the \code{\link{Protein}} function
-#' @param modifications the list of unique modifications to be considered
+#' @param modifications the list of modifications to be considered
 #' @examples
 #' data(ENSTest)
 #' make.sites.coverage.matrix(ENSTest, unique(ENSTest$modifications))
@@ -67,14 +67,8 @@ make.sample.dependency.matrix <- function(sample, reference) {
 #' @importFrom stringr str_replace
 #' @export
 make.sites.coverage.matrix <- function(data, modifications) {
-	acetylation.pos <- data %>%
-		filter(is.acetylated = str_detect(modifications, "^([A-Z]_[0-9]+;)*a(;[A-Z]_[0-9]+)*$")) %>%
-		select(start) %>%
-		distinct(start)
-	acetylation.pos <- acetylation.pos$start
-
-	modification.positions <- as.integer(str_replace(modifications, "[A-Z]_", ""))
-	modification.positions[modifications == "a"] <- acetylation.pos
+	# Get the numeric positions
+	modification.positions <- as.integer(str_replace(modifications, "[aA-Z]_", ""))
 
 	# Matrix of peptide coverage
 	siteAtOrAfterStart <- outer(data$start, modification.positions, FUN = "<=")
