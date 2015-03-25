@@ -1,9 +1,15 @@
 #' The main function here.
 #' Receives the data and the variance model, prepares all the elements and then performs the simulation
-#' @param ENSTestModel
+#' @param PeptidesModel the PeptidesModel data
 #' @param var.model the variance model
 #' @param n number of iterations
-#' @param number of iterations to record
+#' @param n.out number of iterations to record
+#' @param burn.in the burn-in time (integer, NOT a proportion)
+#' @param c.prior.sd,o.prior.shape1,o.prior.shape2 parameters for the prior
+#' @param prior_move_proportion the proportion of moves that are sampled from the prior
+#' @param c_sd,o_sd standard deviations for the moves on o and c
+#' @param o_k_scale scaling factor for the moves on o when they are close to 0 or 1
+#' @param o_restrict reject any move that is closer than o_restrict to 0 or 1
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
