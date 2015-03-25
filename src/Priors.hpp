@@ -1,13 +1,13 @@
 #pragma once
 
 #include <boost/math/distributions/beta.hpp>
+#include <boost/math/distributions/normal.hpp>
 #include <boost/math/distributions/laplace.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <iostream>
 #include "Parameters.hpp"
 //#include <cmath>
 #include <random>
-//#include <boost/math/distributions/normal.hpp>
 //#include <random>
 
 class GenericPrior {
@@ -73,6 +73,23 @@ class LaplacePrior: public GenericPrior {
 	void print(std::ostream &out) const override;
 };
 
+class NormalPrior: public GenericPrior {
+	const boost::math::normal_distribution<double> normal;
+	const boost::random::uniform_real_distribution<double> unif01;
+
+	public:
+	NormalPrior(const double aSd):
+		normal(0, aSd), unif01(0.0, 1.0) {}
+	double pdf(double x) const override {
+		return boost::math::pdf(normal, x);
+	}
+	double sample(std::mt19937_64& rng) const override {
+		double uniform = unif01(rng);
+		return quantile(normal, uniform);
+	}
+	void print(std::ostream &out) const override;
+};
+
 template <typename PriorType>
 class ParamPriors {
 	double *param; // link directly into cParams/oParams
@@ -132,13 +149,14 @@ std::ostream& operator<< (std::ostream &out, const ParamPriors<T> &someParamPrio
 class Prior {
 	//cParams &c;
 	//oParams &o;
-	LaplacePrior laplace;
+	NormalPrior normal;
+	//LaplacePrior laplace;
 	BetaPrior beta;
-	std::vector<ParamPriors<LaplacePrior>> cPriors;
+	std::vector<ParamPriors<NormalPrior>> cPriors;
 	std::vector<std::vector<ParamPriors<BetaPrior>>> oPriors;
 	double priorTotal, temptativePriorTotal;
 
-	static std::vector<ParamPriors<LaplacePrior>> makeCPriors(cParams &aC, LaplacePrior &aLaplacePrior);
+	static std::vector<ParamPriors<NormalPrior>> makeCPriors(cParams &aC, NormalPrior &aNormalPrior);
 	static std::vector<std::vector<ParamPriors<BetaPrior>>> makeOPriors(oParams &anO, BetaPrior &aBetaPrior);
 
 	public:
@@ -147,17 +165,17 @@ class Prior {
 	double updateO(const size_t, const size_t);
 
 	Prior(cParams &aC, oParams &anO,
-		const LaplacePrior &aLaplacePrior, const BetaPrior &aBetaPrior):
-			laplace(aLaplacePrior), beta(aBetaPrior),
-			cPriors(makeCPriors(aC, laplace)), oPriors(makeOPriors(anO, beta)) {
+		const NormalPrior &aNormalPrior, const BetaPrior &aBetaPrior):
+			normal(aNormalPrior), beta(aBetaPrior),
+			cPriors(makeCPriors(aC, normal)), oPriors(makeOPriors(anO, beta)) {
 		updateAll();
 	}
 	Prior(cParams &aC, oParams &anO,
-		const double aScale, const double aShape1, const double aShape2,
+		const double aCPriorSd, const double anOPriorShape1, const double anOPriorShape2,
 		const double anO_restrict):
-			Prior(aC, anO, LaplacePrior(aScale), BetaPrior(aShape1, aShape2, anO_restrict)) {}
+			Prior(aC, anO, NormalPrior(aCPriorSd), BetaPrior(anOPriorShape1, anOPriorShape2, anO_restrict)) {}
 
-	LaplacePrior& getLaplacePrior() {return laplace;}
+	NormalPrior& getNormalPrior() {return normal;}
 	BetaPrior& getBetaPrior() {return beta;}
 
 	double getPriorTotal() {return priorTotal;}

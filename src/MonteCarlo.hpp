@@ -28,7 +28,7 @@ class MonteCarlo {
 		constants(someConstants),
 		c(aCMap, constants.sampleDependenceMatrix),
 		o(anOMap),
-		p(c, o, constants.scale, constants.shape1, constants.shape2, constants.o_restrict),
+		p(c, o, constants.c_prior_sd, constants.o_prior_shape1, constants.o_prior_shape2, constants.o_restrict),
 		l(peptides, c, o, constants),
 		paramSpecs(makeParamSpecsVector(c, o, p)),
 		rng(anRNG),

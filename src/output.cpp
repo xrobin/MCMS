@@ -57,6 +57,10 @@ void LaplacePrior::print(ostream &out) const {
 	out << "<LaplacePrior@" << this << "(" << laplace.location() << ", "  << laplace.scale() << ")>";
 }
 
+void NormalPrior::print(ostream &out) const {
+	out << "<NormalPrior@" << this << "(" << normal.mean() << ", "  << normal.standard_deviation() << ")>";
+}
+
 ostream& operator<< (ostream& out, const VarianceModel& aVarianceModel) {
 	out << "<VarianceModel@" << &aVarianceModel << " (";
 	out << "rate0 = " << aVarianceModel.rate0;
@@ -72,15 +76,14 @@ ostream& operator<< (ostream& out, const Constants& someConstants) {
 	out << "<Constants@" << &someConstants << " (";
 	out << "varianceModel = " << someConstants.varianceModel << endl;
 	out << "sampleDependenceMatrix = " << someConstants.sampleDependenceMatrix << endl;
-	out << ", shape1 = " << someConstants.shape1;
-	out << ", shape2 = " << someConstants.shape2;
-	out << ", scale = " << someConstants.scale;
+	out << ", o_prior_shape1 = " << someConstants.o_prior_shape1;
+	out << ", o_prior_shape2 = " << someConstants.o_prior_shape2;
+	out << ", c_prior_sd = " << someConstants.c_prior_sd;
 	out << ", o_restrict = " << someConstants.o_restrict;
 	out << ", priorMoveProportion = " << someConstants.priorMoveProportion;
 	out << ", c_sd = " << someConstants.c_sd;
 	out << ", o_sd = " << someConstants.o_sd;
 	out << ", o_k_scale = " << someConstants.o_k_scale;
-	out << ", shape1 = " << someConstants.shape1;
 	out << ")>";
 	return out;
 }

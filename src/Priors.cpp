@@ -1,9 +1,9 @@
 #include "Priors.hpp"
 
-std::vector<ParamPriors<LaplacePrior>> Prior::makeCPriors(cParams &aC, LaplacePrior &aLaplacePrior) {
-	std::vector<ParamPriors<LaplacePrior>> newCPriors;
+std::vector<ParamPriors<NormalPrior>> Prior::makeCPriors(cParams &aC, NormalPrior &aNormalPrior) {
+	std::vector<ParamPriors<NormalPrior>> newCPriors;
 	for (size_t i = 0; i < aC.size(); ++i) {
-		newCPriors.push_back(ParamPriors<LaplacePrior>(aC.getPointerToC(i), aLaplacePrior));
+		newCPriors.push_back(ParamPriors<NormalPrior>(aC.getPointerToC(i), aNormalPrior));
 	}
 	return newCPriors;
 }

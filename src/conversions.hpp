@@ -13,7 +13,7 @@
  */
 oParams::o_type convertListToOMap(const Rcpp::List&);
 cParams::c_type convertVectorToCMap(const Rcpp::NumericVector&);
-MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4&, const VarianceModel&, const double scale, const double shape1, const double shape2,
+MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4&, const VarianceModel&, const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
 	const double o_restrict,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
 

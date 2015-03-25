@@ -100,12 +100,12 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 
 ParamSpecsVector MonteCarlo::makeParamSpecsVector(cParams& c, oParams& o, Prior& p) {
 	std::vector<ParamSpecs> paramSpecs;
-	LaplacePrior& laplacePrior = p.getLaplacePrior();
+	NormalPrior& normalPrior = p.getNormalPrior();
 	BetaPrior& betaPrior = p.getBetaPrior();
 
 	// Fill the paramSpecs vector with o and c
 	for (size_t i = 0; i < c.size(); ++i) {
-		paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::c, c.getPointerToC(i), i, laplacePrior));
+		paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::c, c.getPointerToC(i), i, normalPrior));
 	}
 	for (size_t i = 0; i < o.size(); ++i) {
 		for (size_t j = 0; j < o.size(i); ++j) {
