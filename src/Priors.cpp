@@ -42,8 +42,7 @@ double Prior::changedO(const size_t sample, const size_t site) {
 	return priorTotal - previousPriorTotal;
 }
 double Prior::temptativeChangedO(const size_t sample, const size_t site) {
-	temptativePriorTotal = priorTotal;
-	temptativePriorTotal += oPriors.at(sample).at(site).temptativeChanged();
+	temptativePriorTotal = priorTotal + oPriors.at(sample).at(site).temptativeChanged();
 	return temptativePriorTotal - priorTotal;
 }
 double Prior::acceptO(const size_t sample, const size_t site) {
@@ -57,8 +56,7 @@ double Prior::changedC(const size_t i) {
 	return priorTotal - previousPriorTotal;
 }
 double Prior::temptativeChangedC(const size_t i) {
-	temptativePriorTotal = priorTotal;
-	temptativePriorTotal += cPriors.at(i).temptativeChanged();
+	temptativePriorTotal = priorTotal + cPriors.at(i).temptativeChanged();
 	return temptativePriorTotal - priorTotal;
 }
 double Prior::acceptC(const size_t i) {
