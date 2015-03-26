@@ -96,22 +96,26 @@ class ParamPriors {
 	PriorType& prior;
 	double priorValue;
 	double temptativePriorValue; // prior of a proposed changed
+	
+	double calcPrior() {
+		return std::log(prior.pdf(*param));
+	}
 
 	public:
 	/** Constructor */
 	ParamPriors(double *aParam, PriorType& aPrior):
 		param(aParam), prior(aPrior),
-		priorValue(aPrior.pdf(*aParam)), temptativePriorValue(0) {};
+		priorValue(calcPrior()), temptativePriorValue(0) {};
 
 	/** MC functions */
 	double changed() { /** Called just after a parameter was changed */
 		double previousPriorValue = priorValue;
-		priorValue = prior.pdf(*param);
+		priorValue = calcPrior();
 		return priorValue - previousPriorValue;
 	}
 	/** The parameter just changed temptatively, update temptativePriorValue */
 	double temptativeChanged() {
-		temptativePriorValue = prior.pdf(*param);
+		temptativePriorValue = calcPrior();
 		return temptativePriorValue - priorValue;
 	}
 	double accept() {
@@ -120,7 +124,7 @@ class ParamPriors {
 	}
 
 	double update() { // just update and return
-		priorValue = prior.pdf(*param);
+		priorValue = calcPrior();
 		return priorValue;
 	}
 
