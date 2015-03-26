@@ -22,9 +22,8 @@ class Constants {
 	const double c_sd, o_sd, o_k_scale, o_restrict; // sd for resampling c and o, scale for the o
 													// restrict o between o_restrict and 1-o_restrict (beta prior)
 	explicit Constants(const VarianceModel& aVarianceModel, const Rcpp::NumericMatrix &aSampleDependenceMatrix,
-		const double aShape1, const double aShape2, const double aCPriorSd,
-		const double aPriorMoveProportion, const double aC_sd, const double anO_sd, const double anO_k_scale,
-		const double anO_restrict):
+		const double aCPriorSd, const double aShape1, const double aShape2, const double anO_restrict,
+		const double aPriorMoveProportion, const double aC_sd, const double anO_sd, const double anO_k_scale):
 		varianceModel(aVarianceModel), sampleDependenceMatrix(aSampleDependenceMatrix),
 		o_prior_shape1(aShape1), o_prior_shape2(aShape2), c_prior_sd(aCPriorSd),
 		priorMoveProportion(aPriorMoveProportion), c_sd(aC_sd), o_sd(anO_sd), o_k_scale(anO_k_scale), o_restrict(anO_restrict) {};
@@ -234,16 +233,17 @@ class ParamSpecs {
 	const ParamCategory category;
 	const size_t index1, index2; // 1: c or sample (o); 2, o only: site
 	const double *param; // pointer to the parameter itself
+	const double sd_corr; // a correction factor for the parameter's standard deviation: square root of the number of likelihoods that are changed
 	const GenericPrior& prior;
 
-	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const size_t anIndex1, GenericPrior& aPrior): // c
-		category(aCategory), index1(anIndex1), index2(0), param(aParamPointer), prior(aPrior) {
+	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const double anSdCorr, const size_t anIndex1, GenericPrior& aPrior): // c
+		category(aCategory), index1(anIndex1), index2(0), param(aParamPointer), sd_corr(anSdCorr), prior(aPrior) {
 			if (category != c) {
 				throw std::invalid_argument("One argument constructor expects to receive a 'c' category param");
 			}
 		}
-	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const size_t anIndex1, const size_t anIndex2, GenericPrior& aPrior): // o
-		category(aCategory), index1(anIndex1), index2(anIndex2), param(aParamPointer), prior(aPrior) {
+	ParamSpecs(const ParamCategory& aCategory, const double *aParamPointer, const double anSdCorr, const size_t anIndex1, const size_t anIndex2, GenericPrior& aPrior): // o
+		category(aCategory), index1(anIndex1), index2(anIndex2), param(aParamPointer), sd_corr(anSdCorr), prior(aPrior) {
 			if (category != o) {
 				throw std::invalid_argument("Two argument constructor expects to receive an 'o' category param");
 			}

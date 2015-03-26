@@ -56,22 +56,22 @@ class BetaPrior: public GenericPrior {
 	void print(std::ostream &out) const override;
 };
 
-class LaplacePrior: public GenericPrior {
-	const boost::math::laplace_distribution<double> laplace;
-	const boost::random::uniform_real_distribution<double> unif01;
-
-	public:
-	LaplacePrior(const double aScale):
-		laplace(0, aScale), unif01(0.0, 1.0) {}
-	double pdf(double x) const override {
-		return boost::math::pdf(laplace, x);
-	}
-	double sample(std::mt19937_64& rng) const override {
-		double uniform = unif01(rng);
-		return quantile(laplace, uniform);
-	}
-	void print(std::ostream &out) const override;
-};
+//class LaplacePrior: public GenericPrior {
+//	const boost::math::laplace_distribution<double> laplace;
+//	const boost::random::uniform_real_distribution<double> unif01;
+//
+//	public:
+//	LaplacePrior(const double aScale):
+//		laplace(0, aScale), unif01(0.0, 1.0) {}
+//	double pdf(double x) const override {
+//		return boost::math::pdf(laplace, x);
+//	}
+//	double sample(std::mt19937_64& rng) const override {
+//		double uniform = unif01(rng);
+//		return quantile(laplace, uniform);
+//	}
+//	void print(std::ostream &out) const override;
+//};
 
 class NormalPrior: public GenericPrior {
 	const boost::math::normal_distribution<double> normal;

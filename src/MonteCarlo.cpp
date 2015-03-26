@@ -21,7 +21,7 @@ void MonteCarlo::iterate() {
 		double oldC = c.getC(randomParam.index1);
 		// 2. resample a new c
 		MoveSpec move = resampler.resampleC(randomParam, oldC);
-//		cout << "Move: " << move << endl;
+//		cout << "Move c: " << move << endl;
 		if (move.valid) {
 			// 3. Update the parameter
 			c.setC(randomParam.index1, move.newParam);
@@ -33,11 +33,13 @@ void MonteCarlo::iterate() {
 //			cout << "Prior change: " << priorChange << endl;
 			// 6 decide acceptance
 			if (move.accept(likelihoodChange + priorChange, rng)) {
+//				cout << "accept c " << randomParam.index1 << endl;
 //				cout << "Accepted!" << endl;
 				l.acceptC(randomParam.index1);
 				p.acceptC(randomParam.index1);
 			}
 			else {
+//				cout << "reject c " << randomParam.index1 << endl;
 //				cout << "Rejected!" << endl;
 				c.setC(randomParam.index1, oldC);
 				// There is no need for explicit reject
@@ -51,16 +53,19 @@ void MonteCarlo::iterate() {
 		if (move.valid) {
 			o.setO(randomParam.index1, randomParam.index2, move.newParam);
 			double likelihoodChange = l.temptativeChangedO(randomParam.index1, randomParam.index2);
+			likelihoodChange = 0;
 //			cout << "Likelihood change: " << likelihoodChange << endl;
 			double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
 //			cout << "Prior change: " << priorChange << endl;
 			if (move.accept(likelihoodChange + priorChange, rng)) {
+//				cout << "accept o " << randomParam.index1 << ", " << randomParam.index2 << endl;
 //				cout << "Accepted!" << endl;
 				l.acceptO(randomParam.index1, randomParam.index2);
 				p.acceptO(randomParam.index1, randomParam.index2);
 			}
 			else {
 //				cout << "Rejected!" << endl;
+//				cout << "reject o " << randomParam.index1 << ", " << randomParam.index2 << endl;
 				o.setO(randomParam.index1, randomParam.index2, oldO);
 			}
 		}
@@ -98,18 +103,20 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 	return McResult;
 }
 
-ParamSpecsVector MonteCarlo::makeParamSpecsVector(cParams& c, oParams& o, Prior& p) {
+ParamSpecsVector MonteCarlo::makeParamSpecsVector(cParams& c, oParams& o, Prior& p, Likelihood& l) {
 	std::vector<ParamSpecs> paramSpecs;
 	NormalPrior& normalPrior = p.getNormalPrior();
 	BetaPrior& betaPrior = p.getBetaPrior();
 
 	// Fill the paramSpecs vector with o and c
 	for (size_t i = 0; i < c.size(); ++i) {
-		paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::c, c.getPointerToC(i), i, normalPrior));
+		const double sd_corr = std::sqrt(l.onUpdateCSize(i)); // correction factor on sd
+		paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::c, c.getPointerToC(i), sd_corr, i, normalPrior));
 	}
 	for (size_t i = 0; i < o.size(); ++i) {
 		for (size_t j = 0; j < o.size(i); ++j) {
-			paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::o, o.getPointerToO(i, j), i, j, betaPrior));
+			const double sd_corr = std::sqrt(l.onUpdateOSize(i, j)); // correction factor on sd
+			paramSpecs.push_back(ParamSpecs(ParamSpecs::ParamCategory::o, o.getPointerToO(i, j), sd_corr, i, j, betaPrior));
 		}
 	}
 	return paramSpecs;

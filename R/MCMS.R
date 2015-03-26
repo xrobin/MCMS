@@ -24,9 +24,10 @@
 #' @export
 #' @useDynLib MCMS
 MCMS <- function(PeptidesModel, var.model, n, n.out, burn.in,
-				 c.prior.sd = 1, o.prior.shape1 = .5, o.prior.shape2 = .5,
+				 c.prior.sd = sqrt(2), o.prior.shape1 = .5, o.prior.shape2 = .5,
 				 prior_move_proportion = .02, c_sd = 0.05,
-				 o_sd = 0.05, o_k_scale = 1/100, o_restrict = 1e-5) {
-	run_MCMC_Cpp(ENSTestModel, var.model, n, n.out, burn.in, c_prior_sd = c.prior.sd, o_prior_shape1 = o.prior.shape1, o_prior_shape2 = o.prior.shape2,
-			prior_move_proportion = prior_move_proportion, c_sd = c_sd, o_sd = o_sd, o_k_scale = o_k_scale, o_restrict = o_restrict)
+				 o_sd = 0.05, o_k_scale = 1/100, o_restrict = 1e-3) {
+	run_MCMC_Cpp(PeptidesModel, var.model, n, n.out, burn.in, c_prior_sd = c.prior.sd, o_prior_shape1 = o.prior.shape1,
+				 o_prior_shape2 = o.prior.shape2, o_restrict = o_restrict,
+				 prior_move_proportion = prior_move_proportion, c_sd = c_sd, o_sd = o_sd, o_k_scale = o_k_scale)
 }

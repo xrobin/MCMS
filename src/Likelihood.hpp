@@ -149,6 +149,14 @@ class Likelihood {
 //		return likelihoodValue;
 //	}
 
+	/** Returns the number of likelihoods that will be affected by the change in c or o */
+	size_t onUpdateCSize(const size_t i) {
+		return onupdate_c.at(i).size();
+	}
+	size_t onUpdateOSize(const size_t sample, const size_t site) {
+		return onupdate_o.at(sample).at(site).size();
+	}
+
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const Likelihood &Likelihood);
 };

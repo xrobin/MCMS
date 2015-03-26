@@ -53,9 +53,9 @@ void BetaPrior::print(ostream &out) const {
 	out << "<BetaPrior@" << this << "(" << beta.alpha() << ", "  << beta.beta() << ")>";
 }
 
-void LaplacePrior::print(ostream &out) const {
-	out << "<LaplacePrior@" << this << "(" << laplace.location() << ", "  << laplace.scale() << ")>";
-}
+//void LaplacePrior::print(ostream &out) const {
+//	out << "<LaplacePrior@" << this << "(" << laplace.location() << ", "  << laplace.scale() << ")>";
+//}
 
 void NormalPrior::print(ostream &out) const {
 	out << "<NormalPrior@" << this << "(" << normal.mean() << ", "  << normal.standard_deviation() << ")>";

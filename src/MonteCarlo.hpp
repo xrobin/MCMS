@@ -18,7 +18,7 @@ class MonteCarlo {
 	std::mt19937_64 rng; // The random numbers for the whole MC run
 	Resampler resampler;
 
-	static ParamSpecsVector makeParamSpecsVector(cParams& c, oParams& o, Prior& p);
+	static ParamSpecsVector makeParamSpecsVector(cParams& c, oParams& o, Prior& p, Likelihood& l);
 
 	public:
 	MonteCarlo(const std::vector<Peptide>& peptides,
@@ -30,7 +30,7 @@ class MonteCarlo {
 		o(anOMap),
 		p(c, o, constants.c_prior_sd, constants.o_prior_shape1, constants.o_prior_shape2, constants.o_restrict),
 		l(peptides, c, o, constants),
-		paramSpecs(makeParamSpecsVector(c, o, p)),
+		paramSpecs(makeParamSpecsVector(c, o, p, l)),
 		rng(anRNG),
 		resampler(rng, constants){}
 	/** Delete dangerous copy and copy assignment constructors */
