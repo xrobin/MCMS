@@ -53,7 +53,6 @@ void MonteCarlo::iterate() {
 		if (move.valid) {
 			o.setO(randomParam.index1, randomParam.index2, move.newParam);
 			double likelihoodChange = l.temptativeChangedO(randomParam.index1, randomParam.index2);
-			likelihoodChange = 0;
 //			cout << "Likelihood change: " << likelihoodChange << endl;
 			double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
 //			cout << "Prior change: " << priorChange << endl;
