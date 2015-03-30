@@ -1,5 +1,4 @@
 check_peptides <- function(object) {
-
 	errors <- character()
 	if (length(object@c) != object@num.c || length(object@c) != length(object@names.c) ) {
 		msg <- paste0("Inconsistent number of parameters c + ", length(object@c), ", not ", object@num.c, " or ", length(object@names.c))
@@ -47,15 +46,22 @@ PeptidesModel <- function(protein) {
 	# Compute the number of occupancies and concentrations
 	names.c <- colnames(protein@sample.dependency)
 	num.c <- length(names.c)
+	c.initial <- rep(0, num.c) # Start from 0
+	names(c.initial) <- names.c
 
 	# Take the median ratios as starting point for the c
 	median.ratios <- protein@data %>%
 		filter(modifications == "") %>%
+		filter(pair %in% names.c) %>% # Don't compute other pairs
 		group_by(pair) %>%
-		summarize(ratio = median(ratio)) %>%
-		slice(match(names.c, pair))
-	c.initial <- median.ratios$ratio
-	names(c.initial) <- names.c
+		summarize(ratio = median(ratio))# %>%
+		#slice(match(names.c, pair))
+
+	c.guess <- median.ratios$ratio
+	names(c.guess) <- median.ratios$pair
+
+	# Replace the initial values with the estimated one
+	c.initial[names(c.guess)] <- c.guess
 
 	# Set the o's to 0.5 for now
 	o.initial <- sapply(protein@reference.sample.intersect, function(sample) {
