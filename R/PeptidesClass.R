@@ -66,7 +66,7 @@ PeptidesModel <- function(protein) {
 	# Set the o's to 0.5 for now
 	o.initial <- sapply(protein@reference.sample.intersect, function(sample) {
 		idx <- protein@data$sample == sample | protein@data$reference == sample
-		sample.coverage <- protein@sites.coverage[idx,]
+		sample.coverage <- protein@sites.coverage[idx,, drop = FALSE]
 		sample.modifications <- colSums(sample.coverage) > 0
 		sample.modifications[sample.modifications] <- 0.5
 		return(sample.modifications[sample.modifications == 0.5])

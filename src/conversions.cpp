@@ -28,13 +28,15 @@ oParams::o_type convertListToOMap(const List &anOList) {
 	for (auto& sampleName: as<vector<string>>(sampleNames)) {
 		map<string, double> sampleSitesMap;
 		NumericVector sampleSites = anOList[sampleName];
-		vector<string> siteNames = sampleSites.names();
-		for (int i = 0; i < sampleSites.size(); ++i) {
-			string siteName = siteNames[i];
-			double siteO = sampleSites[i];
-			sampleSitesMap[siteName] = siteO;
+		if (sampleSites.size() > 0) {
+			vector<string> siteNames = sampleSites.names();
+			for (int i = 0; i < sampleSites.size(); ++i) {
+				string siteName = siteNames[i];
+				double siteO = sampleSites[i];
+				sampleSitesMap[siteName] = siteO;
+			}
+			anO[sampleName] = sampleSitesMap;
 		}
-		anO[sampleName] = sampleSitesMap;
 	}
 	return(anO);
 }
@@ -97,7 +99,10 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 	const vector<string> referenceNames = data["reference"];
 	const vector<string> pairNames = data["pair"];
 	// Indexed over number of sites
-	const vector<string> siteNames = as<vector<string>>(Rcpp::colnames(sitesCoverage));
+	vector<string> siteNames;
+	if (sitesCoverage.ncol() > 0) {
+		siteNames = as<vector<string>>(Rcpp::colnames(sitesCoverage));
+	}
 	// Now loop over all this
 	for (int i = 0; i < data.nrows(); ++i) {
 		std::vector<SiteSpecs> siteSpecs;
