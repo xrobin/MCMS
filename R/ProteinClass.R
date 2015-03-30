@@ -92,6 +92,8 @@ setClass("Protein",
 
 #' End-user function to create a Protein object
 #' @param data the \code{data.frame}
+#' @param sample.dependency.matrix a matrix encoding how samples (rows) depend on the parameters (columns). It can be omitted for simple problems with no complex dependencies.
+#' @param decimate.sample.dependency.matrix whether to remove samples that are not observed and the parameters that are not
 #' @description
 #' Only acetylation (a) is supported as a non-positional modification. It is added to the N-term of the peptide
 #' @examples
@@ -100,7 +102,8 @@ setClass("Protein",
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_replace
 #' @export
-Protein <- function(data) {
+Protein <- function(data, sample.dependency.matrix, decimate.sample.dependency.matrix = TRUE) {
+
 	modifications <- make_unique_modifications(data, data$modifications)
 
 	samples <-  sort(unique(data$sample))
@@ -118,7 +121,22 @@ Protein <- function(data) {
 		reference.sample.intersect = reference.sample.intersect
 		)
 
-	protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)
+	if (missing(sample.dependency.matrix)) {
+		protein@sample.dependency <- make.sample.dependency.matrix(data$sample, data$reference)
+	}
+	else {
+		if (decimate.sample.dependency.matrix) {
+			if (any(which <- ! data$pair %in% rownames(sample.dependency.matrix))) {
+				stop(paste0("Some pairs were not encoded in the dependency matrix: ", paste(data$pair[which], collapse = ", ")))
+			}
+			# Remove rows that do not appear in a data$pair:
+			sample.dependency.matrix <- sample.dependency.matrix[rownames(sample.dependency.matrix) %in% data$pair,, drop=FALSE]
+			# Remove columns that have only 0s (= parameter is not used)
+			sample.dependency.matrix <- sample.dependency.matrix[, colSums(abs(sample.dependency.matrix)) > 0, drop = FALSE]
+		}
+		protein@sample.dependency <- sample.dependency.matrix
+	}
+
 	protein@sites.coverage <- make.sites.coverage.matrix(data, modifications)
 	protein@sites.activation <- make.sites.activation.matrix(data, modifications)
 

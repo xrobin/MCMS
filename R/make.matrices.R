@@ -25,12 +25,12 @@ make.sample.dependency.matrix <- function(sample, reference) {
 		samples.with.samples.only <- subset(unique.sample.pairs, !reference %in% ref.as.sample & ! sample %in% ref.as.sample)
 		# If we can't, bail out for now
 		if (!identical(sort(samples.with.samples.only$sample), sort(samples.with.sampleref$sample))) {
-			stop("Inconsistence or over-complicated triangular dependencies cannot be solved for now")
+			stop("Inconsistence or over-complicated triangular dependencies cannot be solved yet. Please supply the matrix manually.")
 		}
 		# Support multiple samples appearing in reference only...
 		reference.sample <- unique(samples.with.samples.only$reference)
 		if (length(reference.sample) > 1) {
-			stop("Multiple samples that appear only as reference is not supported yet")
+			stop("Multiple samples that appear only as reference is not supported yet. Please supply the matrix manually.")
 		}
 		# Construct the matrix
 		m <- matrix(0, nrow = nrow(unique.sample.pairs), ncol = nrow(samples.with.samples))
