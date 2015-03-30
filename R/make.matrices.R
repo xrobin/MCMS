@@ -94,7 +94,7 @@ make.sites.activation.matrix <- function(data, modifications) {
 		mod.on <- outer(data$modifications, modification.regexes, str_detect)
 	}
 	else {
-		mod.on <- matrix(nrow = length(data$peptide), ncol = 0)
+		mod.on <- matrix(nrow = length(data$modifications), ncol = 0)
 	}
 
 
