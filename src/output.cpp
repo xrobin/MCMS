@@ -96,6 +96,7 @@ ostream& operator<< (ostream &out, const ParamSpecs &aParamSpecs) {
 		case ParamSpecs::o: out << "o"; break;
 	}
 	out << ", " << aParamSpecs.index1 << ", " << aParamSpecs.index2;
+	out << ", sd_corr = " << aParamSpecs.sd_corr;
 	out << "; param@" << aParamSpecs.param << " (" << *(aParamSpecs.param) << "), ";
 	out << aParamSpecs.prior << ">";
 	return out;
