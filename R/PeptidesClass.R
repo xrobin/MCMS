@@ -28,7 +28,7 @@ setClass("Peptides",
 		 	c = "numeric",
 		 	o = "list",
 		 	num.c = "numeric",
-		 	#num.o = "numeric",
+		 	num.o = "numeric",
 		 	names.c = "character",
 		 	names.o = "list",
 		 	protein = "Protein"),
@@ -73,6 +73,9 @@ PeptidesModel <- function(protein) {
 	}, simplify = FALSE)
 	names.o <- sapply(o.initial, names, simplify = FALSE)
 
+	# How many o do we have?
+	num.o <- length(unlist(names.o, use.names = FALSE))
+
 	#o.initial <- matrix(0.5,
 	#					nrow = length(protein@reference.sample.intersect),
 	#					ncol = length(protein@modifications),
@@ -89,6 +92,7 @@ PeptidesModel <- function(protein) {
 		c = c.initial,
 		o = o.initial,
 		num.c = num.c,
+		num.o = num.o,
 		names.c = names.c,
 		names.o = names.o,
 		protein = protein)
