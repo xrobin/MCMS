@@ -93,6 +93,11 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 
 	size_t i = 0;
 	for (unsigned long j = 0; j < n; ++j) {
+		// Regularly check if user canceled the run
+		if (j % 100 == 0) {
+			Rcpp::checkUserInterrupt();
+		}
+
 		iterate();
 		if ((j >= burn_in) && ((j - burn_in) % (n2 / n_out)) == 0) {
 			McResult(i, Rcpp::_) = recordState();
