@@ -22,5 +22,5 @@ double Peptide::computeLikelihood(const VarianceModel &aVarianceModel) const {
 	double predictedRatio = calcRatio();
 	double gamma = aVarianceModel.calcGamma(predictedRatio, nEff, q);
 	double nuTilde = aVarianceModel.calcNuTilde(nEff);
-	return - nuTilde * log1p(gamma * std::pow(ratio - predictedRatio, 2) + std::log(gamma) / 2);
+	return - nuTilde * log1p(gamma * std::pow(ratio - predictedRatio, 2)) + std::log(gamma) / 2;
 }
