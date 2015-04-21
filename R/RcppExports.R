@@ -9,3 +9,7 @@ getLikelihood_MCMC_Cpp <- function(aModel, aVarianceModelAsList, aC, anO, c_prio
     .Call('MCMS_getLikelihood_MCMC_Cpp', PACKAGE = 'MCMS', aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose)
 }
 
+getPrior_MCMC_Cpp <- function(aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose = FALSE) {
+    .Call('MCMS_getPrior_MCMC_Cpp', PACKAGE = 'MCMS', aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose)
+}
+
