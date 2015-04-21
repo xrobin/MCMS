@@ -22,7 +22,7 @@ NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale, const bool verbose = false) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
 
-	MonteCarlo m = convertS4ToMonteCarlo(aModel, aVarianceModel, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
+	MonteCarlo m = convertS4ToMonteCarlo(as<PeptidesModel>(aModel), aVarianceModel, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
 		prior_move_proportion, c_sd, o_sd, o_k_scale);
 
 	if (verbose) {

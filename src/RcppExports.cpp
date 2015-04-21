@@ -33,3 +33,25 @@ BEGIN_RCPP
     return __sexp_result;
 END_RCPP
 }
+// getLikelihood_MCMC_Cpp
+double getLikelihood_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList, const NumericVector& aC, const List& anO, const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const bool verbose = false);
+RcppExport SEXP MCMS_getLikelihood_MCMC_Cpp(SEXP aModelSEXP, SEXP aVarianceModelAsListSEXP, SEXP aCSEXP, SEXP anOSEXP, SEXP c_prior_sdSEXP, SEXP o_prior_shape1SEXP, SEXP o_prior_shape2SEXP, SEXP verboseSEXP) {
+BEGIN_RCPP
+    SEXP __sexp_result;
+    {
+        Rcpp::RNGScope __rngScope;
+        Rcpp::traits::input_parameter< const S4& >::type aModel(aModelSEXP );
+        Rcpp::traits::input_parameter< const List& >::type aVarianceModelAsList(aVarianceModelAsListSEXP );
+        Rcpp::traits::input_parameter< const NumericVector& >::type aC(aCSEXP );
+        Rcpp::traits::input_parameter< const List& >::type anO(anOSEXP );
+        Rcpp::traits::input_parameter< const double >::type c_prior_sd(c_prior_sdSEXP );
+        Rcpp::traits::input_parameter< const double >::type o_prior_shape1(o_prior_shape1SEXP );
+        Rcpp::traits::input_parameter< const double >::type o_prior_shape2(o_prior_shape2SEXP );
+        Rcpp::traits::input_parameter< const bool >::type verbose(verboseSEXP );
+        double __result = getLikelihood_MCMC_Cpp(aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose);
+        PROTECT(__sexp_result = Rcpp::wrap(__result));
+    }
+    UNPROTECT(1);
+    return __sexp_result;
+END_RCPP
+}

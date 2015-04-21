@@ -1,8 +1,5 @@
 #include "conversions.hpp"
-#include "Parameters.hpp"
-#include <Rcpp.h>
-#include "VarianceModel.hpp"
-
+#include "RcppConversions.hpp"
 
 namespace Rcpp {
 	template <> oParams::o_type as(SEXP anOList) {
@@ -23,5 +20,13 @@ namespace Rcpp {
 		double rate1 = rate(2, 0);
 		double rate2 = rate(0, 0);
 		return VarianceModel(rate0, rate1, rate2, shape0);
+	}
+
+	template <> PeptidesModel as(SEXP aPeptidesModel) {
+		return PeptidesModel(aPeptidesModel);
+	}
+
+	template <> ProteinModel as(SEXP aProteinModel) {
+		return ProteinModel(aProteinModel);
 	}
 }

@@ -5,3 +5,7 @@ run_MCMC_Cpp <- function(aModel, aVarianceModelAsList, n, n_out, burn_in, c_prio
     .Call('MCMS_run_MCMC_Cpp', PACKAGE = 'MCMS', aModel, aVarianceModelAsList, n, n_out, burn_in, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict, prior_move_proportion, c_sd, o_sd, o_k_scale, verbose)
 }
 
+getLikelihood_MCMC_Cpp <- function(aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose = FALSE) {
+    .Call('MCMS_getLikelihood_MCMC_Cpp', PACKAGE = 'MCMS', aModel, aVarianceModelAsList, aC, anO, c_prior_sd, o_prior_shape1, o_prior_shape2, verbose)
+}
+

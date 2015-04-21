@@ -21,6 +21,7 @@ Collate:
     'ProteinClass.R'
     'PeptidesClass.R'
     'RcppExports.R'
+    'getLikelihood.R'
     'make.matrices.R'
     'objective.R'
     'occupancy_concentration_likelihood.R'

@@ -3,7 +3,9 @@
 //#include "Likelihood.hpp"
 #include "MonteCarlo.hpp"
 #include "Parameters.hpp"
+#include "Peptide.hpp"
 #include <Rcpp.h>
+#include "S4Aliases.hpp" // ProteinModel
 #include "typedefs.hpp"
 
 /** Various conversion functions outside the Rcpp namespace */
@@ -13,7 +15,17 @@
  */
 oParams::o_type convertListToOMap(const Rcpp::List&);
 cParams::c_type convertVectorToCMap(const Rcpp::NumericVector&);
-MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4&, const VarianceModel&, const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
+
+/** Converts the ProteinModel to a vector of Peptide */
+std::vector<Peptide> convertS4ToPeptides(const ProteinModel& aProtein);
+
+/** The actual MC objects */
+MonteCarlo convertS4ToMonteCarloWithParams(const PeptidesModel&, const VarianceModel&,
+		const cParams::c_type aCMap, const oParams::o_type anOMap,
+		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
+		const double o_restrict, const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
+
+MonteCarlo convertS4ToMonteCarlo(const PeptidesModel&, const VarianceModel&, const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
 	const double o_restrict,
 	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
 

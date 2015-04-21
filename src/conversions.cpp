@@ -6,6 +6,7 @@
 #include "Priors.hpp"
 #include <Rcpp.h>
 #include "RcppHelpers.hpp" // for colnames
+#include "S4Aliases.hpp"
 #include <string>
 #include "typedefs.hpp"
 #include <vector>
@@ -50,41 +51,7 @@ cParams::c_type convertVectorToCMap(const NumericVector &aCVector) {
 	return(aCMap);
 }
 
-
-MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aVarianceModel,
-		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
-		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
-			using Rcpp::Rcout;
-	const string modelClass = string(as<CharacterVector>(aModel.attr("class"))[0]);
-	if (modelClass != "Peptides") {
-		stop(string("aModel of class Peptides expected, ") + modelClass + " received");
-	}
-	const Rcpp::S4 aProtein = as<Rcpp::S4>(aModel.slot("protein"));
-	const string proteinClass = string(as<CharacterVector>(aProtein.attr("class"))[0]);
-	if (proteinClass != "Protein") {
-		stop(string("aProtein of class Protein expected, ") + proteinClass + " received");
-	}
-
-	// Build the parameters
-	// First O
-	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
-	//oParams anO(anOMap);
-
-	// Then C
-	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
-	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
-	//cParams aC(aCMap, sampleDependency);
-//	NumericVector aC = aModel.slot("c");
-	//Rcpp::Rcout << aC;
-	//aC.updateC(0, 10);
-	//Rcpp::Rcout << aC;
-
-	// The priors
-	//BetaPrior beta(shape1, shape2);
-	//LaplacePrior laplace(scale);
-	//Prior paramPrior(aC, anO, laplace, beta);
-
-
+std::vector<Peptide> convertS4ToPeptides(const ProteinModel& aProtein) {
 	// Create the peptides
 	std::vector<Peptide> peptides;
 	// Extract them from the data
@@ -123,6 +90,18 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 			siteSpecs);
 		peptides.push_back(newPeptide);
 	}
+	return peptides;
+}
+
+
+MonteCarlo convertS4ToMonteCarloWithParams(const PeptidesModel& aModel, const VarianceModel& aVarianceModel,
+		const cParams::c_type aCMap, const oParams::o_type anOMap,
+		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
+		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
+
+	const ProteinModel aProtein = aModel.getProteinModel();
+	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
+	const std::vector<Peptide> peptides = convertS4ToPeptides(aProtein);
 
 	// Get a RNG seeded from R
 	std::mt19937_64 prng = seedFromR();
@@ -134,6 +113,24 @@ MonteCarlo convertS4ToMonteCarlo(const Rcpp::S4& aModel, const VarianceModel& aV
 	);
 	//Rcpp::Rcout << l;
 	return m;
+}
+
+
+MonteCarlo convertS4ToMonteCarlo(const PeptidesModel& aModel, const VarianceModel& aVarianceModel,
+		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
+		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
+	// Build the parameters
+	// First O
+	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
+	//oParams anO(anOMap);
+
+	// Then C
+	const cParams::c_type aCMap = convertVectorToCMap(aModel.slot("c"));
+
+	// Call the converter with c and o
+	return convertS4ToMonteCarloWithParams(aModel, aVarianceModel, aCMap, anOMap,
+		c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
+		prior_move_proportion, c_sd, o_sd, o_k_scale);
 }
 
 
