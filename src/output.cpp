@@ -179,11 +179,13 @@ ostream& operator<< (ostream &out, const oParams &anOParams) {
 
 
 ostream& operator<< (ostream& out, const Prior& aPrior) {
-	out << "<aPrior@" << &aPrior << ":" << endl;
+	out << "<Prior@" << &aPrior << ":" << endl;
 	//out << aPrior.laplace << endl;
-	//out << aPrior.beta << endl;
-	//out << "cPriors = " << aPrior.cPriors << endl;
-	//out << "oPriors = " << aPrior.oPriors << endl;
+	out << aPrior.normal << endl;
+	out << aPrior.beta << endl;
+	out << "cPriors = " << aPrior.cPriors << endl;
+	out << "oPriors = " << aPrior.oPriors;
+	out << ">" << endl;
 	return out;
 }
 

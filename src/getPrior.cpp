@@ -38,8 +38,9 @@ double getPrior_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
 	Prior p(c, o, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict);
 
 	if (verbose) {
-		Rcpp::Rcout << "c = " << c << std::endl;
-		Rcpp::Rcout << "o = " << o << std::endl;
+		Rcpp::Rcout << "p = " << p.getPriorTotal();
+		Rcpp::Rcout << c << std::endl;
+		Rcpp::Rcout << o << std::endl;
 		Rcpp::Rcout << "p = " << p << std::endl;
 	}
 
