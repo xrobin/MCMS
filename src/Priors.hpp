@@ -143,6 +143,7 @@ std::ostream& operator<< (std::ostream &out, const ParamPriors<T> &someParamPrio
 	out << ": " << someParamPriors.param << " (" << *(someParamPriors.param) << "), " << someParamPriors.priorValue;
 	out << someParamPriors.prior;
 	out << ">";
+	return out;
 }
 
 
