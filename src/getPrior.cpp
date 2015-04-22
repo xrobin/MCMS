@@ -24,7 +24,8 @@ double getPrior_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
 	// The following variables aren't used but still needed to build the MonteCarlo object.
 	// We set them to signaling NaNs so we're sure we don't use them
 	double o_restrict, prior_move_proportion, c_sd, o_sd, o_k_scale;
-	o_restrict = prior_move_proportion = c_sd = o_sd = o_k_scale = std::numeric_limits<double>::signaling_NaN();
+	o_restrict = 0;
+	prior_move_proportion = c_sd = o_sd = o_k_scale = std::numeric_limits<double>::signaling_NaN();
 	Constants constants(aVarianceModel, sampleDependency, c_prior_sd, o_prior_shape1, o_prior_shape2,
 		o_restrict, prior_move_proportion, c_sd, o_sd, o_k_scale);
 
