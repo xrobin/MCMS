@@ -12,7 +12,7 @@ using std::endl;
 using std::string;
 using std::vector;
 
-void MonteCarlo::iterate() {
+void MonteCarlo::iterate(const double cooling_rate) {
 	// Choose parameter to change
 	const ParamSpecs& randomParam = paramSpecs.getRandomElementByReference(rng);
 //	cout << endl << randomParam << endl;
@@ -32,7 +32,7 @@ void MonteCarlo::iterate() {
 			double priorChange = p.temptativeChangedC(randomParam.index1);
 //			cout << "Prior change: " << priorChange << endl;
 			// 6 decide acceptance
-			if (move.accept(likelihoodChange + priorChange, rng)) {
+			if (move.accept(likelihoodChange + priorChange, rng, cooling_rate)) {
 //				cout << "accept c " << randomParam.index1 << endl;
 //				cout << "Accepted!" << endl;
 				l.acceptC(randomParam.index1);
@@ -56,7 +56,7 @@ void MonteCarlo::iterate() {
 //			cout << "Likelihood change: " << likelihoodChange << endl;
 			double priorChange = p.temptativeChangedO(randomParam.index1, randomParam.index2);
 //			cout << "Prior change: " << priorChange << endl;
-			if (move.accept(likelihoodChange + priorChange, rng)) {
+			if (move.accept(likelihoodChange + priorChange, rng, cooling_rate)) {
 //				cout << "accept o " << randomParam.index1 << ", " << randomParam.index2 << endl;
 //				cout << "Accepted!" << endl;
 				l.acceptO(randomParam.index1, randomParam.index2);
@@ -92,13 +92,18 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 	NumericMatrix McResult(n_out, paramSpecs.size() + 2);
 
 	size_t i = 0;
+	double cooling_rate = 0;
 	for (unsigned long j = 0; j < n; ++j) {
 		// Regularly check if user canceled the run
 		if (j % 100 == 0) {
 			Rcpp::checkUserInterrupt();
 		}
 
-		iterate();
+		// Compute the cooling
+		cooling_rate = j / burn_in;
+
+
+		iterate(cooling_rate);
 		if ((j >= burn_in) && ((j - burn_in) % (n2 / n_out)) == 0) {
 			McResult(i, Rcpp::_) = recordState();
 			++i;

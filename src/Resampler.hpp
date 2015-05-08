@@ -21,7 +21,7 @@ class MoveSpec {
 	}
 	MoveSpec(const double anOldParam, const double aNewParam, const double logPreviousBias, const double logNewBias):
 		valid(true), oldParam(anOldParam), newParam(aNewParam), logPreviousBias(logPreviousBias), logNewBias(logNewBias) {}
-	bool accept(const double, std::mt19937_64&);
+	bool accept(const double, std::mt19937_64&, const double cooling_rate = 1);
 
 	/** Output */
 	friend std::ostream& operator<< (std::ostream &out, const MoveSpec &aMoveSpec);

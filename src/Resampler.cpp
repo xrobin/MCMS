@@ -77,8 +77,8 @@ MoveSpec Resampler::resampleOStandard(const ParamSpecs& paramSpec, const double 
 	return MoveSpec(oldO, newO, logPreviousBias, logNewBias);
 }
 
-bool MoveSpec::accept(const double lpChange, std::mt19937_64& rng) {
-	double nominator = lpChange + logNewBias;
+bool MoveSpec::accept(const double lpChange, std::mt19937_64& rng, const double cooling_rate) {
+	double nominator = cooling_rate * lpChange + logNewBias;
 	double denominator = logPreviousBias;
 
 	return (nominator > denominator || unif01(rng) < std::exp(nominator - denominator));
