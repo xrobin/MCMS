@@ -1,3 +1,4 @@
+#include <algorithm> // std::min
 #include <iostream>
 #include <iterator> // std::back_inserter
 #include "MonteCarlo.hpp"
@@ -100,8 +101,7 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 		}
 
 		// Compute the cooling
-		cooling_rate = j / burn_in;
-
+		cooling_rate = std::min((double)j / (double)burn_in, 1.0);
 
 		iterate(cooling_rate);
 		if ((j >= burn_in) && ((j - burn_in) % (n2 / n_out)) == 0) {
