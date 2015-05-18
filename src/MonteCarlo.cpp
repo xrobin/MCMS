@@ -85,7 +85,7 @@ NumericVector MonteCarlo::recordState() {
 }
 
 
-NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_out, const unsigned long burn_in) {
+NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_out, const unsigned long burn_in, const bool cooling) {
 	const unsigned long n2 = n - burn_in;
 	if (n2 % n_out != 0) {
 		throw std::invalid_argument("n - burn_in must be a multiple of n_out");
@@ -93,7 +93,7 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 	NumericMatrix McResult(n_out, paramSpecs.size() + 2);
 
 	size_t i = 0;
-	double cooling_rate = 0;
+	double cooling_rate = cooling ? 0 : 1;
 	for (unsigned long j = 0; j < n; ++j) {
 		// Regularly check if user canceled the run
 		if (j % 100 == 0) {
@@ -101,7 +101,9 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 		}
 
 		// Compute the cooling
-		cooling_rate = std::min((double)j / (double)burn_in, 1.0);
+		if (cooling) {
+			cooling_rate = cooling std::min((double)j / (double)burn_in, 1.0);
+		} // Otherwise it's 1 anyway
 
 		iterate(cooling_rate);
 		if ((j >= burn_in) && ((j - burn_in) % (n2 / n_out)) == 0) {

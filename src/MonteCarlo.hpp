@@ -47,7 +47,10 @@ class MonteCarlo {
 		rng(std::move(old.rng)),
 		resampler(std::move(old.resampler)){}
 
-	Rcpp::NumericMatrix iterate(const unsigned long, const unsigned long, const unsigned long);
+	/** Run the Monte Carlo with `n` iterations, recording `n_out` steps, ignoring the `burn_in` first ones.
+	 * `cooling` controls whether a cooling is conducted during the burn-in time
+	 */
+	Rcpp::NumericMatrix iterate(const unsigned long, const unsigned long, const unsigned long, const bool);
 	void iterate(const double cooling_rate = 1);
 	Rcpp::NumericVector recordState();
 

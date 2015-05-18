@@ -11,6 +11,7 @@
 #' @param o_k_scale scaling factor for the moves on o when they are close to 0 or 1
 #' @param o_restrict reject any move that is closer than o_restrict to 0 or 1
 #' @param verbose if TRUE, will print internal details of the Monte Carlo object (elements and pointers)
+#' @param cooling whether to perform cooling during the MonteCarlo. If \code{TRUE}, the simulation will start with
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
@@ -27,8 +28,9 @@
 MCMS <- function(PeptidesModel, var.model, n, n.out, burn.in,
 				 c.prior.sd = sqrt(2), o.prior.shape1 = .5, o.prior.shape2 = .5,
 				 prior_move_proportion = .02, c_sd = 0.05,
-				 o_sd = 0.05, o_k_scale = 1/100, o_restrict = 1e-3, verbose = FALSE) {
+				 o_sd = 0.05, o_k_scale = 1/100, o_restrict = 1e-3, verbose = FALSE, cooling = TRUE) {
 	run_MCMC_Cpp(PeptidesModel, var.model, n, n.out, burn.in, c_prior_sd = c.prior.sd, o_prior_shape1 = o.prior.shape1,
 				 o_prior_shape2 = o.prior.shape2, o_restrict = o_restrict,
-				 prior_move_proportion = prior_move_proportion, c_sd = c_sd, o_sd = o_sd, o_k_scale = o_k_scale, verbose = verbose)
+				 prior_move_proportion = prior_move_proportion, c_sd = c_sd, o_sd = o_sd, o_k_scale = o_k_scale,
+				 verbose = verbose, cooling = cooling)
 }

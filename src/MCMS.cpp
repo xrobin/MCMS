@@ -19,7 +19,8 @@ using std::string;
 NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
 	const unsigned long n, const unsigned long n_out, const unsigned long burn_in,
 	const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
-	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale, const bool verbose = false) {
+	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale, const bool verbose = false,
+	const bool cooling = false) {
 	VarianceModel aVarianceModel = as<VarianceModel>(aVarianceModelAsList);
 
 	MonteCarlo m = convertS4ToMonteCarlo(as<PeptidesModel>(aModel), aVarianceModel, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
@@ -29,7 +30,7 @@ NumericVector run_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList,
 		Rcpp::Rcout << m;
 	}
 
-	NumericMatrix res = m.iterate(n, n_out, burn_in);
+	NumericMatrix res = m.iterate(n, n_out, burn_in, cooling);
 	Rcpp::colnames(res, as<CharacterVector>(Rcpp::wrap(m.getIterateNames())));
 
 	//Rcpp::Rcout << m.getCByReference() << std::endl;
