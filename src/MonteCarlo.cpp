@@ -102,7 +102,7 @@ NumericMatrix MonteCarlo::iterate(const unsigned long n, const unsigned long n_o
 
 		// Compute the cooling
 		if (cooling) {
-			cooling_rate = cooling std::min((double)j / (double)burn_in, 1.0);
+			cooling_rate = std::min((double)j / (double)burn_in, 1.0);
 		} // Otherwise it's 1 anyway
 
 		iterate(cooling_rate);

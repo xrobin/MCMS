@@ -97,14 +97,15 @@ std::vector<Peptide> convertS4ToPeptides(const ProteinModel& aProtein) {
 MonteCarlo convertS4ToMonteCarloWithParams(const PeptidesModel& aModel, const VarianceModel& aVarianceModel,
 		const cParams::c_type aCMap, const oParams::o_type anOMap,
 		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
-		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
+		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale,
+		const NumericVector& seed) {
 
 	const ProteinModel aProtein = aModel.getProteinModel();
 	const NumericMatrix sampleDependency = aProtein.slot("sample.dependency");
 	const std::vector<Peptide> peptides = convertS4ToPeptides(aProtein);
 
 	// Get a RNG seeded from R
-	std::mt19937_64 prng = seedFromR();
+	std::mt19937_64 prng = seedFromR(seed);
 
 	MonteCarlo m(peptides, aCMap, anOMap,
 		Constants(aVarianceModel, sampleDependency, c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
@@ -118,7 +119,8 @@ MonteCarlo convertS4ToMonteCarloWithParams(const PeptidesModel& aModel, const Va
 
 MonteCarlo convertS4ToMonteCarlo(const PeptidesModel& aModel, const VarianceModel& aVarianceModel,
 		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2, const double o_restrict,
-		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale) {
+		const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale,
+		const NumericVector& seed) {
 	// Build the parameters
 	// First O
 	const oParams::o_type anOMap = convertListToOMap(aModel.slot("o"));
@@ -130,7 +132,7 @@ MonteCarlo convertS4ToMonteCarlo(const PeptidesModel& aModel, const VarianceMode
 	// Call the converter with c and o
 	return convertS4ToMonteCarloWithParams(aModel, aVarianceModel, aCMap, anOMap,
 		c_prior_sd, o_prior_shape1, o_prior_shape2, o_restrict,
-		prior_move_proportion, c_sd, o_sd, o_k_scale);
+		prior_move_proportion, c_sd, o_sd, o_k_scale, seed);
 }
 
 
@@ -153,13 +155,11 @@ MonteCarlo convertS4ToMonteCarlo(const PeptidesModel& aModel, const VarianceMode
 //	return(anO);
 //}
 
-std::mt19937_64 seedFromR() {
+std::mt19937_64 seedFromR(const NumericVector& seed) {
 	Rcpp::RNGScope scope;		// ensure RNG gets set/reset
-
-	NumericVector numericSeed = Rcpp::round(Rcpp::runif(10, std::numeric_limits<int>::min(), std::numeric_limits<int>::max()), 0);
 	typedef std::uint_least32_t seed_int_t;
 	std::vector<seed_int_t> seedVector;
-	transform(numericSeed.begin(), numericSeed.end(), back_inserter(seedVector),
+	transform(seed.begin(), seed.end(), back_inserter(seedVector),
         [](double const& val) {return seed_int_t(val);});
 	Rcpp::Rcout << seedVector << std::endl;
 	std::seed_seq sseq(seedVector.begin(), seedVector.end());

@@ -23,16 +23,18 @@ std::vector<Peptide> convertS4ToPeptides(const ProteinModel& aProtein);
 MonteCarlo convertS4ToMonteCarloWithParams(const PeptidesModel&, const VarianceModel&,
 		const cParams::c_type aCMap, const oParams::o_type anOMap,
 		const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
-		const double o_restrict, const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
+		const double o_restrict, const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale,
+		const Rcpp::NumericVector& seed);
 
 MonteCarlo convertS4ToMonteCarlo(const PeptidesModel&, const VarianceModel&, const double c_prior_sd, const double o_prior_shape1, const double o_prior_shape2,
 	const double o_restrict,
-	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale);
+	const double prior_move_proportion, const double c_sd, const double o_sd, const double o_k_scale,
+	const Rcpp::NumericVector& seed);
 
 
 //vector<Peptides> convertListToPeptidesVector(List aDataList, ...) {
 
 
 /** Initialize a PRNG using the seed from R */
-std::mt19937_64 seedFromR();
+std::mt19937_64 seedFromR(const Rcpp::NumericVector&);
 
