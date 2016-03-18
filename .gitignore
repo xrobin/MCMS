@@ -6,3 +6,9 @@ src/*.so
 src/*.dylib
 src/*.dll
 man/*
+test_speed/*
+*.RData
+*.pdf
+*.png
+*.out
+*.txt
