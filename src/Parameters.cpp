@@ -39,7 +39,7 @@ oParams::oParams(const o_type &anOMap) {
 		std::map<std::string, double> sampleSites = samplePair.second;
 		std::vector<double> sampleOs;
 		sampleOs.reserve(sampleSites.size());
-		std::unordered_map<std::string, size_t> sampleSiteNames;
+		my_universal_unordered_map sampleSiteNames;
 		sampleSiteNames.reserve(sampleSites.size());
 		// Loop over sites
 		size_t siteNumber = 0;
@@ -143,7 +143,7 @@ string oParams::getSampleName(const size_t sample) const {
 
 
 string oParams::getSiteName(const size_t sample, const size_t site) const {
-	const std::unordered_map<std::string, size_t>& sampleSiteNames = siteNames[sample];
+	const my_universal_unordered_map& sampleSiteNames = siteNames[sample];
 	for (const std::pair<string, size_t>& name: sampleSiteNames) {
 		if (name.second == site) {
 			return name.first;

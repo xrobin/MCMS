@@ -9,7 +9,7 @@
 #include "VarianceModel.hpp"
 #include <vector>
 
-//#include "typedefs.hpp"
+#include "typedefs.hpp"
 
 
 /** Constant variables during the Monte Carlo sampling */
@@ -47,7 +47,7 @@ class cParams {
 	//const Rcpp::NumericMatrix sampleDependence;
 	std::vector<std::vector<DependencyPair>> dependencyPairs;
 	std::vector<double> c, redundantC;
-	std::unordered_map<std::string, size_t> cNames, redundantCNames; // so from a name we know which c to update
+	my_universal_unordered_map cNames, redundantCNames; // so from a name we know which c to update
 	std::vector<std::vector<size_t>> redundantCToC; // Maps a redundantC to one or more c on which it depends
 	std::vector<std::vector<size_t>> cToRedundantC; // Maps a c to one or more redundantC which depend on it
 
@@ -144,8 +144,8 @@ public:
 class oParams {
 	typedef std::vector<double>::size_type size_t;
 	std::vector<std::vector<double>> o;
-	std::unordered_map<std::string, size_t> sampleNames; // so from a name we know which sample number it is
-	std::vector<std::unordered_map<std::string, size_t>> siteNames; // so from sample number and name we know which site it is
+	my_universal_unordered_map sampleNames; // so from a name we know which sample number it is
+	std::vector<my_universal_unordered_map> siteNames; // so from sample number and name we know which site it is
 
 public:
 	/** Constructor from an o_type map*/

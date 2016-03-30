@@ -6,6 +6,7 @@
 #include "prettyprint.hpp"
 #include "Priors.hpp"
 #include "Resampler.hpp"
+#include "typedefs.hpp" //my_universal_unordered_map
 #include <vector>
 
 using std::endl;
@@ -110,7 +111,7 @@ ostream& operator<< (ostream &out, const MoveSpec &aMoveSpec) {
 	return out;
 }
 
-void printAC(ostream &out, const vector<double> &aC, const std::unordered_map<std::string, size_t> &aCNames) {
+void printAC(ostream &out, const vector<double> &aC, const my_universal_unordered_map &aCNames) {
 	for (size_t i = 0; i < aC.size(); ++i) {
 		// get the cName
 		auto it = aCNames.begin();
