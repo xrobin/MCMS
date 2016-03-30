@@ -29,3 +29,4 @@ Collate:
     'occupancy_concentration_likelihood_mc.R'
     'onLoad.R'
     'predict.R'
+RoxygenNote: 5.0.1
