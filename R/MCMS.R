@@ -17,7 +17,7 @@
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
 #' ENSTestModel <- PeptidesModel(ENSTestProtein)
-#' MCMS(ENSTestModel, var.model, 10000, 1000
+#' MCMS(ENSTestModel, var.model, 10000, 1000,
 #' 	scale = 1, shape1 = .5, shape2 = .5,
 #' 	prior_move_proportion = .02, c_sd = 0.05, o_sd = 0.05, o_k_scale = 1/100)
 #' \dontrun{

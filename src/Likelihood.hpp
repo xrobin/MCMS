@@ -21,7 +21,7 @@ class PeptideLikelihood {
 		peptide(aPeptide), likelihoodValue(aLikelihood),
 		temptativeLikelihoodValue(0), varianceModel(aVarianceModel) {};
 	PeptideLikelihood(const Peptide& aPeptide, const VarianceModel& aVarianceModel):
-		PeptideLikelihood(aPeptide, aVarianceModel, peptide.computeLikelihood(aVarianceModel)) {};
+		PeptideLikelihood(aPeptide, aVarianceModel, aPeptide.computeLikelihood(aVarianceModel)) {};
 	//PeptideLikelihood(const Peptide& aPeptide, const double aLikelihood):
 	//	peptide(aPeptide), likelihood(aLikelihood) {};
 
