@@ -78,6 +78,7 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 
 	// populate redundantCNames from the matrix
 	vector<string> redundantNames = as<vector<string>>(Rcpp::rownames(aSampleDependenceMatrix));
+	vector<string> nonRedundantNames = as<vector<string>>(Rcpp::colnames(aSampleDependenceMatrix));
 	for (size_t redundantCNumber = 0; redundantCNumber < redundantNames.size(); ++redundantCNumber) {
 		redundantCNames[redundantNames[redundantCNumber]] = redundantCNumber;
 	}
@@ -86,27 +87,29 @@ cParams::cParams(const c_type &aCMap, const Rcpp::NumericMatrix &aSampleDependen
 	// Loop over redundantC (rows)
 	for (int i = 0; i < nrow; ++i) {
 		vector<DependencyPair> responsibleCs; // The c's impacting the redundantC i
+		size_t rowIdx = getIndexOnRedundantC(redundantNames[i]);
 		for (int j = 0; j < ncol; ++j) {
 			double aMult = aSampleDependenceMatrix(i, j);
+			// Where is column j in c?
+			size_t colIdx = getIndexOnC(nonRedundantNames[j]);
 			if (aMult != 0) {
-				responsibleCs.push_back(DependencyPair(aMult, static_cast<size_t>(j)));
+				responsibleCs.push_back(DependencyPair(aMult, static_cast<size_t>(colIdx)));
 			}
 		}
 		dependencyPairs.push_back(responsibleCs);
 	}
 
 	// Populate the redundantCToC indices
-	vector<string> nonRedundantNames = as<vector<string>>(Rcpp::colnames(aSampleDependenceMatrix));
 	// Iterate over the columns first
 	for (int j = 0; j < ncol; ++j) {
 		// Get the index on c for the column
-		//size_t colIdx = getIndexOnC(nonRedundantNames[j]);
+		size_t colIdx = getIndexOnC(nonRedundantNames[j]);
 		// Then go through the rows
 		for (int i = 0; i < nrow; ++i) {
 			if (aSampleDependenceMatrix(i, j) != 0) {
 				// and then find the rows that are != 0
-				redundantCToC.at(i).push_back(static_cast<size_t>(j));
-				cToRedundantC.at(j).push_back(static_cast<size_t>(i));
+				redundantCToC.at(i).push_back(static_cast<size_t>(colIdx));
+				cToRedundantC.at(colIdx).push_back(static_cast<size_t>(i));
 			}
 		}
 	}
