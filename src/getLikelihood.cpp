@@ -43,8 +43,8 @@ double getLikelihood_MCMC_Cpp(const S4& aModel, const List& aVarianceModelAsList
 	Likelihood l(peptides, c, o, constants);
 
 	if (verbose) {
-		Rcpp::Rcout << "c = " << c << std::endl;
-		Rcpp::Rcout << "o = " << o << std::endl;
+		Rcpp::Rcout << c << std::endl;
+		Rcpp::Rcout << o << std::endl;
 		Rcpp::Rcout << "l = " << l << std::endl;
 	}
 

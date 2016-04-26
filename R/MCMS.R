@@ -12,7 +12,7 @@
 #' @param o_restrict reject any move that is closer than o_restrict to 0 or 1
 #' @param verbose if TRUE, will print internal details of the Monte Carlo object (elements and pointers)
 #' @param cooling whether to perform cooling during the MonteCarlo. If \code{TRUE}, the simulation will start with
-#' @param seed
+#' @param seed a seed from the sampling, taken from \code{\link{runif}} by default.
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
