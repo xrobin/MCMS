@@ -135,6 +135,7 @@ ostream& operator<< (ostream &out, const cParams &aCParams) {
 	out << "]" << endl;
 
 	out << "redundantCToC = " << aCParams.redundantCToC << endl;
+	out << "cToRedundantC = " << aCParams.cToRedundantC << endl;
 
 //	const Rcpp::NumericMatrix sampleDependence;
 //	std::vector<double> c, redundantC;
