@@ -37,6 +37,7 @@ setClass("Peptides",
 #' Creates a model with concentration and occupancies for a Protein.
 #' @param proteins a \code{\link{Protein-class}} object
 #' @import dplyr
+#' @import methods
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)

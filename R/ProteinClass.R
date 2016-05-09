@@ -96,6 +96,7 @@ setClass("Protein",
 #' @param decimate.sample.dependency.matrix whether to remove samples that are not observed and the parameters that are not
 #' @description
 #' Only acetylation (a) is supported as a non-positional modification. It is added to the N-term of the peptide
+#' @import methods
 #' @examples
 #' data(ENSTest)
 #' Protein(ENSTest)

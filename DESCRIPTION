@@ -10,6 +10,7 @@ Description: Markov chain monte carlo sampling of protein concentration and
     modification occupancy ratios from mass spectrometry experiments
 License: GPL (>= 2)
 Imports:
+    methods,
     Rcpp (>= 0.11.3),
     dplyr,
     stringr
