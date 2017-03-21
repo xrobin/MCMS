@@ -1,0 +1,1243 @@
+#LyX 2.2 created this file. For more info see http://www.lyx.org/
+\lyxformat 508
+\begin_document
+\begin_header
+\save_transient_properties true
+\origin unavailable
+\textclass article
+\use_default_options true
+\maintain_unincluded_children false
+\language english
+\language_package default
+\inputencoding auto
+\fontencoding global
+\font_roman "default" "default"
+\font_sans "default" "default"
+\font_typewriter "default" "default"
+\font_math "auto" "auto"
+\font_default_family default
+\use_non_tex_fonts false
+\font_sc false
+\font_osf false
+\font_sf_scale 100 100
+\font_tt_scale 100 100
+\graphics default
+\default_output_format default
+\output_sync 0
+\bibtex_command default
+\index_command default
+\paperfontsize default
+\spacing single
+\use_hyperref false
+\papersize default
+\use_geometry true
+\use_package amsmath 1
+\use_package amssymb 1
+\use_package cancel 1
+\use_package esint 1
+\use_package mathdots 1
+\use_package mathtools 1
+\use_package mhchem 1
+\use_package stackrel 1
+\use_package stmaryrd 1
+\use_package undertilde 1
+\cite_engine basic
+\cite_engine_type default
+\biblio_style plain
+\use_bibtopic false
+\use_indices false
+\paperorientation portrait
+\suppress_date false
+\justification true
+\use_refstyle 1
+\index Index
+\shortcut idx
+\color #008000
+\end_index
+\leftmargin 2cm
+\topmargin 3cm
+\rightmargin 1.5cm
+\bottommargin 2cm
+\secnumdepth 3
+\tocdepth 3
+\paragraph_separation indent
+\paragraph_indentation default
+\quotes_language english
+\papercolumns 1
+\papersides 1
+\paperpagestyle default
+\tracking_changes false
+\output_changes false
+\html_math_output 0
+\html_css_as_file 0
+\html_be_strict false
+\end_header
+
+\begin_body
+
+\begin_layout Title
+Mass spectrometry data processing
+\end_layout
+
+\begin_layout Subsection*
+Spectral search
+\end_layout
+
+\begin_layout Standard
+Spectral search was carried out with MaxQuant v.1.5.0.2 (search details from
+ Erwin go here) against Ensembl 78.
+ The following modifications were searched: methionine oxydation, phosphorylatio
+n on S, T and Y, N-term acetylation and pyro-Q on Gln and Glu.
+ pyro-Q was considered as a sample preparation artefact and the peptides
+ were further processed as if they were unmodified.
+ In addition, spectra with a score < 40 were removed from further analysis.
+ All ratios were expressed in natural logarithmic form.
+\end_layout
+
+\begin_layout Standard
+SILAC pairs information was extracted from the evidence.txt file, while all
+ MS/MS information was collected from the msms.txt file.
+\end_layout
+
+\begin_layout Subsection*
+Ratio normalization
+\end_layout
+
+\begin_layout Standard
+To normalize for biases in protein extraction efficiency between biological
+ replicates, we substracted the median of the biological replicate in which
+ the ratio was observed.
+\end_layout
+
+\begin_layout Subsection*
+Isoforms
+\end_layout
+
+\begin_layout Standard
+To accomodate isoforms, we assumed that all isoforms of a protein were expressed
+ similarly.
+ We generated an artificial database where for each gene in Ensembl 78 (identifi
+ed by an ENSG id), we selected the longest isoform as reference protein
+ (ENSP id).
+ All peptide of other isoforms of the corresponding ENSG that were not mapped
+ into the longest ENSP were added at the end, separated by a J amino acid
+ (Jinho has a reference here).
+\end_layout
+
+\begin_layout Subsection*
+Counting effective observations
+\end_layout
+
+\begin_layout Standard
+In order to account for uncertainties in the MS identification of a SILAC
+ pair 
+\begin_inset Formula ${\cal P}$
+\end_inset
+
+ ratio to a (potentially modified) peptide, we computed the effective number
+ of times a has been observed 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\omega=1$
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+.
+ For a modified peptide, we list all possible peptide modifications and
+ rate their probabilities.
+ We further correct for cofragmentation probabilities in the case where
+ an MS² spectra was observed only for a light or heavy peak.
+\end_layout
+
+\begin_layout Subsubsection*
+Peptide modifications
+\end_layout
+
+\begin_layout Standard
+We extracted modification probabilities all MS² spectra were extracted from
+ the msms.txt file.
+ For unmodified peptides, the corresponding effective number of observation
+ 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $\omega=1$
+\end_inset
+
+.
+ For modified peptides, 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+let 
+\begin_inset Formula $A$
+\end_inset
+
+ be an indicator matrix between the phosphosites 
+\begin_inset Formula $j$
+\end_inset
+
+ and all combination of potential peptides 
+\begin_inset Formula $i$
+\end_inset
+
+ with the correct set of modifications.
+ 
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $A$
+\end_inset
+
+ can be inversed, we get that
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\omega_{i}=\sum_{j}\left(A^{-1}\right)_{ij}p_{j}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+with 
+\begin_inset Formula $p$
+\end_inset
+
+ being the site probabilities extracted from MaxQuant.
+\end_layout
+
+\begin_layout Standard
+If 
+\begin_inset Formula $A$
+\end_inset
+
+ is not solvable, it becomes an optimization problem:
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\min\left[\sum_{j}p_{j}\sum_{i}\left(A^{-1}\right)_{ij}\omega_{i}\right]
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Assessing cofragmentation
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula ${\cal P}$
+\end_inset
+
+ indicate a SILAC pair and 
+\begin_inset Formula $C_{L,H}$
+\end_inset
+
+ indicate whether co-localization has occured (
+\begin_inset Formula $C=1$
+\end_inset
+
+) or not (
+\begin_inset Formula $C=0$
+\end_inset
+
+) for the light and heavy peaks respectively.
+ This is determined by having multiple sequences scored in the msms.txt file
+ for a single Scan number and raw file.
+ From those silac pairs where both heavy and light MS² spectra have been
+ observed, we estimate the four probabilities: 
+\begin_inset Formula 
+\[
+P(C_{L},C_{H}|{\cal P})=\begin{cases}
+p_{11}^{C} & \mbox{for }C_{L}=1,C_{H}=1\\
+p_{01}^{C} & \mbox{for }C_{L}=0,C_{H}=1\\
+p_{10}^{C} & \mbox{for }C_{L}=1,C_{H}=0\\
+p_{00}^{C} & \mbox{for }C_{L}=0,C_{H}=0
+\end{cases}
+\]
+
+\end_inset
+
+ Let 
+\begin_inset Formula ${\cal N}=\left\{ C_{L}=0,\,C_{H}=0\right\} $
+\end_inset
+
+ (no co-localisation problems), so 
+\begin_inset Formula $P({\cal N}|{\cal P})=p_{00}^{C}$
+\end_inset
+
+.
+ Let also 
+\begin_inset Formula $p_{L}^{top},p_{H}^{top}$
+\end_inset
+
+ be the probability for the top-scoring peptide according to the MS² analysis
+ for L and H respectively.
+ Let 
+\begin_inset Formula ${\cal S}^{top}$
+\end_inset
+
+ indicate the case where the top scoring peptide is the same for the L and
+ H MS² analysis.
+ Focusing on all SILAC pairs where there is no colocalization problems we
+ can assess by global statistics 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\[
+P({\cal S}^{top}\,|\,p_{L}^{top},p_{H}^{top},{\cal N},{\cal P})
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P(p_{L}^{top},p_{H}^{top}\,|\,{\cal N},{\cal P})
+\]
+
+\end_inset
+
+The effective number of observations, 
+\begin_inset Formula $n_{i}^{eff}$
+\end_inset
+
+, for a p-peptide 
+\begin_inset Formula $i$
+\end_inset
+
+ in cases where both MS² spectra have been obtained is given by 
+\begin_inset Formula $n_{i}^{eff}=p_{L}(i)\cdot p_{H}(i)$
+\end_inset
+
+, where 
+\begin_inset Formula $p_{L,H}(i)$
+\end_inset
+
+ is the probability of peptide 
+\begin_inset Formula $i$
+\end_inset
+
+ in the L and H MS-2 analysis, respectively.
+ If only one MS² spectra has been observed, say for the light sample, we
+ can calculate the expected effective number of observations for the top
+ scoring peptide 
+\begin_inset Formula $i_{top}$
+\end_inset
+
+ according to the observed 
+\begin_inset Formula $p_{L}^{top}$
+\end_inset
+
+ and the global statistics derived above.
+ Specifically,
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+P(p_{H}^{top},{\cal S}^{top},C_{H}=0|p_{L}^{top},C_{L}=0,{\cal P}) & = & P(p_{H}^{top},{\cal S}^{top}\,|\,p_{L}^{top},{\cal N},{\cal P})P(C_{H}=0|p_{L}^{top},C_{L}=0,{\cal P})\\
+ & = & P({\cal S}^{top}|p_{L}^{top},p_{H}^{top},{\cal N},{\cal P})\cdot P(p_{H}^{top}|p_{L}^{top},{\cal N},{\cal P})\cdot P(C_{H}=0|p_{L}^{top},C_{L}=0,{\cal P})\\
+ & = & P({\cal S}^{top}|p_{L}^{top},p_{H}^{top},{\cal N},{\cal P})\cdot\frac{P(p_{H}^{top},p_{L}^{top}|{\cal N},{\cal P})}{P(p_{L}^{top}|{\cal N},{\cal P})}\frac{P({\cal N}|{\cal P})}{P(C_{L}=0|{\cal P})}\\
+ & = & P({\cal S}^{top}|p_{L}^{top},p_{H}^{top},{\cal N},{\cal P})\cdot\frac{P(p_{H}^{top},p_{L}^{top}|{\cal N},{\cal P})}{P(p_{L}^{top}|{\cal N},{\cal P})}\cdot\frac{p_{00}^{C}}{p_{00}^{C}+p_{01}^{C}}
+\end{eqnarray*}
+
+\end_inset
+
+Let 
+\begin_inset Formula $\tilde{P}(p_{H}^{top})=P(p_{H}^{top},{\cal S}^{top},C_{H}=0|p_{L}^{top},C_{L}=0,{\cal P})$
+\end_inset
+
+ .
+ The expected effective number of observations is then given as 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+\langle n_{i-top}^{eff}\rangle(p_{L}^{top})=p_{L}^{top}\cdot\langle p_{H}^{top}\rangle=p_{L}^{top}\cdot\int\,p_{H}^{top}\cdot\tilde{P}(p_{H}^{top})dp_{H}^{top}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+Specifically, we computed this statistics in the following bins: 0, .3, .5,
+ .6, .7, .8, .9, .95, 1.
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+I'm sure this binning has a name...
+\end_layout
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsection*
+Bayesian variance model 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ be the precision of a gaussian distribution with mean 
+\begin_inset Formula $\mu$
+\end_inset
+
+ and let 
+\begin_inset Formula 
+\begin{equation}
+\Gamma(\lambda|a,b)=\frac{1}{\Gamma(a)}b^{a}\lambda^{a-1}\exp(-b\lambda)\label{eq:precision-prior}
+\end{equation}
+
+\end_inset
+
+ be the probability density of this precision , where 
+\begin_inset Formula $b$
+\end_inset
+
+ is the inverse scale of the gamma-distribution and 
+\begin_inset Formula $a$
+\end_inset
+
+ the shape
+\begin_inset Foot
+status open
+
+\begin_layout Plain Layout
+Note that 
+\begin_inset Formula $\chi_{\nu}^{2}$
+\end_inset
+
+ is a special case of the 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+-distribution with 
+\begin_inset Formula $a=\nu/2$
+\end_inset
+
+ and 
+\begin_inset Formula $b=\frac{1}{2}.$
+\end_inset
+
+ Furthermore, variance estimates 
+\begin_inset Formula $s^{2}=\frac{1}{n-1}\sum_{i}(x_{i}-\bar{x})^{2}$
+\end_inset
+
+ are distributed according to 
+\begin_inset Formula $s^{2}\sim\frac{\sigma^{2}}{n-1}\cdot\chi_{n-1}^{2}$
+\end_inset
+
+
+\end_layout
+
+\end_inset
+
+.
+ 
+\end_layout
+
+\begin_layout Standard
+Let 
+\begin_inset Formula $D=\left\{ x_{1},\cdots,x_{n}\right\} $
+\end_inset
+
+be a set of peptide ratio observations, we have
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+P(D|\mu,\lambda) & = & \frac{\lambda^{n/2}}{(2\pi)^{n/2}}\exp\left(-\frac{1}{2}\lambda\sum(x_{i}-\mu)^{2}\right)\\
+ & = & \frac{\lambda^{n/2}}{(2\pi)^{n/2}}\exp\left(-\frac{1}{2}\lambda\left[n(\bar{x}-\mu)^{2}+(n-1)s^{2}\right]\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+where 
+\begin_inset Formula 
+\begin{eqnarray*}
+\bar{x} & = & \frac{1}{n}\sum_{i}x_{i}\\
+s^{2} & = & \frac{1}{n-1}\sum_{i}(x_{i}-\bar{x})^{2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+So 
+\begin_inset Formula 
+\begin{eqnarray}
+P(\bar{x},s^{2}|\mu,\lambda,n) & = & P(\bar{x}|\mu,\lambda,n)P(s^{2}|\lambda,n)\label{eq:normal-chi^2}\\
+ & = & \frac{(n\lambda)^{1/2}}{\sqrt{2\pi}}\exp\left(-\frac{1}{2}n\lambda(\bar{x}-\mu)^{2}\right)\cdot\gamma\cdot\frac{(\gamma s^{2})^{\nu/2-1}}{2^{\nu/2}\Gamma(\nu/2)}\exp\left(-\frac{1}{2}\gamma s^{2}\right),\,\,\,\mbox{where}\nonumber \\
+\nu & = & n-1\nonumber \\
+\gamma & = & \lambda\nu\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+The latter expression shows that 
+\begin_inset Formula $s^{2}\gamma=s^{2}\nu/\sigma^{2}\sim\chi_{\nu}^{2}.$
+\end_inset
+
+ Let the prior be on the form 
+\begin_inset Formula $P(\mu,\lambda)=P(\lambda|\mu)P(\mu).$
+\end_inset
+
+ Then 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+P(\bar{x},s^{2},\lambda|\mu,n)=P(\bar{x},s^{2}|\lambda,\mu,n)P(\lambda|\mu)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The posterior distribution for the precision is then given by
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ 
+\begin_inset Formula 
+\begin{eqnarray}
+P(\lambda|\mu,s^{2},n) & = & \frac{P(s^{2}|\lambda,n)P(\lambda|\mu)}{P(s^{2}|n)}\nonumber \\
+ & = & \frac{1}{\Gamma(a_{s})}b_{s}^{a_{s}}\lambda^{a_{s}-1}\exp(-b_{s}\lambda),\,\,\,\,\mbox{where}\nonumber \\
+a_{s} & = & \frac{\nu}{2}+a(\mu)\nonumber \\
+b_{s} & = & b(\mu)+s^{2}\cdot\frac{\nu}{2}\label{eq:posterior-gamma}
+\end{eqnarray}
+
+\end_inset
+
+ 
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+The marginalization wrt.
+ 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ becomes, 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+P(\bar{x}|\mu,s^{2},n) & = & \int P(\bar{x}|\mu,\lambda,n)P(\lambda|\mu,s^{2},n)d\lambda\nonumber \\
+ & = & \frac{\sqrt{n}\cdot b_{s}^{a_{s}}}{\sqrt{2\pi}\cdot\Gamma(a_{s})}\int\lambda^{a_{s}-1/2}\exp\left(-\frac{1}{2}n\lambda(\bar{x}-\mu)^{2}-b_{s}\lambda\right)d\lambda\nonumber \\
+P(\bar{x}|\mu,s^{2},n) & = & \sqrt{\frac{n}{2b_{s}}}\cdot\frac{\Gamma(a_{s}/2)}{\sqrt{\pi}\cdot\Gamma(a_{s}/2-\frac{1}{2})}\left(1+\frac{(\bar{x}-\mu)^{2}\cdot n}{2b_{s}}\right)^{-a_{s}-1/2}\label{eq:final-t}
+\end{eqnarray}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+We can get this in to a more convenient form by defining 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{t} & = & \frac{(\bar{x}-\mu)\sqrt{n}}{\sqrt{2b_{s}}}\\
+\nu_{s} & = & \nu+2a(\mu)
+\end{eqnarray*}
+
+\end_inset
+
+Then
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray}
+P(\tilde{t}|\mu,s^{2},n) & = & \frac{1}{B\left(\nu_{s}-\frac{1}{2};\frac{1}{2}\right)}\left(1+\tilde{t}^{2}\right)^{-\frac{1}{2}(\nu_{s}+1)}\label{eq:t-tilde}\\
+ & = & \frac{\Gamma(\nu_{s})}{\sqrt{\pi}\cdot\Gamma(\nu_{s}-\frac{1}{2})}\left(1+\tilde{t}^{2}\right)^{-\frac{1}{2}(\nu_{s}+1)}\nonumber 
+\end{eqnarray}
+
+\end_inset
+
+This is the non-standardized 
+\begin_inset Formula $t-$
+\end_inset
+
+distribution, which can be used also for 
+\begin_inset Formula $n=1$
+\end_inset
+
+, in which case 
+\begin_inset Formula $b_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $\nu_{s}$
+\end_inset
+
+ simply revert to their prior values 
+\begin_inset Formula $b(\mu)$
+\end_inset
+
+ and 
+\begin_inset Formula $2a(\mu)$
+\end_inset
+
+.
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+ Note that in the limit 
+\begin_inset Formula $\nu\gg2\max\left\{ a,\frac{b}{s^{2}}\right\} ,$
+\end_inset
+
+ 
+\begin_inset Formula $\tilde{t}^{2}\rightarrow\frac{1}{\nu}t^{2}$
+\end_inset
+
+ , where 
+\begin_inset Formula $t=\frac{(\bar{x}-\mu)\sqrt{n}}{s}$
+\end_inset
+
+.
+ Consequently, this non-standardised 
+\begin_inset Formula $t$
+\end_inset
+
+-distribution (due to the regularisation from the prior) becomes equal to
+ the standard 
+\begin_inset Formula $t$
+\end_inset
+
+-distribution.
+ The first two moments of this distribution is 
+\begin_inset Formula 
+\begin{eqnarray*}
+\langle\tilde{t}\rangle & = & 0\\
+\langle\tilde{t}^{2}\rangle & = & \frac{1}{\nu_{s}-2}
+\end{eqnarray*}
+
+\end_inset
+
+
+\family default
+\series default
+\shape default
+\size default
+\emph default
+\bar default
+\strikeout default
+\uuline default
+\uwave default
+\noun default
+\color inherit
+Consequently, 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\langle\bar{x}\rangle & = & \mu\\
+Var(\bar{x}) & = & \frac{1}{n}\cdot\frac{2b+s^{2}\nu}{\nu_{s}-2}=\frac{2b+s^{2}(n-1)}{n\cdot(n-3+2a)}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We can generalize this result to the case, where we are not certain which
+ observation 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ (MS¹ peak
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Is it really what you mean?
+\end_layout
+
+\end_inset
+
+) is associated with a particular peptide.
+ Let 
+\begin_inset Formula $D=\{x_{1},\cdots,x_{n}\}$
+\end_inset
+
+ be a set of SILAC ratios all of which have some final probabilities 
+\begin_inset Formula $\omega_{i}>0$
+\end_inset
+
+ of being associated with a particular peptide sequence .
+ Then we shall interpret 
+\begin_inset Formula $n$
+\end_inset
+
+ as the 
+\emph on
+effective 
+\emph default
+number of observations and use 
+\begin_inset Formula 
+\begin{eqnarray*}
+n & = & \sum_{i}\omega_{i}\\
+\bar{x} & = & \frac{1}{n}\sum_{i}\omega_{i}x_{i}\\
+\nu & = & n-1\\
+\nu\cdot s^{2} & = & \sum_{i}\omega_{i}(x_{i}-\bar{x})^{2}
+\end{eqnarray*}
+
+\end_inset
+
+which in turn defines the new effective posterior 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+-parameters, 
+\begin_inset Formula $a_{s}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{s}$
+\end_inset
+
+ according to Eq.
+ (
+\begin_inset CommandInset ref
+LatexCommand ref
+reference "eq:posterior-gamma"
+
+\end_inset
+
+).
+\end_layout
+
+\begin_layout Standard
+Empirically, MS data (log-ratio) has precision distribution with a fixed
+ shape-parameter 
+\begin_inset Formula $a\approx1,$
+\end_inset
+
+ irrespective of the measurement value (log-ratio), thus corresponding to
+ a pure exponential distribution in all cases.
+ The scale of the precision, 
+\begin_inset Formula $1/b$
+\end_inset
+
+, is on the other hand strongly correlated with the log-ratio measurement.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+\frac{1}{b} & \simeq & A\cdot\exp(-B\cdot x^{\nu}),\,\,\,\,x=|\log(\mbox{ratio})|,\,\,\,\,B\approx0.88,\,\,\,\,\nu\approx1.28\,\,\,\,\mbox{(blue)}\\
+\frac{1}{b} & \simeq & A\exp(-B\cdot x),\,\,\,\,B\simeq1\,\,\,\,\mbox{(red)}
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+\begin_inset Graphics
+	filename precision-vs-log-ratio.pdf
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+The red-curve is the expected behavior signifying 
+\begin_inset Formula $\mbox{Variance \ensuremath{\propto\mbox{Mean}}}$
+\end_inset
+
+, since 
+\begin_inset Formula $\frac{1}{b}\sim\mbox{precision}$
+\end_inset
+
+.
+ The fact that the characteristic variance increases at higher mean-values
+ indicates a type of 'saturation' effect towards high and/or low values
+ of intensities.
+ For any specific protein (or phospho-site), the fact that 
+\begin_inset Formula $a\simeq1$
+\end_inset
+
+ implies that the second moment diverges in the absence of specific variance-inf
+ormation.
+ If a variance of a specific protein measurement is 
+\begin_inset Formula $V$
+\end_inset
+
+, based on 
+\begin_inset Formula $N$
+\end_inset
+
+ observation, the posterior precision distribution for 
+\begin_inset Formula $\lambda$
+\end_inset
+
+ for this protein is given by 
+\begin_inset Formula 
+\begin{eqnarray*}
+\lambda & \sim & \Gamma(\cdot|a_{N},b_{N})\\
+a_{N} & = & a+\frac{N-1}{2}\\
+b_{N} & = & b+\frac{N-1}{2}V
+\end{eqnarray*}
+
+\end_inset
+
+Thus, any ratio-observation with 
+\begin_inset Formula $N>1$
+\end_inset
+
+ alleviates the divergence of the second moment.
+ 
+\end_layout
+
+\begin_layout Subsection*
+Monte Carlo Simulation of concentration and occupancy ratios
+\end_layout
+
+\begin_layout Standard
+In the previous section we have described an accurate likelihood function
+ for log-ratios, 
+\begin_inset Formula $x_{i}$
+\end_inset
+
+ of individual peptides in terms of the number of observations, 
+\begin_inset Formula $n_{i}$
+\end_inset
+
+ and the 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+-parameters 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+.
+ We need to discuss how to aggregate this information into occupancy ratios
+ and concentration ratios for phosphorylatable sites and proteins, respectively.
+ Let 
+\begin_inset Formula $s$
+\end_inset
+
+ denote a given phosphorylation site, 
+\begin_inset Formula ${\cal S}_{i}$
+\end_inset
+
+ the set of phospho-sites for sequence 
+\begin_inset Formula $i$
+\end_inset
+
+, 
+\begin_inset Formula $S$
+\end_inset
+
+ the total number of modifyable sites and 
+\begin_inset Formula $o_{s}=\frac{p_{s}}{c}$
+\end_inset
+
+ the occupansion ratio on site 
+\begin_inset Formula $s$
+\end_inset
+
+.
+ Assuming 
+\begin_inset Formula $o_{s}$
+\end_inset
+
+'s to be mutual independent, the expected log-concentration ratio, 
+\begin_inset Formula $\mu_{i}$
+\end_inset
+
+, is given by
+\begin_inset Formula 
+\begin{eqnarray*}
+\exp(\mu_{i}) & = & \exp(c)\prod_{s\in{\cal S}_{i}}\left(\frac{o'_{s}}{o_{s}}\right)^{t_{is}}\left(\frac{1-o'_{s}}{1-o_{s}}\right)^{1-t_{is}},\\
+\mu_{i}(c,\bar{o},\bar{o}') & = & c+\sum_{s}I_{is}\left[\log\left(\frac{1-o'_{s}}{1-o_{s}}\right)+t_{is}\left(\log\left(\frac{o'_{s}}{1-o'_{s}}\right)-\log\left(\frac{o_{s}}{1-o_{s}}\right)\right)\right]
+\end{eqnarray*}
+
+\end_inset
+
+where 
+\begin_inset Formula $c$
+\end_inset
+
+ is the protein log-concentration ratio between the primed- and unprimed
+ cell-line, 
+\begin_inset Formula $\bar{o}$
+\end_inset
+
+ and 
+\begin_inset Formula $\bar{o}'$
+\end_inset
+
+ are the collection of occupancy ratios for the unprimed and primed celle-line
+ respectively, and 
+\begin_inset Formula $t_{is}$
+\end_inset
+
+ are indicator variables signifying whether 
+\begin_inset Formula $s$
+\end_inset
+
+-site is modulated in peptide 
+\begin_inset Formula $i$
+\end_inset
+
+ (1) or not (0).
+ Similarly, 
+\begin_inset Formula $I_{is}=1$
+\end_inset
+
+ if phospho-site 
+\begin_inset Formula $s$
+\end_inset
+
+ is covered by peptide 
+\begin_inset Formula $i$
+\end_inset
+
+ and zero otherwise.
+ Let 
+\begin_inset Formula $z=(\bar{x}_{1},\cdots,\bar{x}_{I})$
+\end_inset
+
+ be the measured log-concentration ratios for the 
+\begin_inset Formula $I$
+\end_inset
+
+ peptides belonging to the given protein, where each 
+\begin_inset Formula $\bar{x}_{i}$
+\end_inset
+
+ represent the mean value taken over 
+\begin_inset Formula $n_{i}$
+\end_inset
+
+ repeats and with effective posterior 
+\begin_inset Formula $\Gamma$
+\end_inset
+
+-parameters of 
+\begin_inset Formula $a_{i}$
+\end_inset
+
+ and 
+\begin_inset Formula $b_{i}$
+\end_inset
+
+ and let 
+\begin_inset Formula $\bar{\mu}=(\mu_{1},\cdots,\mu_{I})$
+\end_inset
+
+ be the collection of expected values.
+ Then 
+\begin_inset Formula $P(\bar{z}|\bar{\mu})=\prod_{i}P(z_{i}|\mu_{i})$
+\end_inset
+
+ where each factor is a non-standardized 
+\begin_inset Formula $t$
+\end_inset
+
+-distribution.
+ Define for convenience 
+\begin_inset Newline newline
+\end_inset
+
+
+\begin_inset Formula 
+\begin{eqnarray*}
+\tilde{\nu_{i}} & = & \frac{1}{2}(\nu_{i}+1)\\
+\gamma_{i} & = & \frac{n_{i}}{2b_{i}}\\
+K_{i} & = & 1+\gamma_{i}(\bar{x}_{i}-\mu_{i})^{2}.
+\end{eqnarray*}
+
+\end_inset
+
+ Consequently the likelihood function is given as , 
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\begin{eqnarray*}
+L(c,\bar{o},\bar{o}') & = & \log P(\bar{z}|\bar{\mu}(c,\bar{o},\bar{o}'))\\
+ & = & \sum_{i=1}^{I}\left(-\tilde{\nu_{i}}\log\left[K_{i}\right]+\frac{1}{2}\log(\gamma_{i})\right)\\
+L(c,\bar{o},\bar{o}') & = & \sum_{i=1}^{I}\left(\tilde{\nu_{i}}\log\left[1+\gamma_{i}\left(\bar{x}_{i}-c-\sum_{s}I_{is}\left[\log\left(\frac{1-o'_{s}}{1-o_{s}}\right)+t_{is}\left(\log\left(\frac{o'_{s}}{1-o'_{s}}\right)-\log\left(\frac{o_{s}}{1-o_{s}}\right)\right)\right]\right)^{2}\right]+\frac{1}{2}\log(\gamma_{i})\right)
+\end{eqnarray*}
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+We optimized the function for each protein separately with bayesian Monte
+ Carlo simulations, 100000 iterations were performed per parameter.
+ We used a Jeffrey prior on 
+\begin_inset Formula $o_{s}$
+\end_inset
+
+ with
+\begin_inset Formula $\alpha_{1}=\alpha_{2}=\frac{1}{2}$
+\end_inset
+
+ and a an exponential prior
+\begin_inset Note Note
+status open
+
+\begin_layout Plain Layout
+Really?
+\end_layout
+
+\end_inset
+
+ with 
+\begin_inset Formula $\lambda=2$
+\end_inset
+
+ on 
+\begin_inset Formula $c$
+\end_inset
+
+.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+L(c,\bar{o},\bar{o}')+P(c,\bar{o},\bar{o}')=L(c,\bar{o},\bar{o}')+Be(o_{s}|\alpha_{1},\alpha_{2})+Be(o_{s}|\alpha_{1},\alpha_{2})-2\left|c\right|
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Subsubsection*
+Moves
+\end_layout
+
+\begin_layout Standard
+2% of the proposed moves are drawn from the prior distribution of the parameters
+ as described above.
+ Standard moves were as
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula 
+\[
+c_{t+1}=c_{t}+\mathcal{N}(\lambda=0,\sigma=0.05)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+for the concentration and 
+\end_layout
+
+\begin_layout Standard
+
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+\begin_inset Formula 
+\[
+o_{s,t+1}=o_{s,t}+\mathcal{N}(\lambda=0,\sigma=k)
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+for occupancies, with a standard deviation corrected to propose smaller
+ moves when 
+\begin_inset Formula $o_{s}$
+\end_inset
+
+ approaches 0 or 1.
+\end_layout
+
+\begin_layout Standard
+\begin_inset Formula 
+\[
+k=\dfrac{1}{\vert\dfrac{1}{100}Be(o_{s}|\alpha_{1},\alpha_{2})\left(\dfrac{1}{2(1-o)}-\dfrac{1}{2o}\right)\vert+\dfrac{1}{0.05}}
+\]
+
+\end_inset
+
+
+\end_layout
+
+\begin_layout Standard
+In addition, all moves that would result in 
+\begin_inset Formula $o_{s}<10^{-5}$
+\end_inset
+
+ or 
+\family roman
+\series medium
+\shape up
+\size normal
+\emph off
+\bar no
+\strikeout off
+\uuline off
+\uwave off
+\noun off
+\color none
+
+\begin_inset Formula $o_{s}>1-10^{-5}$
+\end_inset
+
+were automatically rejected.
+\end_layout
+
+\end_body
+\end_document
