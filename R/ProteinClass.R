@@ -38,7 +38,7 @@ make_unique_modifications <- function(data, modifications) {
 		unique.mods <- unique.mods[unique.mods != "a"]
 		# Detect where it occurs
 		acetylation.pos <- data %>%
-			filter(is.acetylated = str_detect(modifications, "^([A-Z]_[0-9]+;)*a(;[A-Z]_[0-9]+)*$")) %>%
+			filter(str_detect(modifications, "^([A-Z]_[0-9]+;)*a(;[A-Z]_[0-9]+)*$")) %>%
 			select(start) %>%
 			distinct(start)
 		acetylation.pos <- unique(acetylation.pos$start)
