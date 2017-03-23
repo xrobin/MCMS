@@ -94,6 +94,7 @@ setClass("Protein",
 #' @param data the \code{data.frame}
 #' @param sample.dependency.matrix a matrix encoding how samples (rows) depend on the parameters (columns). It can be omitted for simple problems with no complex dependencies.
 #' @param decimate.sample.dependency.matrix whether to remove samples that are not observed and the parameters that are not
+#' @param na.action either \code{\link{na.fail}} or \code{\link{na.omit}}. Other actions
 #' @description
 #' Only acetylation (a) is supported as a non-positional modification. It is added to the N-term of the peptide
 #' @import methods
@@ -103,7 +104,15 @@ setClass("Protein",
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_replace
 #' @export
-Protein <- function(data, sample.dependency.matrix, decimate.sample.dependency.matrix = TRUE) {
+Protein <- function(data, sample.dependency.matrix, decimate.sample.dependency.matrix = TRUE, na.action = na.fail) {
+
+	### Remove NAs in data
+	if (any(which.ones <- is.na(data$q) & data$n == 1)) {
+		warning(sprintf("Filling %d missing q values with 0 where n == 1", sum(which.ones)))
+		data$q[which.ones] <- 0
+	}
+	# Process the na.action
+	data <- na.action(data)
 
 	modifications <- make_unique_modifications(data, data$modifications)
 
