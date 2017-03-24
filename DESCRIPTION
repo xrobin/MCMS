@@ -2,18 +2,19 @@ Package: MCMS
 Type: Package
 Title: MCMC Simulations of Protein Concentration and Modification Occupancy
     Ratios from MS Experiments
-Version: 0.1
-Date: 2015-02-17
+Version: 0.2
+Date: 2017-03-24
 Author: Xavier Robin
 Maintainer: Xavier Robin <robin@lindinglab.org>
 Description: Markov chain monte carlo sampling of protein concentration and
-    modification occupancy ratios from mass spectrometry experiments
+    modification occupancy ratios from mass spectrometry experiments.
 License: GPL (>= 2)
 Imports:
     methods,
     Rcpp (>= 0.11.3),
     dplyr,
-    stringr
+    stringr,
+    xavamess (>= 0.5)
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
 Collate:
