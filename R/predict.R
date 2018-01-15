@@ -7,7 +7,7 @@
 #' @importFrom stats predict
 #' @include PeptidesClass.R
 #' @export
-predict.Peptides <- function(object, newdata = object@protein) {
+predict.Peptides <- function(object, newdata = object@protein, ...) {
 	if (!is(newdata, "Protein"))
 		stop("Protein object expected as newdata")
 
