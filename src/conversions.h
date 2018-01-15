@@ -1,12 +1,12 @@
 #pragma once
 
-//#include "Likelihood.hpp"
-#include "MonteCarlo.hpp"
-#include "Parameters.hpp"
-#include "Peptide.hpp"
+//#include "Likelihood.h"
+#include "MonteCarlo.h"
+#include "Parameters.h"
+#include "Peptide.h"
 #include <Rcpp.h>
-#include "S4Aliases.hpp" // ProteinModel
-#include "typedefs.hpp"
+#include "S4Aliases.h" // ProteinModel
+#include "typedefs.h"
 
 /** Various conversion functions outside the Rcpp namespace */
 

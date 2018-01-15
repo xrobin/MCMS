@@ -1,11 +1,11 @@
-#include "conversions.hpp"
-#include "Parameters.hpp"
+#include "conversions.h"
+#include "Parameters.h"
 #include <Rcpp.h>
-#include "RcppConversions.hpp"
-#include "RcppHelpers.hpp"
+#include "RcppConversions.h"
+#include "RcppHelpers.h"
 #include <string>
 #include <vector>
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 
 using Rcpp::as;
 using Rcpp::CharacterVector;

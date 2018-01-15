@@ -1,7 +1,7 @@
-#include "conversions.hpp"
+#include "conversions.h"
 #include <Rcpp.h>
-#include "RcppConversions.hpp"
-#include "S4Aliases.hpp"
+#include "RcppConversions.h"
+#include "S4Aliases.h"
 #include <vector>
 
 using Rcpp::as;

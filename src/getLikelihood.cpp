@@ -1,10 +1,10 @@
-#include "conversions.hpp"
-#include "Parameters.hpp"
+#include "conversions.h"
+#include "Parameters.h"
 #include <Rcpp.h>
-#include "RcppConversions.hpp"
-#include "S4Aliases.hpp"
+#include "RcppConversions.h"
+#include "S4Aliases.h"
 #include <vector>
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 
 using Rcpp::as;
 using Rcpp::S4;

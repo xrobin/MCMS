@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Parameters.hpp"
+#include "Parameters.h"
 #include <Rcpp.h>
-#include "S4Aliases.hpp"
-#include "VarianceModel.hpp"
+#include "S4Aliases.h"
+#include "VarianceModel.h"
 
 namespace Rcpp {
 	// oParams

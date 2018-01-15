@@ -1,8 +1,8 @@
 #include <algorithm> // std::min
 #include <iostream>
 #include <iterator> // std::back_inserter
-#include "MonteCarlo.hpp"
-#include "Resampler.hpp"
+#include "MonteCarlo.h"
+#include "Resampler.h"
 #include <string>
 #include <vector>
 

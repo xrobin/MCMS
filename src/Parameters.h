@@ -1,15 +1,15 @@
 #pragma once
 
-#include "Helpers.hpp"
+#include "Helpers.h"
 #include <map>
-// #include "prettyprint.hpp"
+// #include "prettyprint.h"
 #include <Rcpp.h>
 #include <stdexcept>
 #include <string>
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 #include <vector>
 
-#include "typedefs.hpp"
+#include "typedefs.h"
 
 
 /** Constant variables during the Monte Carlo sampling */

@@ -1,5 +1,5 @@
-#include "Likelihood.hpp"
-//#include "prettyprint.hpp"
+#include "Likelihood.h"
+//#include "prettyprint.h"
 #include <Rcpp.h>
 
 using namespace Rcpp;

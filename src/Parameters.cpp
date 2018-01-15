@@ -1,7 +1,7 @@
-#include "Parameters.hpp"
-//#include "prettyprint.hpp"
+#include "Parameters.h"
+//#include "prettyprint.h"
 #include <Rcpp.h>
-#include "RcppHelpers.hpp" // for colnames
+#include "RcppHelpers.h" // for colnames
 #include <string>
 #include <vector>
 

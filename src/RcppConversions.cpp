@@ -1,5 +1,5 @@
-#include "conversions.hpp"
-#include "RcppConversions.hpp"
+#include "conversions.h"
+#include "RcppConversions.h"
 
 namespace Rcpp {
 	template <> oParams::o_type as(SEXP anOList) {

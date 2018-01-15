@@ -4,9 +4,9 @@
 #include <iostream> // cout
 //#include <Rcpp.h>
 #include <string>
-#include "typedefs.hpp"
+#include "typedefs.h"
 #include <vector>
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 
 // Describes a pair of pointers to occupancy ratios for the sample and reference class.
 class oPair {

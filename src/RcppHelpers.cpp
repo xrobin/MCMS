@@ -1,5 +1,5 @@
 #include <Rcpp.h>
-#include "RcppHelpers.hpp"
+#include "RcppHelpers.h"
 
 /** Things that are missing in Rcpp */
 

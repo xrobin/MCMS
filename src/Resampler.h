@@ -3,7 +3,7 @@
 #include <boost/random/normal_distribution.hpp>
 #include <boost/random/uniform_real_distribution.hpp>
 #include <iostream>
-#include "Parameters.hpp"
+#include "Parameters.h"
 #include <stdexcept>
 
 class MoveSpec {

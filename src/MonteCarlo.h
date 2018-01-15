@@ -1,10 +1,10 @@
 #pragma once
 
 #include <boost/random/uniform_int_distribution.hpp>
-#include "Likelihood.hpp"
-#include "Priors.hpp"
+#include "Likelihood.h"
+#include "Priors.h"
 #include <Rcpp.h>
-#include "Resampler.hpp"
+#include "Resampler.h"
 #include <string>
 #include <vector>
 

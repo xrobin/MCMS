@@ -1,5 +1,5 @@
 #include <cmath> // abs, pow
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 
 double VarianceModel::calcPowerPriorRate(const double ratio) const {
 	return rate0 + std::pow((std::abs(ratio) / rate1), rate2);

@@ -1,4 +1,4 @@
-#include "Priors.hpp"
+#include "Priors.h"
 
 std::vector<ParamPriors<NormalPrior>> Prior::makeCPriors(cParams &aC, NormalPrior &aNormalPrior) {
 	std::vector<ParamPriors<NormalPrior>> newCPriors;

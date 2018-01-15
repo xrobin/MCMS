@@ -1,8 +1,8 @@
 #include <cmath>
-#include "Peptide.hpp"
+#include "Peptide.h"
 #include <stdexcept>
 #include <string>
-#include "VarianceModel.hpp"
+#include "VarianceModel.h"
 
 
 double Peptide::calcRatio() const {

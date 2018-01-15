@@ -1,14 +1,14 @@
-#include "conversions.hpp"
+#include "conversions.h"
 #include <limits>
-#include "MonteCarlo.hpp"
-#include "Parameters.hpp"
-#include "prettyprint.hpp"
-#include "Priors.hpp"
+#include "MonteCarlo.h"
+#include "Parameters.h"
+#include "prettyprint.h"
+#include "Priors.h"
 #include <Rcpp.h>
-#include "RcppHelpers.hpp" // for colnames
-#include "S4Aliases.hpp"
+#include "RcppHelpers.h" // for colnames
+#include "S4Aliases.h"
 #include <string>
-#include "typedefs.hpp"
+#include "typedefs.h"
 #include <vector>
 
 using Rcpp::as;

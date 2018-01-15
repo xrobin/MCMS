@@ -1,12 +1,12 @@
 #include <iostream> // cout
-#include "Likelihood.hpp"
-#include "MonteCarlo.hpp"
-#include "Parameters.hpp"
-#include "Peptide.hpp"
-#include "prettyprint.hpp"
-#include "Priors.hpp"
-#include "Resampler.hpp"
-#include "typedefs.hpp" //my_universal_unordered_map
+#include "Likelihood.h"
+#include "MonteCarlo.h"
+#include "Parameters.h"
+#include "Peptide.h"
+#include "prettyprint.h"
+#include "Priors.h"
+#include "Resampler.h"
+#include "typedefs.h" //my_universal_unordered_map
 #include <vector>
 
 using std::endl;

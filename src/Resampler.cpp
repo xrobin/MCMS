@@ -1,9 +1,9 @@
 
 #include <boost/math/distributions/normal.hpp>
 #include <cmath>
-#include "Parameters.hpp"
-#include "Priors.hpp"
-#include "Resampler.hpp"
+#include "Parameters.h"
+#include "Priors.h"
+#include "Resampler.h"
 
 double calcSigma(const GenericPrior& prior, const double o, const double o_sd, const double k_scale) {
 	double k = prior.pdf(o) * (1 / (2 * (1 - o)) - 1 / (2 * o)) * k_scale/o_sd;

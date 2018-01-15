@@ -1,9 +1,9 @@
 #pragma once
 
 #include <iostream> // cout
-#include "Parameters.hpp"
+#include "Parameters.h"
 #include <map>
-#include "Peptide.hpp"
+#include "Peptide.h"
 #include <Rcpp.h>
 #include <vector>
 
