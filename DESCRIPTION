@@ -13,6 +13,7 @@ Imports:
     methods,
     Rcpp (>= 0.11.3),
     dplyr,
+    matrixStats,
     stringr,
     xavamess (>= 0.5)
 SystemRequirements: C++11
@@ -27,9 +28,6 @@ Collate:
     'getLikelihood.R'
     'getPrior.R'
     'make.matrices.R'
-    'objective.R'
-    'occupancy_concentration_likelihood.R'
-    'occupancy_concentration_likelihood_mc.R'
     'onLoad.R'
     'predict.R'
 RoxygenNote: 6.0.1
