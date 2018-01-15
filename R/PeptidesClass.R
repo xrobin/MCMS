@@ -39,7 +39,7 @@ setClass("Peptides",
 #' @param proteins a \code{\link{Protein-class}} object
 #' @import dplyr
 #' @import methods
-#' @import stats
+#' @importFrom stats median
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
