@@ -1,4 +1,7 @@
 #' Predicts ratios from a Peptides model
+#' @param object the \code{\link{Peptides}} model to predict from
+#' @param newdata an optional \code{\link{Protein}} model to use as data for the predictions
+#' @param ... ignored.
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
