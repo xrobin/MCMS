@@ -1,4 +1,4 @@
 ## Additional flags for the C++ compiler
 
 ## Add the Boost headers as -isystem instead of -I in order to hide warnings in Boost
-PKG_CXXFLAGS = -isystem `$(R_HOME)/bin/Rscript -e 'cat(system.file("include", package="BH"))'`
+PKG_CXXFLAGS = @CUSTOM_I_FLAG@ `$(R_HOME)/bin/Rscript -e 'cat(system.file("include", package="BH"))'`

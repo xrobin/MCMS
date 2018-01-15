@@ -1,0 +1,4 @@
+## Additional flags for the C++ compiler on Windows
+
+## Use the R_HOME indirection to support installations of multiple R version
+PKG_CPPFLAGS = -I $(shell $(R_HOME)/bin${R_ARCH_BIN}/Rscript.exe -e "cat(system.file('include', package='BH'))")
