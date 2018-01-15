@@ -17,6 +17,7 @@ check_peptides <- function(object) {
 #' @name Peptides-class
 #' @rdname Peptides-class
 #' @exportClass Peptides
+#' @title Set of peptides
 #' @title A class that describe a set of peptides. Use the \code{\link{PeptidesModel}} function for easy object creation
 #' @slot c the concentration ratios (per sample pair) as a named numeric (name is sampleX_sampleY, ...)
 #' @slot o the occupancy ratios (per sample) as a named numeric (name is sampleX, ...)
