@@ -17,12 +17,13 @@ Imports:
     xavamess (>= 0.5)
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
-Collate:
+Collate: 
     'ENSTest.R'
     'MCMS.R'
     'ProteinClass.R'
     'PeptidesClass.R'
     'RcppExports.R'
+    'calcModifiedPeptideP.R'
     'getLikelihood.R'
     'getPrior.R'
     'make.matrices.R'
@@ -31,4 +32,4 @@ Collate:
     'occupancy_concentration_likelihood_mc.R'
     'onLoad.R'
     'predict.R'
-RoxygenNote: 5.0.1
+RoxygenNote: 6.0.1
