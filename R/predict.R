@@ -14,6 +14,8 @@ predict.Peptides <- function(object, newdata = object@protein, ...) {
 	if (!is(newdata, "Protein"))
 		stop("Protein object expected as newdata")
 
+	site.names <- colnames(newdata@sites.coverage)
+
 	# Get a c for all the pairs
 	all.c <- tcrossprod(object@c, newdata@sample.dependency)
 
@@ -27,17 +29,14 @@ predict.Peptides <- function(object, newdata = object@protein, ...) {
 	all.pairs <- unique(data$pair)
 	mu <- rep(NA, nrow(data))
 	for (current.pair in all.pairs) {
-		print(current.pair)
 		row.numbers <- which(data$pair == current.pair)
 		data.rows <- data[row.numbers,]
 
-		o.ref <- object@o[data.rows[1, 'reference'],]
-		o.sample <- object@o[data.rows[1, 'sample'],]
+		o.ref <- object@o[[data.rows[1, 'reference']]][site.names]
+		o.sample <- object@o[[data.rows[1, 'sample']]][site.names]
 
 		mu[row.numbers] <- predicted.ratios(c[current.pair], o.ref, o.sample, newdata@sites.coverage[row.numbers,, drop=FALSE], newdata@sites.activation[row.numbers,, drop=FALSE])
 	}
 
 	return(mu)
 }
-
-#setMethod("predict", signature(object = "Peptides"), predict.Peptides)

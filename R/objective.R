@@ -6,7 +6,7 @@
 predicted.ratios <- function(c, o.ref, o.sample, sites.coverage, sites.activation) {
 	res <- rep(NA, nrow(sites.coverage))
 	for (row in seq(nrow(sites.coverage))) {
-		res[row] <- c + sum(sites.coverage[row,] * (log((1 - o.sample) / (1 - o.ref)) + sites.activation[row,] * (log(o.sample / (1 - o.sample)) - log(o.ref / (1 - o.ref)))))
+		res[row] <- c + sum((log((1 - o.sample) / (1 - o.ref)) + sites.activation[row,] * (log(o.sample / (1 - o.sample)) - log(o.ref / (1 - o.ref))))[sites.coverage[row,] > 0])
 	}
 	return(res)
 }
