@@ -16,18 +16,22 @@ Imports:
     matrixStats,
     stringr,
     xavamess (>= 0.5)
+Suggests:
+	testthat
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
 Collate: 
-    'ENSTest.R'
     'MCMS.R'
     'ProteinClass.R'
     'PeptidesClass.R'
     'RcppExports.R'
     'calcModifiedPeptideP.R'
+    'datasets.R'
+    'dplyr_fix.R'
     'getLikelihood.R'
     'getPrior.R'
     'make.matrices.R'
+    'objective.R'
     'onLoad.R'
     'predict.R'
 RoxygenNote: 6.0.1

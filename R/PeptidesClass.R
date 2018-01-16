@@ -17,12 +17,14 @@ check_peptides <- function(object) {
 #' @name Peptides-class
 #' @rdname Peptides-class
 #' @exportClass Peptides
+#' @aliases Peptides
 #' @title Set of peptides
-#' @title A class that describe a set of peptides. Use the \code{\link{PeptidesModel}} function for easy object creation
+#' @description A class that describe a set of peptides. Use the \code{\link{PeptidesModel}} function for easy object creation
 #' @slot c the concentration ratios (per sample pair) as a named numeric (name is sampleX_sampleY, ...)
 #' @slot o the occupancy ratios (per sample) as a named numeric (name is sampleX, ...)
 #' @slot num.c,num.o number of o and c parameters
 #' @slot names.c,names.o names of the pair to which each c, and of the sample to which each o applies.
+#' @slot protein the \code{\link{Protein-class}} object
 #' @include ProteinClass.R
 setClass("Peptides",
 		 representation(
@@ -36,7 +38,7 @@ setClass("Peptides",
 		 validity = check_peptides)
 
 #' Creates a model with concentration and occupancies for a Protein.
-#' @param proteins a \code{\link{Protein-class}} object
+#' @param protein a \code{\link{Protein-class}} object
 #' @import dplyr
 #' @import methods
 #' @importFrom stats median

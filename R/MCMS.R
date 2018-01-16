@@ -13,6 +13,7 @@
 #' @param verbose if TRUE, will print internal details of the Monte Carlo object (elements and pointers)
 #' @param cooling whether to perform cooling during the MonteCarlo. If \code{TRUE}, the simulation will start with
 #' @param seed a seed from the sampling, taken from \code{\link{runif}} by default.
+#' @importFrom stats runif
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
@@ -22,7 +23,8 @@
 #' 	prior_move_proportion = .02, c_sd = 0.05, o_sd = 0.05, o_k_scale = 1/100)
 #' \dontrun{
 #' # In a shell:
-#' # R -e "library(MCMS); m <- MCMS(ENSTestModel, var.model, 10000000, 10000, 300000); summary(as.data.frame(m))";
+#' R -e "library(MCMS); m <- MCMS(ENSTestModel, var.model, 10000000, 10000, 300000); \
+#' summary(as.data.frame(m))";
 #' }
 #' @export
 #' @useDynLib MCMS
