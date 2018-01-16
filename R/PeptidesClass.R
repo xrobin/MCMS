@@ -17,9 +17,8 @@ check_peptides <- function(object) {
 #' @name Peptides-class
 #' @rdname Peptides-class
 #' @exportClass Peptides
-#' @aliases Peptides
 #' @title Set of peptides
-#' @description A class that describe a set of peptides. Use the \code{\link{PeptidesModel}} function for easy object creation
+#' @description A class that describe a set of peptides. Use the \code{\link{Peptides}} function for easy object creation
 #' @slot c the concentration ratios (per sample pair) as a named numeric (name is sampleX_sampleY, ...)
 #' @slot o the occupancy ratios (per sample) as a named numeric (name is sampleX, ...)
 #' @slot num.c,num.o number of o and c parameters
@@ -37,7 +36,7 @@ setClass("Peptides",
 		 	protein = "Protein"),
 		 validity = check_peptides)
 
-#' Creates a model with concentration and occupancies for a Protein.
+#' Creates a Peptides model with concentration and occupancies for a Protein.
 #' @param protein a \code{\link{Protein-class}} object
 #' @import dplyr
 #' @import methods
@@ -45,9 +44,9 @@ setClass("Peptides",
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
-#' ENSTestModel <- PeptidesModel(ENSTestProtein)
+#' ENSTestModel <- Peptides(ENSTestProtein)
 #' @export
-PeptidesModel <- function(protein) {
+Peptides <- function(protein) {
 	# Compute the number of occupancies and concentrations
 	names.c <- colnames(protein@sample.dependency)
 	num.c <- length(names.c)

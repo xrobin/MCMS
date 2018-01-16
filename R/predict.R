@@ -5,7 +5,7 @@
 #' @examples
 #' data(ENSTest)
 #' ENSTestProtein <- Protein(ENSTest)
-#' ENSTestModel <- PeptidesModel(ENSTestProtein)
+#' ENSTestModel <- Peptides(ENSTestProtein)
 #' predict(ENSTestModel)
 #' @importFrom stats predict
 #' @include PeptidesClass.R

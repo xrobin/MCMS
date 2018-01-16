@@ -1,6 +1,6 @@
 #' The main function here.
 #' Receives the data and the variance model, prepares all the elements and then performs the simulation
-#' @param PeptidesModel the PeptidesModel data
+#' @param Peptides the Peptides model data
 #' @param var.model the variance model
 #' @param n number of iterations
 #' @param n.out number of iterations to record
@@ -16,9 +16,10 @@
 #' @importFrom stats runif
 #' @examples
 #' data(ENSTest)
+#' data(var.model)
 #' ENSTestProtein <- Protein(ENSTest)
-#' ENSTestModel <- PeptidesModel(ENSTestProtein)
-#' MCMS(ENSTestModel, var.model, 10000, 1000,
+#' ENSTestModel <- Peptides(ENSTestProtein)
+#' MCMS(ENSTestModel, var.model,
 #' 	prior_move_proportion = .02, c_sd = 0.05, o_sd = 0.05, o_k_scale = 1/100)
 #' \dontrun{
 #' # In a shell:

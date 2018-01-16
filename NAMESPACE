@@ -2,7 +2,7 @@
 
 S3method(predict,Peptides)
 export(MCMS)
-export(PeptidesModel)
+export(Peptides)
 export(Protein)
 export(calcModifiedPeptideP)
 export(constructModifiedPeptide)
