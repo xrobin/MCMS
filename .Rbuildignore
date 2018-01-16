@@ -6,3 +6,4 @@
 ^\w+\.R$
 ^src/Makevars$
 data/ENSTest.csv
+.\.lyx
