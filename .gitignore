@@ -14,3 +14,5 @@ test_speed/*
 *.txt
 src/Makevars
 R-removed
+MCMS.Rcheck
+MCMS_*.tar.gz

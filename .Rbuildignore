@@ -8,3 +8,5 @@
 data/ENSTest.csv
 .\.lyx
 R-removed
+^MCMS.Rcheck$
+^MCMS_.+\.tar.gz$
