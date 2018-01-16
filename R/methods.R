@@ -2,6 +2,7 @@
 #' @param object the \code{Peptides} model
 #' @return an integer
 #' @include PeptidesClass.R
+#' @export
 setGeneric("nParams", function(object) {
   standardGeneric("nParams")
 })
@@ -13,6 +14,7 @@ setGeneric("nParams", function(object) {
 #' ENSTestProtein <- Protein(ENSTest)
 #' ENSTestModel <- Peptides(ENSTestProtein)
 #' nParams(ENSTestModel)
+#' @export
 setMethod("nParams", signature("Peptides"), function(object) {
   object@num.c + object@num.o
 })
