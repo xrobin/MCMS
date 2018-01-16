@@ -9,4 +9,6 @@ data/ENSTest.csv
 .\.lyx
 R-removed
 ^MCMS.Rcheck$
-^MCMS_.+\.tar.gz$^Makefile
+^MCMS_.+\.tar.gz$
+^Makefile
+^last.dump.rda
