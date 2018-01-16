@@ -18,7 +18,8 @@ Imports:
     stringr,
     xavamess (>= 0.5)
 Suggests:
-	testthat
+	testthat,
+	coda
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
 Collate: 
