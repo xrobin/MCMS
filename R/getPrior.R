@@ -8,7 +8,7 @@
 #' data(ENSTest, var.model)
 #' ENSTestProtein <- Protein(ENSTest)
 #' ENSTestModel <- Peptides(ENSTestProtein)
-#' getPrior(ENSTestModel)
+#' getPrior(ENSTestModel, var.model)
 #' # With custom c
 #' someC <- ENSTestModel@@c
 #' someC[] <- 0

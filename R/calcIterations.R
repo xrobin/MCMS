@@ -2,7 +2,12 @@
 #' @description The calculation is based on the number of parameters (c and o)
 #' @param Peptides the \code{Peptides}
 #' @param round whether to round the number up to the next power of 10 (default). If \code{FALSE} the value is only rounded up to the next integer.
-#' @return a list with the
+#' @return an integer
+#' @examples 
+#' data(ENSTest, var.model)
+#' ENSTestProtein <- Protein(ENSTest)
+#' ENSTestModel <- Peptides(ENSTestProtein)
+#' calcIterations(ENSTestModel)
 #' @export
 calcIterations <- function(Peptides, round = TRUE) {
   n.params <- Peptides@num.c + Peptides@num.o

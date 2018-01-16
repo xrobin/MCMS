@@ -10,8 +10,8 @@
 #' ENSTestModel <- Peptides(ENSTestProtein)
 #' getLikelihood(ENSTestModel, var.model)
 #' # With custom c
-#' someC <- ENSTestModel@@c
-#' someC[] <- 0
+#' someC <- ENSTestModel@c
+#' someC[2] <- 15
 #' getLikelihood(ENSTestModel, var.model, c = someC)
 #' @export
 #' @useDynLib MCMS

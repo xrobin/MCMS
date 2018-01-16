@@ -8,6 +8,11 @@ setGeneric("nParams", function(object) {
 
 
 #' @describeIn nParams This corresponds to the sum of the concentration and occupancy parameters
+#' @examples 
+#' data(ENSTest, var.model)
+#' ENSTestProtein <- Protein(ENSTest)
+#' ENSTestModel <- Peptides(ENSTestProtein)
+#' nParams(ENSTestModel)
 setMethod("nParams", signature("Peptides"), function(object) {
   object@num.c + object@num.o
 })
