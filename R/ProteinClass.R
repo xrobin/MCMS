@@ -76,8 +76,8 @@ sort_modifications <- function(modifications) {
 #' @slot reference.sample.overlap those sample that appear both as reference and as sample so one can "close the loop"
 #' @slot reference.sample.intersect all the sample and reference names. Will for instance correspond to all the occupancy ratios that need to be computed.
 #' @slot sample.dependency a matrix with all the sample_reference pairs in rows, and the columns over all non-redundant pairs. Useful to compute concentration ratios
-#' @slot site.coverage indicator matrix of which peptide covers which site
 #' @slot sites.activation indicator matrix of which sites are on or off. Meaningful only on the indices where \code{site.coverage} is 1
+#' @slot sites.coverage indicator matrix of which peptide covers which site
 setClass("Protein",
 		 representation(
 		 	data = "data.frame",
