@@ -33,6 +33,7 @@ Collate:
     'getLikelihood.R'
     'getPrior.R'
     'make.matrices.R'
+    'methods.R'
     'objective.R'
     'onLoad.R'
     'predict.R'
