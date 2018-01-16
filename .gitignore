@@ -13,3 +13,4 @@ test_speed/*
 *.out
 *.txt
 src/Makevars
+R-removed
