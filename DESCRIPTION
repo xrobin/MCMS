@@ -26,6 +26,7 @@ Collate:
     'ProteinClass.R'
     'PeptidesClass.R'
     'RcppExports.R'
+    'calcIterations.R'
     'calcModifiedPeptideP.R'
     'datasets.R'
     'dplyr_fix.R'
