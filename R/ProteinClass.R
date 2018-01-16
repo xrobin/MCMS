@@ -68,10 +68,11 @@ sort_modifications <- function(modifications) {
 #' @rdname Protein-class
 #' @exportClass Protein
 #' @title A representation of a protein
-#' @description A class that describe a protein. Use the \code{\link{Protein}} function for easy object creation
+#' @description A class that describe a protein. Use the \code{\link{Protein}} function for easy object creation.
 #' @slot data a data.frame with the data for one protein.
 #' @slot modifications vector listing all the modification sites
-#' @slot samples,references vector with the name of all the samples, reference or sample (unique and sorted)
+#' @slot samples vector with the name of all the samples (unique and sorted)
+#' @slot references vector with the name of the reference sample(s)
 #' @slot reference.sample.overlap those sample that appear both as reference and as sample so one can "close the loop"
 #' @slot reference.sample.intersect all the sample and reference names. Will for instance correspond to all the occupancy ratios that need to be computed.
 #' @slot sample.dependency a matrix with all the sample_reference pairs in rows, and the columns over all non-redundant pairs. Useful to compute concentration ratios
