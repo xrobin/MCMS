@@ -10,7 +10,8 @@
 #' @importFrom xavamess safe.mapping
 #' @export
 read.labelfree <- function(dir, reference.experiment,
-						   score.threshold = 40, mod.threshold = .9) {
+						   score.threshold = 40, mod.threshold = .9,
+						   raw.file.filter = NULL) {
 	evidence <- read.evidence(dir) %>%
 		annotate_Experiment(reference.experiment = reference.experiment)
 
@@ -24,31 +25,23 @@ read.labelfree <- function(dir, reference.experiment,
 
 	# Optional filter
 	if (!is.null(raw.file.filter)) {
-		sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>% filter(str_detect(Raw.file, "UPS1_\\d{4,5}amol"))
+		sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>% filter(str_detect(Raw.file, raw.file.filter))
 	}
 
 	normalized.sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>%
 		normalize()
 
 	# Make sure intensities are > 0
-	#dev.null <- lapply(c("normmedian.I", "normgmean.I", "normlm.I"), function(x) {
-	dev.null <- lapply("normlm.I", function(x) {
+	dev.null <- lapply("norm.I", function(x) {
 		if (any(normalized.sum.intensities.per.peptide.per.raw.file[[x]] < 0, na.rm = TRUE)) {
 			stop(sprintf("Negative %s", x))
 		}
 	})
 
-	#### Choose a final normalization
-	normalized.sum.intensities.per.peptide.per.raw.file$norm.I <- normalized.sum.intensities.per.peptide.per.raw.file$normlm.I
-
-	#### Aggregate the replicates
-	# summarized.normalized.spikein.mq.data <- normalized.spikein.sum.intensities %>%
-	# 	aggregate.replica.intensities() %>% print
-
-	summarized.normalized.ups.mq.data <- normalized.sum.intensities.per.peptide.per.raw.file %>%
+	summarized.normalized.mq.data <- normalized.sum.intensities.per.peptide.per.raw.file %>%
 		aggregate.replica.intensities() %>% ungroup %>% print
 
-	summarized.normalized.ups.control <- summarized.normalized.ups.mq.data %>%
+	summarized.normalized.control <- summarized.normalized.mq.data %>%
 		filter(Experiment == reference.experiment) %>%
 		rename(
 			n.evidence.control = n.evidence,
@@ -58,34 +51,24 @@ read.labelfree <- function(dir, reference.experiment,
 			I.tot.control = I.tot,
 			I.mean.control = I.mean,
 			I.sd.control = I.sd,
-			#normmedian.I.mean.control = normmedian.I.mean,
-			#normmedian.I.sd.control = normmedian.I.sd,
-			#normgmean.I.mean.control = normgmean.I.mean,
-			#normgmean.I.sd.control = normgmean.I.sd,
-			normlm.I.mean.control = normlm.I.mean,
-			normlm.I.sd.control = normlm.I.sd
+			norm.I.mean.control = norm.I.mean,
+			norm.I.sd.control = norm.I.sd
 		) %>%
 		select(-Experiment) %>% print
-	ups.ratios <- left_join(summarized.normalized.ups.mq.data, summarized.normalized.ups.control, by = c("Modified.sequence", "run")) %>%
+	ratios <- left_join(summarized.normalized.mq.data, summarized.normalized.control, by = c("Modified.sequence", "run")) %>%
 		mutate(
 			# log ratio
 			ratio = log(I.mean.control / I.mean),
-			#normmedian.ratio = log(normmedian.I.mean / normmedian.I.mean.control),
-			#normgmean.ratio = log(normgmean.I.mean / normgmean.I.mean.control),
-			normlm.ratio = log(normlm.I.mean / normlm.I.mean.control),
+			norm.ratio = log(norm.I.mean / norm.I.mean.control),
 			# sd
 			ratio.sd = sqrt((I.sd / I.mean)^2 + (I.sd.control / I.mean.control)^2),
-			#normmedian.ratio.sd = sqrt((normmedian.I.sd / normmedian.I.mean)^2 + (normmedian.I.sd.control / normmedian.I.mean.control)^2),
-			#normgmean.ratio.sd = sqrt((normgmean.I.sd / normgmean.I.mean)^2 + (normgmean.I.sd.control / normgmean.I.mean.control)^2),
-			normlm.ratio.sd = sqrt((normlm.I.sd / normlm.I.mean)^2 + (normlm.I.sd.control / normlm.I.mean.control)^2),
+			norm.ratio.sd = sqrt((norm.I.sd / norm.I.mean)^2 + (norm.I.sd.control / norm.I.mean.control)^2),
 			# n
 			n.replicate.total = n.replicate.control + n.replicate,
 			n.eff = pmin(n.replicate.control, n.replicate),
 			# q
-			ratio.q = (n.replicate.total-1) * normlm.ratio.sd^2,
-			#normmedian.ratio.q = (n.replicate.total-1) * normmedian.ratio.sd^2,
-			#normgmean.ratio.q = (n.replicate.total-1) * normgmean.ratio.sd^2,
-			normlm.ratio.q = (n.replicate.total-1) * normlm.ratio.sd^2,
+			ratio.q = (n.replicate.total-1) * norm.ratio.sd^2,
+			norm.ratio.q = (n.replicate.total-1) * norm.ratio.sd^2,
 
 			# Fix peptide.ID
 			Peptide.ID = ifelse(is.na(Peptide.ID.x), Peptide.ID.y, Peptide.ID.x)
@@ -95,25 +78,19 @@ read.labelfree <- function(dir, reference.experiment,
 
 	# Map peptides to the original protein
 	peptides <- read.peptides(dir)
-	#mapped.ratios <- ups.ratios %>% safe.mapping(peptides, by = "Peptide.ID")
 
-	#ups.ratios$Peptide <- str_replace_all(ups.ratios$Modified.sequence, "(_|\\([a-z]+\\))", "")
-	#mapping <- read.mapper.file(longest.isoform.map.file)
-	#if (anyDuplicated(mapping$Peptide)) {stop("Duplicated peptides in mapper file!")}
-	n.eff <- ups.ratios %>% safe.mapping(peptides, by = "Peptide.ID") %>%
+	n.eff <- ratios %>% safe.mapping(peptides, by = "Peptide.ID") %>%
 		filter(!is.na(n.eff), # remove if n is missing
-			   !is.na(normlm.ratio),
+			   !is.na(norm.ratio),
 			   Experiment != control.experiment) %>%
 		mutate(
 			reference = control.experiment,
 			# Calculate modifications
-			modifications = xavamess::constructModifiedPeptide(Modified.sequence, Start.position)#,
-			#length = nchar(Peptide),
-			#end = Position + length - 1
+			modifications = constructModifiedPeptide(Modified.sequence, Start.position)#,
 		) %>%
 		select(Leading.razor.protein, Sequence, modifications, Experiment, reference,
 			   Start.position, End.position, Length,
-			   normlm.ratio, normlm.ratio.q, n.eff) %>%
+			   norm.ratio, norm.ratio.q, n.eff) %>%
 		rename(
 			protein = Leading.razor.protein,
 			sequence = Sequence,
@@ -121,8 +98,8 @@ read.labelfree <- function(dir, reference.experiment,
 			end = End.position,
 			length = Length,
 			sample = Experiment,
-			ratio = normlm.ratio,
-			q = normlm.ratio.q,
+			ratio = norm.ratio,
+			q = norm.ratio.q,
 			n = n.eff
 		)
 
@@ -135,38 +112,19 @@ read.labelfree <- function(dir, reference.experiment,
 #' Normalize the sum intensities data and a linear model
 #' @param data the MS data to normalize
 #' @param lm.model an optional \code{\link{lm}} model of the form lm(log.Intensity ~ Raw.file). If provided, a column named norm.I will be calculated. Alternative models can be used if they provide methods for \code{\link{coef}} and \code{\link{predict}}
-#'
+#' @export
 normalize.labelfree <- function(data, lm.model) {
 	sum.intensities <- data %>%
 		# Integrate all Modified.sequences
 		group_by(Raw.file, replicate, run, Experiment) %>%
 		summarize(I.tot = sum(peptide.Intensity, na.rm = TRUE),
-				  I.tot.log = sum(log(peptide.Intensity), na.rm = TRUE)#,
-				  #I.gmean = exp(mean(log(peptide.Intensity), na.rm = TRUE)),
-				  #I.median = median(peptide.Intensity, na.rm = TRUE),
-				  #I.gsd = exp(sd(log(peptide.Intensity), na.rm = TRUE)),
-				  #I.IQR = IQR(peptide.Intensity, na.rm = TRUE)
-				  )#,
-	#n = n(), n.evidence = sum(n.evidence))
+				  I.tot.log = sum(log(peptide.Intensity), na.rm = TRUE)
+				  )
 
-	# Get the grand mean
-	#grand.mean <- mean(sum.intensities$I.gmean) # If the runs behave normally
-	#geom.grand.mean <- exp(mean(log(sum.intensities$I.gmean))) # If the runs behave log-normally, geometric grand mean
-	# Grand median
-	#grand.median <- median(sum.intensities$I.median)
 
 	# Apply the normalization
 	data <- data %>%
-		left_join(sum.intensities %>% ungroup %>% select(-replicate, -run, -Experiment), by = "Raw.file")# %>%
-		#mutate(
-		#	#norm.I = (peptide.Intensity - I.median) / I.IQR  + grand.median,
-		#	normmedian.I = exp((log(peptide.Intensity) - log(I.median)) / log(I.IQR) + log(grand.median)),
-		#	#norm2.I = peptide.Intensity / I.tot,
-		#	#norm3.I = exp(log.peptide.Intensity - I.tot.log),
-		#	#normgmean.I = exp(log.peptide.Intensity - (log(I.gmean) - log(grand.mean))),
-		#	normgmean.I = exp(log.peptide.Intensity - log(I.gmean) + log(geom.grand.mean))
-		#	#normlm.I = exp(log.Intensity - predict(lm.raw.file, data))
-		#)
+		left_join(sum.intensities %>% ungroup %>% select(-replicate, -run, -Experiment), by = "Raw.file")
 
 	# Check if we got an lm model
 	if (is.null(lm.model)) {

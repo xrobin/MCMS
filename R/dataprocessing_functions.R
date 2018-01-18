@@ -280,11 +280,6 @@ aggregate.raw.file.intensities <- function(x) {
 		summarize(
 			peptide.Intensity = sum(Intensity),
 			log.peptide.Intensity = log(peptide.Intensity),
-			#norm.peptide.Intensity = sum(norm.I),
-			#norm2.peptide.Intensity = sum(norm2.I),
-			#normlm.peptide.Intensity = sum(normlm.I),
-			#log.peptide.Intensity = log(peptide.Intensity),
-			#log.norm.peptide.Intensity = log(norm.peptide.Intensity),
 			n.evidence = n(),
 			Retention.length = sum(Retention.length),
 			Number.of.data.points = sum(Number.of.data.points)
@@ -307,16 +302,8 @@ aggregate.replica.intensities <- function(x) {
 			I.mean = mean(peptide.Intensity),
 			I.sd = sd(peptide.Intensity),
 
-			# median normalized
-			#normmedian.I.mean = mean(normmedian.I),
-			#normmedian.I.sd = sd(normmedian.I),
-
-			# geometric mean normalized
-			#normgmean.I.mean = mean(normgmean.I),
-			#normgmean.I.sd = sd(normgmean.I),
-
 			# lm normalized
-			normlm.I.mean = mean(normlm.I),
-			normlm.I.sd = sd(normlm.I)
+			norm.I.mean = mean(norm.I),
+			norm.I.sd = sd(norm.I)
 		)
 }
