@@ -15,7 +15,7 @@ Imports:
     Rcpp (>= 0.11.3),
     dplyr,
     stringr,
-    xavamess (>= 0.5)
+    xavamess (>= 0.6)
 Suggests:
 	testthat,
 	coda
@@ -28,6 +28,8 @@ Collate:
     'RcppExports.R'
     'calcIterations.R'
     'calcModifiedPeptideP.R'
+    'dataprocessing.R'
+    'dataprocessing_functions.R'
     'datasets.R'
     'dplyr_fix.R'
     'getLikelihood.R'
@@ -37,4 +39,5 @@ Collate:
     'objective.R'
     'onLoad.R'
     'predict.R'
+    'variance.R'
 RoxygenNote: 6.0.1
