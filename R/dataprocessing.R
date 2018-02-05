@@ -37,9 +37,7 @@ read.labelfree <- function(dir, reference.experiment,
 	}
 
 	if (plot) {
-		browser()
-		ggplot(sum.intensities.per.peptide.per.raw.file, aes(peptide.Intensity)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~.) + ggtitle("Peptide Intensities")
-		ggplot(sum.intensities.per.peptide.per.raw.file, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
+		ggplot(sum.intensities.per.peptide.per.raw.file, aes(peptide.Intensity)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~run) + ggtitle("Un-normalized peptide Intensities")
 	}
 
 	normalized.sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>%
@@ -54,9 +52,7 @@ read.labelfree <- function(dir, reference.experiment,
 
 
 	if (plot) {
-		browser()
-		ggplot(normalized.sum.intensities.per.peptide.per.raw.file, aes(peptide.Intensity)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~.) + ggtitle("Peptide Intensities")
-		ggplot(normalized.sum.intensities.per.peptide.per.raw.file, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
+		ggplot(normalized.sum.intensities.per.peptide.per.raw.file, aes(norm.I)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~run) + ggtitle("Normalized peptide Intensities")
 	}
 
 	summarized.normalized.mq.data <- normalized.sum.intensities.per.peptide.per.raw.file %>%
@@ -148,7 +144,7 @@ normalize.labelfree <- function(data, lm.model) {
 
 	# Check if we got an lm model
 	if (missing(lm.model) || is.null(lm.model)) {
-		lm.model <- lm(log.peptide.Intensity ~ Raw.file, data = sum.intensities.per.peptide.per.raw.file)
+		lm.model <- lm(log.peptide.Intensity ~ Raw.file, data = data)
 	}
 
 	normalization.coefs <- coef(lm.model)
