@@ -5,15 +5,22 @@
 #' @param score.threshold minimal identification score. Peptides with values below this threshold will be filtered out.
 #' @param mod.threshold minimal site localisation probability accepted. Peptides with values below this threshold will be filtered out.
 #' @param raw.file.filter an optional filter for the "Raw file" column passed to \code{\link{str_detect}}
+#' @param plot show diagnostic plots
 #' @import dplyr
-#' @importFrom stringr str_replace str_detect
+#' @importFrom stringr str_replace str_detect str_match
 #' @importFrom xavamess safe.mapping
 #' @export
 read.labelfree <- function(dir, reference.experiment,
 						   score.threshold = 40, mod.threshold = .9,
-						   raw.file.filter = NULL) {
+						   raw.file.filter = NULL,
+						   plot = FALSE) {
 	evidence <- read.evidence(dir) %>%
 		annotate_Experiment(reference.experiment = reference.experiment)
+
+	if (plot) {
+		ggplot(evidence, aes(Score)) + geom_histogram(aes(fill = Reverse), binwidth=0.01) + facet_grid(Experiment~.) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10()  + ggtitle("Scores per experiment")
+		ggplot(evidence, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
+	}
 
 	msms <- read.msms(dir)
 
@@ -23,13 +30,20 @@ read.labelfree <- function(dir, reference.experiment,
 		filter(Score >= score.threshold) %>%
 		aggregate.raw.file.intensities
 
+
 	# Optional filter
 	if (!is.null(raw.file.filter)) {
 		sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>% filter(str_detect(Raw.file, raw.file.filter))
 	}
 
+	if (plot) {
+		browser()
+		ggplot(sum.intensities.per.peptide.per.raw.file, aes(peptide.Intensity)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~.) + ggtitle("Peptide Intensities")
+		ggplot(sum.intensities.per.peptide.per.raw.file, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
+	}
+
 	normalized.sum.intensities.per.peptide.per.raw.file <- sum.intensities.per.peptide.per.raw.file %>%
-		normalize()
+		normalize.labelfree()
 
 	# Make sure intensities are > 0
 	dev.null <- lapply("norm.I", function(x) {
@@ -37,6 +51,13 @@ read.labelfree <- function(dir, reference.experiment,
 			stop(sprintf("Negative %s", x))
 		}
 	})
+
+
+	if (plot) {
+		browser()
+		ggplot(normalized.sum.intensities.per.peptide.per.raw.file, aes(peptide.Intensity)) + geom_histogram(aes(fill = Raw.file), binwidth=0.1) + scale_x_log10() + facet_grid(Experiment~.) + ggtitle("Peptide Intensities")
+		ggplot(normalized.sum.intensities.per.peptide.per.raw.file, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
+	}
 
 	summarized.normalized.mq.data <- normalized.sum.intensities.per.peptide.per.raw.file %>%
 		aggregate.replica.intensities() %>% ungroup %>% print
@@ -111,7 +132,7 @@ read.labelfree <- function(dir, reference.experiment,
 
 #' Normalize the sum intensities data and a linear model
 #' @param data the MS data to normalize
-#' @param lm.model an optional \code{\link{lm}} model of the form lm(log.Intensity ~ Raw.file). If provided, a column named norm.I will be calculated. Alternative models can be used if they provide methods for \code{\link{coef}} and \code{\link{predict}}
+#' @param lm.model an optional \code{\link{lm}} model of the form lm(log.Intensity ~ Raw.file). If provided, a column named norm.I will be calculated. Alternative models can be used if they provide compatible methods for \code{\link{coef}} and \code{\link{predict}}
 #' @export
 normalize.labelfree <- function(data, lm.model) {
 	sum.intensities <- data %>%
@@ -121,13 +142,12 @@ normalize.labelfree <- function(data, lm.model) {
 				  I.tot.log = sum(log(peptide.Intensity), na.rm = TRUE)
 				  )
 
-
 	# Apply the normalization
 	data <- data %>%
 		left_join(sum.intensities %>% ungroup %>% select(-replicate, -run, -Experiment), by = "Raw.file")
 
 	# Check if we got an lm model
-	if (is.null(lm.model)) {
+	if (missing(lm.model) || is.null(lm.model)) {
 		lm.model <- lm(log.peptide.Intensity ~ Raw.file, data = sum.intensities.per.peptide.per.raw.file)
 	}
 

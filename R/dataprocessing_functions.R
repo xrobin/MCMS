@@ -1,10 +1,14 @@
 #' Reads a MQ file with the proper format: header, tab separator, no stringsAsFactor, no quotes
-#' @return the MQ file as a \cpode{\link{data.frame}}
+#' @return the MQ file as a \code{\link{data.frame}}
 #' @param MQ.file the file name
 #' @param ... additional arguments for \code{\link{read.table}} such as \code{nrow}, etc.
 #' @export
+#' @examples
+#' \dontrun{
+#' evidence <- read.MQ("search/txt/evidence.txt")
+#' }
 read.MQ <- function(MQ.file, ...) {
-	read.table(MQ.file, header = TRUE, sep="\t", stringsAsFactors = FALSE, quote = "", nrows = nrows, ...)
+	read.table(MQ.file, header = TRUE, sep="\t", stringsAsFactors = FALSE, quote = "", ...)
 }
 
 
@@ -46,8 +50,8 @@ read.evidence <- function(MQ.dir, nrows = -1) {
 	rename(Evidence.ID = id)
 
 	# Check reverse and contaminents match with REV__ and CON__
-	print(table(evidence$Reverse, grepl("^REV_", evidence$Leading.Razor.Protein)))
-	print(table(evidence$Potential.contaminant, grepl("^CON_", evidence$Leading.Razor.Protein)))
+	#print(table(evidence$Reverse, grepl("^REV_", evidence$Leading.Razor.Protein)))
+	#print(table(evidence$Potential.contaminant, grepl("^CON_", evidence$Leading.Razor.Protein)))
 
 	return(evidence)
 
