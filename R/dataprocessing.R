@@ -157,8 +157,8 @@ normalize.labelfree <- function(data, lm.model) {
 		# Maybe we can fix that?
 		# Let's make sure we have only 1 missing, and that if we predict we get the intercept term...
 		if (length(missing == 1) && predict(lm.model, newdata = data.frame(Raw.file = missing)) == normalization.coefs["(Intercept)"]) {
-			# Then just warn
-			warning(sprintf("Missing %s Raw file in coefficients: %s. Using the intercept term", length(missing), paste(missing, collapse=", ")))
+			# Then don't even warn anymore, it is safe now
+			# warning(sprintf("Missing %s Raw file in coefficients: %s. Using the intercept term", length(missing), paste(missing, collapse=", ")))
 			normalization.coefs[missing] <- 0
 		}
 		else {
