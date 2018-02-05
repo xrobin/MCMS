@@ -17,3 +17,4 @@ R-removed
 MCMS.Rcheck
 MCMS_*.tar.gz
 last.dump.rda
+inst/doc

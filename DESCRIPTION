@@ -18,10 +18,12 @@ Imports:
     xavamess (>= 0.6)
 Suggests:
 	testthat,
-	coda
+	coda,
+    knitr,
+    rmarkdown
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
-Collate: 
+Collate:
     'MCMS.R'
     'ProteinClass.R'
     'PeptidesClass.R'
@@ -41,3 +43,4 @@ Collate:
     'predict.R'
     'variance.R'
 RoxygenNote: 6.0.1
+VignetteBuilder: knitr
