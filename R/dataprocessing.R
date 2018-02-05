@@ -6,7 +6,7 @@
 #' @param mod.threshold minimal site localisation probability accepted. Peptides with values below this threshold will be filtered out.
 #' @param raw.file.filter an optional filter for the "Raw file" column passed to \code{\link{str_detect}}
 #' @param plot show diagnostic plots
-#' @import dplyr
+#' @import dplyr ggplot2
 #' @importFrom stringr str_replace str_detect str_match
 #' @importFrom xavamess safe.mapping
 #' @export
