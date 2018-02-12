@@ -17,6 +17,12 @@ read.labelfree <- function(dir, reference.experiment,
 	evidence <- read.evidence(dir) %>%
 		annotate_Experiment(reference.experiment = reference.experiment)
 
+	# Make sure we have some reference
+	if (sum(evidence$Experiment == reference.experiment) == 0) {
+		print(table(evidence$Experiment))
+		stop("Reference experiment not found. Please select an experiment from the table above.")
+	}
+
 	if (plot) {
 		ggplot(evidence, aes(Score)) + geom_histogram(aes(fill = Reverse), binwidth=0.01) + facet_grid(Experiment~.) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10()  + ggtitle("Scores per experiment")
 		ggplot(evidence, aes(Score)) + geom_histogram(aes(fill = Reverse)) + facet_grid(Type~run) + geom_vline(xintercept = score.threshold, linetype="dashed", alpha = .5) + scale_x_log10() + ggtitle("Scores per run and type")
