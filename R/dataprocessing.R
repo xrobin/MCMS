@@ -62,7 +62,7 @@ read.labelfree <- function(dir, reference.experiment,
 	}
 
 	summarized.normalized.mq.data <- normalized.sum.intensities.per.peptide.per.raw.file %>%
-		aggregate.replica.intensities() %>% ungroup %>% print
+		aggregate.replica.intensities() %>% ungroup
 
 	summarized.normalized.control <- summarized.normalized.mq.data %>%
 		filter(Experiment == reference.experiment) %>%
@@ -77,7 +77,7 @@ read.labelfree <- function(dir, reference.experiment,
 			norm.I.mean.control = norm.I.mean,
 			norm.I.sd.control = norm.I.sd
 		) %>%
-		select(-Experiment) %>% print
+		select(-Experiment)
 	ratios <- left_join(summarized.normalized.mq.data, summarized.normalized.control, by = c("Modified.sequence", "run")) %>%
 		mutate(
 			# log ratio
@@ -96,7 +96,7 @@ read.labelfree <- function(dir, reference.experiment,
 			# Fix peptide.ID
 			Peptide.ID = ifelse(is.na(Peptide.ID.x), Peptide.ID.y, Peptide.ID.x)
 		) %>%
-		select(-Peptide.ID.x, -Peptide.ID.y) %>% print
+		select(-Peptide.ID.x, -Peptide.ID.y)
 
 
 	# Map peptides to the original protein
