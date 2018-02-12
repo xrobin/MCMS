@@ -105,9 +105,9 @@ read.labelfree <- function(dir, reference.experiment,
 	n.eff <- ratios %>% safe.mapping(peptides, by = "Peptide.ID") %>%
 		filter(!is.na(n.eff), # remove if n is missing
 			   !is.na(norm.ratio),
-			   Experiment != control.experiment) %>%
+			   Experiment != reference.experiment) %>%
 		mutate(
-			reference = control.experiment,
+			reference = reference.experiment,
 			# Calculate modifications
 			modifications = constructModifiedPeptide(Modified.sequence, Start.position)#,
 		) %>%
