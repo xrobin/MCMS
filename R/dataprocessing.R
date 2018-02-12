@@ -126,9 +126,20 @@ read.labelfree <- function(dir, reference.experiment,
 			n = n.eff
 		)
 
+	# Replace q with 0 when n == 1 (instead of NA)
+	n.eff$q[n.eff$n == 1] <- 0
+
 	# Ensure sequence matches length...
 	stopifnot(identical(n.eff$length, nchar(n.eff$sequence)))
 	stopifnot(identical(n.eff$length + n.eff$start - 1L, n.eff$end))
+
+	if (plot) {
+		n.eff.ggplot <- n.eff[sample(seq_len(nrow(n.eff))),]
+		g <- ggplot(n.eff.ggplot, aes(ratio, q)) + geom_point(aes(color = sample, size = n)) + ggtitle("Effective observations")
+		print(g)
+	}
+
+	return(n.eff)
 }
 
 
