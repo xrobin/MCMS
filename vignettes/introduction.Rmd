@@ -16,6 +16,18 @@ knitr::opts_chunk$set(
 )
 ```
 
+## Installation
+
+```{r eval = FALSE}
+library(devtools)
+devtools::install_github("xrobin/MCMS")
+```
+
+The package can later be loaded with 
+```{r}
+library(MCMS)
+```
+
 ## Overview
 
 The MCMS workflow has the following steps:
@@ -24,58 +36,23 @@ The MCMS workflow has the following steps:
 
 The Label-free data is read from the MaxQuant 1.5 output. Use the `read.labelfree` function and point to the `txt` output folder:
 
-```{r eval = FALSE}
-labelfree <- read.labelfree("~/project/MQ/searched/txt", reference.experiment = "control")
+<!-- ```{r eval = FALSE} -->
+```{r}
+labelfree <- read.labelfree("../../UPS/txt/", reference.experiment = "2500amol", plot = TRUE)
 ```
 
+This function reads the data, normalises it and calculates ratios to the reference experiment, standard deviations and number of effective observations. We will later use this to build the variance model and likelihood sampling.
 
-### Normalize the data
+### Create the variance model
 
-```{r eval = FALSE}
-norm <- normalize.labelfree("~/project/MQ/searched/txt", reference.experiment = "control")
+```{r}
+var.model <- variance.model(labelfree)
 ```
-
-
-### Calculate ratio
-
-### Create the noise model
 
 ### Sample the likelihood function
 
-## Styles
-
-The `html_vignette` template includes a basic CSS theme. To override this theme you can specify your own CSS in the document metadata as follows:
-
-    output: 
-      rmarkdown::html_vignette:
-        css: mystyles.css
-
-## Figures
-
-The figure sizes have been customised so that you can easily put two images side-by-side. 
-
-```{r, fig.show='hold'}
-plot(1:10)
-plot(10:1)
 ```
 
-You can enable figure captions by `fig_caption: yes` in YAML:
-
-    output:
-      rmarkdown::html_vignette:
-        fig_caption: yes
-
-Then you can use the chunk option `fig.cap = "Your figure caption."` in **knitr**.
-
-## More Examples
-
-You can write math expressions, e.g. $Y = X\beta + \epsilon$, footnotes^[A footnote here.], and tables, e.g. using `knitr::kable()`.
-
-```{r, echo=FALSE, results='asis'}
-knitr::kable(head(mtcars, 10))
 ```
 
-Also a quote using `>`:
-
-> "He who gives up [code] safety for [code] speed deserves neither."
-([via](https://twitter.com/hadleywickham/status/504368538874703872))
+### Analyse the results
