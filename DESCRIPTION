@@ -15,8 +15,7 @@ Imports:
     Rcpp (>= 0.11.3),
     dplyr,
     ggplot2,
-    stringr,
-    xavamess (>= 0.6)
+    stringr
 Suggests:
 	testthat,
 	coda,
@@ -24,7 +23,7 @@ Suggests:
     rmarkdown
 SystemRequirements: C++11
 LinkingTo: Rcpp, BH
-Collate:
+Collate: 
     'MCMS.R'
     'ProteinClass.R'
     'PeptidesClass.R'
@@ -43,5 +42,6 @@ Collate:
     'onLoad.R'
     'predict.R'
     'variance.R'
+    'xavamess.R'
 RoxygenNote: 6.0.1
 VignetteBuilder: knitr

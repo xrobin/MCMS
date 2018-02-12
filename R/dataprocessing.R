@@ -8,7 +8,6 @@
 #' @param plot show diagnostic plots
 #' @import dplyr ggplot2
 #' @importFrom stringr str_replace str_detect str_match
-#' @importFrom xavamess safe.mapping
 #' @export
 read.labelfree <- function(dir, reference.experiment,
 						   score.threshold = 40, mod.threshold = .9,

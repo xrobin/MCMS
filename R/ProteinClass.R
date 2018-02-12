@@ -96,7 +96,7 @@ setClass("Protein",
 #' @param data the \code{data.frame}
 #' @param sample.dependency.matrix a matrix encoding how samples (rows) depend on the parameters (columns). It can be omitted for simple problems with no complex dependencies.
 #' @param decimate.sample.dependency.matrix whether to remove samples that are not observed and the parameters that are not
-#' @param na.action either \code{\link{na.warn}} from \pkg{xavamess}, \code{\link{na.fail}} or \code{\link{na.omit}}. Actions keeping NAs may compromise the sampling.
+#' @param na.action either \code{\link{na.warn}}, \code{\link{na.fail}} or \code{\link{na.omit}}. Actions keeping NAs may compromise the sampling.
 #' @description
 #' Only acetylation (a) is supported as a non-positional modification. It is added to the N-term of the peptide
 #' @import methods
@@ -105,7 +105,6 @@ setClass("Protein",
 #' Protein(ENSTest)
 #' @importFrom stringr str_split_fixed
 #' @importFrom stringr str_replace
-#' @importFrom xavamess na.warn
 #' @export
 Protein <- function(data, sample.dependency.matrix, decimate.sample.dependency.matrix = TRUE, na.action = na.warn) {
 
