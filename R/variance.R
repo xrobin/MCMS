@@ -9,6 +9,7 @@
 #' @param n the name of the column with the number of effective observations
 #' @param n.cuts is the number of cuts along the x=|log(ratio)| axis to estimate conditional shape and rate parameters for the inverse variances
 #' @param plot whether to show diagnostic plots
+#' @param verbose whether to print diagnostic messages along the way
 #' @param fixed.shape,fixed.rate whether to keep shape and rate fixed
 #' @param min.n use only observations with a number of effective observations greater or equal to that
 #' @param alpha proportion of the tails of the quantiles to ignore
@@ -28,8 +29,9 @@
 #' @author Jesper Ferkinghoff-Borg
 #' @importFrom Hmisc errbar
 #' @export
-variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plot = FALSE, fixed.shape=FALSE, fixed.rate=FALSE,
-					  min.n=5, alpha=c(0,0),
+variance.model <- function(data, mean="ratio", q = "q", n = "n", n.cuts=NULL, plot = FALSE, verbose = FALSE,
+					  fixed.shape=FALSE, fixed.rate=FALSE,
+					  min.n=3, alpha=c(0,0),
 					  #n.quantiles=NULL,
 					  counts.pr.cut=400, cutVector=NULL, cut.type=c("quantile", "equal"),
 					  weight.type=c("normal", "none", "log"),
@@ -40,8 +42,19 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 	data=data[data$variance>min.variance,]
 	filt=data.frame(mean=abs(data[[mean]]),variance=data$variance)
 	filt$n=data[[n]]
-	init.multiple.plots(1)
-	plot(filt$mean,filt$variance,cex=0.3,...)
+	if (nrow(filt) == 0) {
+		stop("No data passed the filter. Try to reduce min.n.")
+	}
+	if (plot) {
+		init.multiple.plots(1)
+		plot(filt$mean,filt$variance,cex=0.3,...)
+	}
+	if (!verbose) {
+		message <- I # Silence
+		try.outFile <- ifelse(.Platform$OS.type == "windows", "NUL:", "/dev/null")
+	} else {
+		try.outFile <- stderr()
+	}
 
 	cut.type <- match.arg(cut.type)
 	weight.type <- match.arg(weight.type)
@@ -61,13 +74,13 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 
 		if (cut.type=="quantile")
 		{
-			print("cutting by quantiles")
+			message("cutting by quantiles")
 			cut.probs=seq(n.cuts)/n.cuts
 			cutVector=c(0,quantile(filt$mean,probs=cut.probs))
 			# Merge duplicate cuts (eg if many 0 ratios)
 			cutVector <- cutVector[!duplicated(cutVector)]
 		} else {
-			print("cutting equal")
+			message("cutting equal")
 			#q.c=quantile(filt$mean,probs=(n.cuts-1)/n.cuts)
 			#cutVector=c(seq(0,q.c,q.c/(n.cuts-1)),max(filt$mean))
 			m=max(filt$mean)
@@ -163,7 +176,7 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 			   		var.var=0.5*median(variance)^2/(mean(n)-1),
 			   		n = n()))
 
-	result<-left_join(result,result2)
+	result<-left_join(result,result2, by = "groups")
 	curve=list()
 	if (rate.from.mean)
 		curve$rate=data.frame(x=result$mean.x,y=(result$shape-1)*result$mean.var, w=1/((result$shape-1)^2*result$var.var+result$mean.var^2*(result$shape.std^2)))
@@ -198,11 +211,11 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 		if (plot) plot(curve[[ct]]$x,curve[[ct]]$y,main=ct)
 		if (nrow(curve[[ct]])>0)
 		{
-			print(paste("doing curvetype",ct))
+			message(paste("doing curvetype",ct))
 			if (ct=="mean") {
 				#fit[[ct]]<-nls(y~a+(x/b)^(1+nu*(b/(x+b))),data =curve[[ct]], weights = curve[[ct]]$w,start=list(nu=0.5,b=0.5,a=-0.2))
 				#fit[[ct]]<-nls(y~a-log(exp(b)+1)+log(exp(b)+exp(c*x)),data =curve[[ct]], weights = curve[[ct]]$w,start=list(a=-0.5,b=1,c=1))
-				attempt<-try(fit[[ct]]<-nls(y~a+b*x^nu,data =curve[[ct]], weights = curve[[ct]]$w,start=list(nu=1,a=1,b=1)))
+				attempt<-try(fit[[ct]]<-nls(y~a+b*x^nu,data =curve[[ct]], weights = curve[[ct]]$w,start=list(nu=1,a=1,b=1)), outFile = try.outFile)
 			}	else if (ct=="shape")
 			{
 				#l=length(curve[[ct]]$w)
@@ -217,11 +230,11 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 				#fit[[ct]]<-nls(y~A*(1+(x/g)^2)^(-nu)+1,data=curve[[ct]],start=list(nu=0.7,g=0.2,A=25),lower=c(0,0,0),
 				#			   weights=curve[[ct]]$w,algorithm="port")
 				attempt<-try(fit[[ct]]<-nls(y~stretched.gamma(x,a,s,b=1,n,k),data=curve[[ct]],start=list(s=2,k=0.9,a=0.7,n=0.1),
-							   lower=rep(0.01,5),algorithm="port")) #weights=curve[[ct]]$w,
+							   lower=rep(0.01,5),algorithm="port"), outFile = try.outFile) #weights=curve[[ct]]$w,
 				#fit[[ct]]<-lm(y~x,data =curve[[ct]],weights=curve[[ct]]$w)
 			}
 			else if (ct=="mode"){
-				attempt<-try(fit[[ct]] <- lm(y ~ x, data =curve[[ct]], weights = curve[[ct]]$w))
+				attempt<-try(fit[[ct]] <- lm(y ~ x, data =curve[[ct]], weights = curve[[ct]]$w), outFile = try.outFile)
 				#fit[[ct]]<-nls(y~a*(1+g*x)^nu,data =curve[[ct]], weights = curve[[ct]]$w,start=list(g=1,nu=1,a=1),lower=c(0,0,0),algorithm="port")
 				#fit[[ct]]<-nls(y~a+c*tanh(b*(x-d)),data =curve[[ct]], weights = curve[[ct]]$w,start=list(c=0.5,b=1,d=0,a=-0.2),lower=c(0,0.001,-10,-1),algorithm="port")
 				#fit[[ct]]<-nls(y~a+(x/b)^(r-nu*(x/(x+b))),data =curve[[ct]], weights = curve[[ct]]$w,start=list(r=1,nu=0.5,b=0.5,a=-0.2))
@@ -231,19 +244,21 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 			}else if (ct=="rate")
 			{
 				attempt<-try(fit[[ct]]<-nls(y~rate0+(x/rate1)^rate2,data =curve[[ct]], weights = curve[[ct]]$w,
-							   start=list(rate2=0.5,rate0=curve[[ct]]$y[1],rate1=3),lower=c(0.1,0,0.01),algorithm="port"))
+							   start=list(rate2=0.5,rate0=curve[[ct]]$y[1],rate1=3),lower=c(0.1,0,0.01),algorithm="port"), outFile = try.outFile)
 				#fit[[ct]]<-nls(y~k+0.5*(1+tanh(s*(x/x0-1)))*(x/x0)^b,data=curve[[ct]],weights=curve[[ct]]$w,start=list(s=3,k=0.01,b=1,x0=0.7),algorithm="port",
 				#		 lower=rep(0.001,5))
 			}
 			if (is(attempt,"try-error")) {
-				warning(paste("Could not perform model fit for",ct,". Reverting to constant fit..."))
+				if (verbose) {
+					warning(paste("Could not perform model fit for",ct,". Reverting to constant fit..."))
+				}
 				fit[[ct]]<-lm(y~1,data=curve[[ct]],weights=curve[[ct]]$w)
 			}
 			curve[[ct]]$predict=predict(fit[[ct]])
 			mdl[[ct]]=summary(fit[[ct]])$coefficients
 		}
 	}
-	print("prediction ok ")
+	message("prediction ok ")
 	#if (fit.type=="stretched")
 	#{
 	#	a0=b_fit$coefficients["(Intercept)"]
@@ -269,7 +284,7 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 			 }
 	)
 
-	print("return ok")
+	message("return ok")
 	if (plot) {
 
 		init.multiple.plots(n.cuts)
@@ -279,7 +294,7 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 			m=result$mean.x[i]
 			param=ret$get.params(m)
 			g=result$groups[i]
-			print(paste("doing group",g," with m=",m,"shape=",param$shape,"rate=",param$rate))
+			message(paste("doing group",g," with m=",m,"shape=",param$shape,"rate=",param$rate))
 			l=filt[filt$groups==g,]
 			dummy=gamma.fit.dplyr(l,
 								  plot=TRUE, as.dataframe=TRUE,alpha=alpha.pr.cut,n.quantiles=n.quantiles.pr.cut,
@@ -289,7 +304,7 @@ variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plo
 
 		#init.multiple.plots(length(curve.types))
 		init.multiple.plots(1)
-		print("start plotting")
+		message("start plotting")
 		for (ct in curve.types)
 		{
 			if (nrow(curve[[ct]])>0) {
