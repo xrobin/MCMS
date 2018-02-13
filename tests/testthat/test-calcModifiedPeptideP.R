@@ -1,4 +1,4 @@
-library(xavamess)
+library(MCMS)
 
 context("calcModifiedPeptideP works")
 
