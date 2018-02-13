@@ -12,3 +12,5 @@ R-removed
 ^MCMS_.+\.tar.gz$
 ^Makefile
 ^last.dump.rda
+codecov.yml
+.travis.yml
