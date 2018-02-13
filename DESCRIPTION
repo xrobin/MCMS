@@ -15,7 +15,8 @@ Imports:
     Rcpp (>= 0.11.3),
     dplyr,
     ggplot2,
-    stringr
+    stringr,
+    Hmisc
 Suggests:
 	testthat,
 	coda,

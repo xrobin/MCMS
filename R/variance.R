@@ -26,6 +26,7 @@
 #' @param weighted.mean.shape whether to use weighting to calculate the mean shape
 #' @param max.rate maximum allowed value for the rate
 #' @author Jesper Ferkinghoff-Borg
+#' @importFrom Hmisc errbar
 #' @export
 variance.model <- function(data, mean="mean", q = "q", n = "n", n.cuts=NULL, plot = FALSE, fixed.shape=FALSE, fixed.rate=FALSE,
 					  min.n=5, alpha=c(0,0),
