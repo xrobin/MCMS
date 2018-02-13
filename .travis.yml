@@ -1,6 +1,10 @@
 language: r
 cache: packages
 
+script:
+- travis_wait R CMD build .
+- R CMD check *tar.gz
+
 r_packages:
   - covr
 
