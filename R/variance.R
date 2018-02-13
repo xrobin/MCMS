@@ -26,6 +26,7 @@
 #' @param rate.from.mean whether to use the rate in the mean fit
 #' @param weighted.mean.shape whether to use weighting to calculate the mean shape
 #' @param max.rate maximum allowed value for the rate
+#' @param ... additional arguments to \code{\link{plot}} and the gamma function
 #' @author Jesper Ferkinghoff-Borg
 #' @importFrom Hmisc errbar
 #' @export
