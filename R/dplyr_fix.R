@@ -17,4 +17,4 @@ if(getRversion() >= "2.15.1")  utils::globalVariables(c("modifications", "pair",
 "broken", "lu", "modified.peptide.p", "n.evidence", "n.replicate", "n.replicate.control",
 "n.replicate.total", "norm.I", "norm.I.mean",
 "norm.I.mean.control", "norm.I.sd", "norm.I.sd.control", "norm.ratio",
-"norm.ratio.q", "norm.ratio.sd", "peptide.Intensity", "reference", "run"))
+"norm.ratio.q", "norm.ratio.sd", "peptide.Intensity", "reference", "run", "variance"))
