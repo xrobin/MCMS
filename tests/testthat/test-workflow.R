@@ -25,6 +25,19 @@ test_that("variance.model runs", {
 	#expect_equivalent(var.mdl$mdl$shape[,"Estimate"], 0.8705470249, tolerance = .001)
 })
 
+
+test_that("variance.model supports plots and verbose", {
+	v1 <- expect_output(variance.model(labelfree, plot = TRUE))
+	v2 <- expect_output(variance.model(labelfree, verbose = TRUE))
+	v3 <- expect_output(variance.model(labelfree, verbose = TRUE, plot = TRUE))
+	expect_equivalent(v1, var.mdl)
+	expect_equivalent(v2, var.mdl)
+	expect_equivalent(v3, var.mdl)
+
+	#expect_equivalent(var.mdl$mdl$rate[,"Estimate"], 0.02472515, tolerance = .001)
+	#expect_equivalent(var.mdl$mdl$shape[,"Estimate"], 0.8705470249, tolerance = .001)
+})
+
 test_that("MCMS can sample one protein", {
 	library(dplyr)
 	albumin <- Peptides(Protein(labelfree %>% filter(protein == "P02768ups|ALBU_HUMAN_UPS")))
