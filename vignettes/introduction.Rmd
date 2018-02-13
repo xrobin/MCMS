@@ -28,9 +28,23 @@ The package can later be loaded with
 library(MCMS)
 ```
 
+
 ## Overview
 
 The MCMS workflow has the following steps:
+
+### Loading some data
+
+The MCMS package reads label-free analysis results from MaxQuant (tested with version 1.5). The following step will download a search result of the UPS data set (Ramus, 2016) for demonstration purposes:
+
+```{r}
+dl.dst <- file.path(tempdir(), "UPS.tar.bz2")
+download.file("https://www.dropbox.com/s/9b7av59t61dw97z/UPS.tar.bz2?dl=1", dl.dst)
+ups.dir <- file.path(tempdir(), "UPS")
+untar(dl.dst, exdir=ups.dir, compressed = "bzip2")
+```
+
+Replace `ups.dir` with the folder containing your own search results. 
 
 ### Read the data
 
@@ -38,10 +52,10 @@ The Label-free data is read from the MaxQuant 1.5 output. Use the `read.labelfre
 
 <!-- ```{r eval = FALSE} -->
 ```{r}
-labelfree <- read.labelfree("../../UPS/txt/", reference.experiment = "2500amol", plot = TRUE)
+labelfree <- read.labelfree(ups.dir, reference.experiment = "2500amol", plot = TRUE)
 ```
 
-This function reads the data, normalises it and calculates ratios to the reference experiment, standard deviations and number of effective observations. We will later use this to build the variance model and likelihood sampling.
+This function reads the data, normalises it and calculates ratios to the reference experiment, standard deviations and number of effective observations. With `plot = TRUE` it also displays diagnostic plots. We will later use this to build the variance model and likelihood sampling.
 
 ### Create the variance model
 
@@ -51,8 +65,29 @@ var.model <- variance.model(labelfree)
 
 ### Sample the likelihood function
 
-```
+The Monte Carlo sampling must be performed on one protein at a time. Because there is no single optimal way to parallize it, the details are left to the user. Here is how to do it for one protein:
 
+```{r}
+library(dplyr)
+albumin <- Peptides(Protein(labelfree %>% filter(protein == "P02768ups|ALBU_HUMAN_UPS")))
+albumin.results <- MCMS(albumin, var.model, n = calcIterations(albumin) / 10)
+# Results is a matrix 
+head(albumin.results)
 ```
 
 ### Analyse the results
+
+#### Look at the chains
+```{r}
+palette <- rainbow(8)
+matplot(albumin.results[,c(8, 2, 4, 7, 6, 1, 3, 5)], type="l", col = palette)
+```
+#### Ensure sufficient sampling
+We use the effectiveSize calculation from the coda package to determine the quality of the sampling of the chains. Typically, if any of the values is below 100, you should consider running `MCMC` again with an increased n argument.
+
+```{r}
+attr(albumin.results, "effectiveSize")
+if (any(attr(albumin.results, "effectiveSize") < 100)) {
+	warning("You should consider sampling again with an increased n.")
+}
+```
