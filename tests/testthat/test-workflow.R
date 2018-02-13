@@ -28,8 +28,8 @@ test_that("variance.model runs", {
 
 test_that("variance.model supports plots and verbose", {
 	v1 <- expect_output(variance.model(labelfree, plot = TRUE))
-	v2 <- expect_output(variance.model(labelfree, verbose = TRUE))
-	v3 <- expect_output(variance.model(labelfree, verbose = TRUE, plot = TRUE))
+	v2 <- expect_message(variance.model(labelfree, verbose = TRUE))
+	v3 <- expect_message(expect_output(variance.model(labelfree, verbose = TRUE, plot = TRUE)))
 	expect_equivalent(v1, var.mdl)
 	expect_equivalent(v2, var.mdl)
 	expect_equivalent(v3, var.mdl)
