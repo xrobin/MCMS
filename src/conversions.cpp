@@ -161,7 +161,6 @@ std::mt19937_64 seedFromR(const NumericVector& seed) {
 	std::vector<seed_int_t> seedVector;
 	transform(seed.begin(), seed.end(), back_inserter(seedVector),
         [](double const& val) {return seed_int_t(val);});
-	Rcpp::Rcout << seedVector << std::endl;
 	std::seed_seq sseq(seedVector.begin(), seedVector.end());
 	return std::mt19937_64(sseq);
 }
