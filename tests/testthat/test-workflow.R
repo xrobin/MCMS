@@ -17,18 +17,18 @@ test_that("read.labelfree reads some data", {
 })
 
 
-test_that("var.model runs", {
-	var.model <<- variance.model(labelfree)
+test_that("variance.model runs", {
+	var.mdl <<- variance.model(labelfree)
 	expect_equal(dim(labelfree), c(47643L, 11L))
 
-	expect_equivalent(var.model$mdl$rate[,"Estimate"], 0.02472515, tolerance = .001)
-	expect_equivalent(var.model$mdl$shape[,"Estimate"], 0.8705470249, tolerance = .001)
+	expect_equivalent(var.mdl$mdl$rate[,"Estimate"], 0.02472515, tolerance = .001)
+	expect_equivalent(var.mdl$mdl$shape[,"Estimate"], 0.8705470249, tolerance = .001)
 })
 
 test_that("MCMS can sample one protein", {
 	library(dplyr)
 	albumin <- Peptides(Protein(labelfree %>% filter(protein == "P02768ups|ALBU_HUMAN_UPS")))
-	albumin.results <- MCMS(albumin, var.model, n = calcIterations(albumin) / 10)
+	albumin.results <- MCMS(albumin, var.mdl, n = calcIterations(albumin) / 10)
 
 	expect_equal(dim(albumin.results), c(7000L, 10L))
 	# Test column names
