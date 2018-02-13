@@ -145,6 +145,7 @@ read.labelfree <- function(dir, reference.experiment,
 #' Normalize the sum intensities data and a linear model
 #' @param data the MS data to normalize
 #' @param lm.model an optional \code{\link{lm}} model of the form lm(log.Intensity ~ Raw.file). If provided, a column named norm.I will be calculated. Alternative models can be used if they provide compatible methods for \code{\link{coef}} and \code{\link{predict}}
+#' @importFrom stats coef lm terms
 #' @export
 normalize.labelfree <- function(data, lm.model) {
 	sum.intensities <- data %>%

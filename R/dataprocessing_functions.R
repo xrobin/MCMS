@@ -2,6 +2,7 @@
 #' @return the MQ file as a \code{\link{data.frame}}
 #' @param MQ.file the file name
 #' @param ... additional arguments for \code{\link{read.table}} such as \code{nrow}, etc.
+#' @importFrom  utils read.table
 #' @export
 #' @examples
 #' \dontrun{

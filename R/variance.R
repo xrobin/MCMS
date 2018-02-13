@@ -29,6 +29,8 @@
 #' @param ... additional arguments to \code{\link{plot}} and the gamma function
 #' @author Jesper Ferkinghoff-Borg
 #' @importFrom Hmisc errbar
+#' @importFrom graphics hist lines par
+#' @importFrom stats nls nls.control pgamma quantile dgamma sd
 #' @export
 variance.model <- function(data, mean="ratio", q = "q", n = "n", n.cuts=NULL, plot = FALSE, verbose = FALSE,
 					  fixed.shape=FALSE, fixed.rate=FALSE,
