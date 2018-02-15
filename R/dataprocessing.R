@@ -8,6 +8,10 @@
 #' @param plot show diagnostic plots
 #' @import dplyr ggplot2
 #' @importFrom stringr str_replace str_detect str_match
+#' @examples
+#' \dontrun{
+#' labelfree <- read.labelfree("searched/txt", reference.experiment = "control", plot = TRUE)
+#' }
 #' @export
 read.labelfree <- function(dir, reference.experiment,
 						   score.threshold = 40, mod.threshold = .9,

@@ -25,3 +25,8 @@ read.labelfree(dir, reference.experiment, score.threshold = 40,
 Read a label-free MaxQuant project
 This function reads, normalises and calculates ratios from a MaxQuant project ("txt" result folder)
 }
+\examples{
+\dontrun{
+labelfree <- read.labelfree("searched/txt", reference.experiment = "control", plot = TRUE)
+}
+}
