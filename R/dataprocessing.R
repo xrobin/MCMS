@@ -38,6 +38,7 @@ read.labelfree <- function(dir, reference.experiment,
 		filter.dirty.peaks(msms, mod.threshold = mod.threshold) %>%
 		filter(Score >= score.threshold) %>%
 		aggregate.raw.file.intensities
+	warning(sprintf("%d / %d peptides with missing intensity values will be ignored", sum(is.na(sum.intensities.per.peptide.per.raw.file$peptide.Intensity)), nrow(sum.intensities.per.peptide.per.raw.file)))
 
 
 	# Optional filter
