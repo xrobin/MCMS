@@ -4,7 +4,7 @@
 #' @param var.model the variance model
 #' @param n number of iterations
 #' @param n.out number of iterations to record. Should be a divisor of (1 - burn.in) * n for best results.
-#' @param burn.in the burn-in time (integer, NOT a proportion)
+#' @param burn.in the burn-in time (as proportion of \code{n})
 #' @param max.repeats the maximum number of repeats of 1E9 iterations to run
 #' @param c.prior.sd,o.prior.shape1,o.prior.shape2 parameters for the prior
 #' @param prior_move_proportion the proportion of moves that are sampled from the prior
