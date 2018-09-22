@@ -13,7 +13,7 @@ library(MCMS)
 
 ## ------------------------------------------------------------------------
 dl.dst <- file.path(tempdir(), "UPS.tar.bz2")
-download.file("https://www.dropbox.com/s/9b7av59t61dw97z/UPS.tar.bz2?dl=1", dl.dst)
+download.file("http://lindinglab.org/downloads/UPS.tar.bz2", dl.dst)
 ups.dir <- file.path(tempdir(), "UPS")
 untar(dl.dst, exdir=ups.dir, compressed = "bzip2")
 

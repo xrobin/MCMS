@@ -88,7 +88,7 @@ devtools<span class="op">::</span><span class="kw">install_github</span>(<span c
 <h3>Loading some data</h3>
 <p>The MCMS package reads label-free analysis results from MaxQuant (tested with version 1.5). The following step will download a search result of the UPS data set (Ramus, 2016) for demonstration purposes:</p>
 <div class="sourceCode"><pre class="sourceCode r"><code class="sourceCode r">dl.dst &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;UPS.tar.bz2&quot;</span>)
-<span class="kw">download.file</span>(<span class="st">&quot;https://www.dropbox.com/s/9b7av59t61dw97z/UPS.tar.bz2?dl=1&quot;</span>, dl.dst)
+<span class="kw">download.file</span>(<span class="st">&quot;http://lindinglab.org/downloads/UPS.tar.bz2&quot;</span>, dl.dst)
 ups.dir &lt;-<span class="st"> </span><span class="kw">file.path</span>(<span class="kw">tempdir</span>(), <span class="st">&quot;UPS&quot;</span>)
 <span class="kw">untar</span>(dl.dst, <span class="dt">exdir=</span>ups.dir, <span class="dt">compressed =</span> <span class="st">&quot;bzip2&quot;</span>)</code></pre></div>
 <p>Replace <code>ups.dir</code> with the folder containing your own search results.</p>
