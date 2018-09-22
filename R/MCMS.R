@@ -4,7 +4,7 @@
 #' @param var.model the variance model
 #' @param n number of iterations
 #' @param n.out number of iterations to record. Should be a divisor of (1 - burn.in) * n for best results.
-#' @param burn.in the burn-in time (as proportion of \code{n})
+#' @param burn.in the fraction of the time \code{n} to use as burn-in (a proportion, not integer time)
 #' @param max.repeats the maximum number of repeats of 1E9 iterations to run
 #' @param c.prior.sd,o.prior.shape1,o.prior.shape2 parameters for the prior
 #' @param prior_move_proportion the proportion of moves that are sampled from the prior
@@ -41,6 +41,10 @@ MCMS <- function(Peptides, var.model, n = calcIterations(Peptides), n.out = 7E3,
 	}
 	else {
 		repeats <- 1
+	}
+
+	if (burn.in > 1) {
+		stop("burn.in should be a proportion, not the time itself.")
 	}
 
 	mc.result <- sapply(seq_len(repeats), function(i) {

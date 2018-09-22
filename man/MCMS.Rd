@@ -22,7 +22,7 @@ MCMS(Peptides, var.model, n = calcIterations(Peptides), n.out = 7000,
 
 \item{n.out}{number of iterations to record. Should be a divisor of (1 - burn.in) * n for best results.}
 
-\item{burn.in}{the burn-in time (integer, NOT a proportion)}
+\item{burn.in}{the fraction of the time \code{n} to use as burn-in (a proportion, not integer time)}
 
 \item{max.repeats}{the maximum number of repeats of 1E9 iterations to run}
 
