@@ -7,7 +7,6 @@ src/*.dylib
 src/*.dll
 test_speed/*
 *.RData
-*.pdf
 *.png
 *.out
 *.txt
