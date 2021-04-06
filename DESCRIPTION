@@ -44,5 +44,5 @@ Collate:
     'predict.R'
     'variance.R'
     'xavamess.R'
-RoxygenNote: 6.0.1
+RoxygenNote: 7.1.1
 VignetteBuilder: knitr

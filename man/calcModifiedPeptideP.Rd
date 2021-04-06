@@ -4,8 +4,11 @@
 \alias{calcModifiedPeptideP}
 \title{Calculate modified peptide probability}
 \usage{
-calcModifiedPeptideP(ModifiedSequences, PhosphoProbabilitySequences = NULL,
-  OxProbabilitySequences = NULL)
+calcModifiedPeptideP(
+  ModifiedSequences,
+  PhosphoProbabilitySequences = NULL,
+  OxProbabilitySequences = NULL
+)
 }
 \arguments{
 \item{ModifiedSequences}{the "Modified Sequence" column in evidence.txt}

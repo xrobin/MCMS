@@ -5,8 +5,14 @@
 \title{Read a label-free MaxQuant project
 This function reads, normalises and calculates ratios from a MaxQuant project ("txt" result folder)}
 \usage{
-read.labelfree(dir, reference.experiment, score.threshold = 40,
-  mod.threshold = 0.9, raw.file.filter = NULL, plot = FALSE)
+read.labelfree(
+  dir,
+  reference.experiment,
+  score.threshold = 40,
+  mod.threshold = 0.9,
+  raw.file.filter = NULL,
+  plot = FALSE
+)
 }
 \arguments{
 \item{dir}{the \dQuote{txt} folder containing the MaxQuant results}

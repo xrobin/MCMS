@@ -4,8 +4,11 @@
 \alias{constructModifiedPeptide}
 \title{Construct the modified peptide sequence as a string}
 \usage{
-constructModifiedPeptide(ModifiedSequences, positions = integer(),
-  delimiter = ";")
+constructModifiedPeptide(
+  ModifiedSequences,
+  positions = integer(),
+  delimiter = ";"
+)
 }
 \arguments{
 \item{ModifiedSequences}{the "Modified Sequence" column in evidence.txt}

@@ -4,8 +4,12 @@
 \alias{Protein}
 \title{End-user function to create a Protein object}
 \usage{
-Protein(data, sample.dependency.matrix,
-  decimate.sample.dependency.matrix = TRUE, na.action = na.warn)
+Protein(
+  data,
+  sample.dependency.matrix,
+  decimate.sample.dependency.matrix = TRUE,
+  na.action = na.warn
+)
 }
 \arguments{
 \item{data}{the \code{data.frame}}

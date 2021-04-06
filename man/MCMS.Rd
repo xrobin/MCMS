@@ -5,13 +5,25 @@
 \title{The main function here.
 Receives the data and the variance model, prepares all the elements and then performs the simulation}
 \usage{
-MCMS(Peptides, var.model, n = calcIterations(Peptides), n.out = 7000,
-  burn.in = 0.3, max.repeats = 20, c.prior.sd = sqrt(2),
-  o.prior.shape1 = 0.5, o.prior.shape2 = 0.5,
-  prior_move_proportion = 0.02, c_sd = 0.05, o_sd = 0.05,
-  o_k_scale = 1/100, o_restrict = 0.001, seed = round(runif(10,
-  -.Machine$integer.max, .Machine$integer.max)), verbose = FALSE,
-  cooling = TRUE)
+MCMS(
+  Peptides,
+  var.model,
+  n = calcIterations(Peptides),
+  n.out = 7000,
+  burn.in = 0.3,
+  max.repeats = 20,
+  c.prior.sd = sqrt(2),
+  o.prior.shape1 = 0.5,
+  o.prior.shape2 = 0.5,
+  prior_move_proportion = 0.02,
+  c_sd = 0.05,
+  o_sd = 0.05,
+  o_k_scale = 1/100,
+  o_restrict = 0.001,
+  seed = round(runif(10, -.Machine$integer.max, .Machine$integer.max)),
+  verbose = FALSE,
+  cooling = TRUE
+)
 }
 \arguments{
 \item{Peptides}{the Peptides model data}

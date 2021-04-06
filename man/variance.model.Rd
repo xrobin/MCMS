@@ -6,14 +6,33 @@
 This function creates a model of the variance based on the global proteomics data.
 The data is cut in bins of similar |log(ratio)| where the variance is asseased. The binning is controlled by the \code{n.cuts}, \code{counts.pr.cut}, \code{cutVector} and \code{cut.type} parameters}
 \usage{
-variance.model(data, mean = "ratio", q = "q", n = "n", n.cuts = NULL,
-  plot = FALSE, verbose = FALSE, fixed.shape = FALSE,
-  fixed.rate = FALSE, min.n = 3, alpha = c(0, 0), counts.pr.cut = 400,
-  cutVector = NULL, cut.type = c("quantile", "equal"),
-  weight.type = c("normal", "none", "log"), n.quantiles.pr.cut = NULL,
-  counts.pr.quantile.pr.cut = 20, alpha.pr.cut = 0, min.variance = 0.005,
-  probs.pr.cut = NULL, moment.fit = 0, rate.from.mean = FALSE,
-  weighted.mean.shape = TRUE, max.rate = 25, ...)
+variance.model(
+  data,
+  mean = "ratio",
+  q = "q",
+  n = "n",
+  n.cuts = NULL,
+  plot = FALSE,
+  verbose = FALSE,
+  fixed.shape = FALSE,
+  fixed.rate = FALSE,
+  min.n = 3,
+  alpha = c(0, 0),
+  counts.pr.cut = 400,
+  cutVector = NULL,
+  cut.type = c("quantile", "equal"),
+  weight.type = c("normal", "none", "log"),
+  n.quantiles.pr.cut = NULL,
+  counts.pr.quantile.pr.cut = 20,
+  alpha.pr.cut = 0,
+  min.variance = 0.005,
+  probs.pr.cut = NULL,
+  moment.fit = 0,
+  rate.from.mean = FALSE,
+  weighted.mean.shape = TRUE,
+  max.rate = 25,
+  ...
+)
 }
 \arguments{
 \item{data}{the normalized data}
@@ -50,7 +69,7 @@ variance.model(data, mean = "ratio", q = "q", n = "n", n.cuts = NULL,
 
 \item{alpha.pr.cut}{proportion of the tails to ignore in the gamma function}
 
-\item{min.variance}{floor levell for the variance}
+\item{min.variance}{floor level for the variance}
 
 \item{probs.pr.cut}{probabilities for the gamma function}
 

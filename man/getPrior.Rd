@@ -4,9 +4,16 @@
 \alias{getPrior}
 \title{Compute the prior of a set of parameters}
 \usage{
-getPrior(Peptides, var.model, c = Peptides@c, o = Peptides@o,
-  c.prior.sd = sqrt(2), o.prior.shape1 = 0.5, o.prior.shape2 = 0.5,
-  verbose = FALSE)
+getPrior(
+  Peptides,
+  var.model,
+  c = Peptides@c,
+  o = Peptides@o,
+  c.prior.sd = sqrt(2),
+  o.prior.shape1 = 0.5,
+  o.prior.shape2 = 0.5,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{Peptides}{the Peptides model data}

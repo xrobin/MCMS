@@ -4,9 +4,16 @@
 \alias{getLikelihood}
 \title{Compute the likelihood of a Peptides model}
 \usage{
-getLikelihood(Peptides, var.model, c = Peptides@c, o = Peptides@o,
-  c.prior.sd = sqrt(2), o.prior.shape1 = 0.5, o.prior.shape2 = 0.5,
-  verbose = FALSE)
+getLikelihood(
+  Peptides,
+  var.model,
+  c = Peptides@c,
+  o = Peptides@o,
+  c.prior.sd = sqrt(2),
+  o.prior.shape1 = 0.5,
+  o.prior.shape2 = 0.5,
+  verbose = FALSE
+)
 }
 \arguments{
 \item{Peptides}{the Peptides model data}
