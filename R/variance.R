@@ -20,7 +20,7 @@
 #' @param n.quantiles.pr.cut number of quantiles for the gamma function
 #' @param counts.pr.quantile.pr.cut the target number of observation in each quantile for the gamma function
 #' @param alpha.pr.cut proportion of the tails to ignore in the gamma function
-#' @param min.variance floor levell for the variance
+#' @param min.variance floor level for the variance
 #' @param probs.pr.cut probabilities for the gamma function
 #' @param moment.fit whether to fit the moment. Values of 0, 1 or 2 are accepted
 #' @param rate.from.mean whether to use the rate in the mean fit
